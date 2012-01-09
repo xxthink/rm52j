@@ -209,59 +209,54 @@ void DeblockMb422(ImageParameters *img, byte **imgY, byte ***imgUV, int mb_y, in
   
 void DeblockMb(ImageParameters *img, byte **imgY, byte ***imgUV, int mb_y, int mb_x)
 {
-  int           EdgeCondition;
-  int           dir,edge,QP;
-  byte          Strength[2], *SrcY, *SrcU = NULL, *SrcV = NULL;
-  Macroblock    *MbP, *MbQ ; 
-  const int mb_width = img->width/16;
-  const int mb_nr    = img->current_mb_nr;
-  Macroblock *currMB = &mb_data[mb_nr];
+    int           EdgeCondition;
+    int           dir,edge,QP;
+    byte          Strength[2], *SrcY, *SrcU = NULL, *SrcV = NULL;
+    Macroblock    *MbP, *MbQ ; 
+    const int mb_width = img->width/16;
+    const int mb_nr    = img->current_mb_nr;
+    Macroblock *currMB = &mb_data[mb_nr];
     int QPchroma;
 
-  SrcY = imgY    [mb_y<<4] + (mb_x<<4) ;                                                      // pointers to source
-  if (imgUV != NULL)
-  {
-    SrcU = imgUV[0][mb_y<<3] + (mb_x<<3) ;
-    SrcV = imgUV[1][mb_y<<3] + (mb_x<<3) ;
-  }
-  MbQ  = &mb_data[mb_y*(img->width>>4) + mb_x] ;                                                 // current Mb
+    SrcY = imgY[mb_y<<4] + (mb_x<<4) ;                                                      // pointers to source
+    if (imgUV != NULL)
+    {
+        SrcU = imgUV[0][mb_y<<3] + (mb_x<<3) ;
+        SrcV = imgUV[1][mb_y<<3] + (mb_x<<3) ;
+    }
+    MbQ  = &mb_data[mb_y*(img->width>>4) + mb_x] ;                                                 // current Mb
 
-  // This could also be handled as a filter offset of -51 
-  if (MbQ->lf_disable) return;
+    // This could also be handled as a filter offset of -51 
+    if (MbQ->lf_disable) return;
 
+    for( dir=0 ; dir<2 ; dir++ )                                             // vertical edges, than horizontal edges
+    {
+        EdgeCondition = (dir && mb_y) || (!dir && mb_x)  ;                     // can not filter beyond frame boundaries
 
-  for( dir=0 ; dir<2 ; dir++ )                                             // vertical edges, than horicontal edges
-  {
-    EdgeCondition = (dir && mb_y) || (!dir && mb_x)  ;                     // can not filter beyond frame boundaries
-  
-  if(dir && mb_y)
-  {
-    EdgeCondition = (currMB->slice_nr == mb_data[img->current_mb_nr-mb_width].slice_nr)? EdgeCondition:0;  //  can not filter beyond slice boundaries   jlzheng 7.8
-  }
-    for( edge=0 ; edge<2 ; edge++ )                                            // first 4 vertical strips of 16 pel
-    {                                                                          // then  4 horicontal
-      if( edge || EdgeCondition )
-      {
-        MbP = (edge)? MbQ : ((dir)? (MbQ -(img->width>>4))  : (MbQ-1) ) ;    // MbP = Mb of the remote 4x4 block   MbP是否需要重新得到？
-        QP = (MbP->qp + MbQ->qp+1) >> 1 ;                                   // Average QP of the two blocks
-        GetStrength( Strength, MbP, MbQ, dir, edge, mb_y<<2, mb_x<<2);           //Strength for 4 pairs of blks in 1 stripe
-    if( *((short*)Strength) )  // && (QP>= 8) )                    // only if one of the 4 Strength bytes is != 0
-        { 
-          EdgeLoop( SrcY + (edge<<3)* ((dir)? img->width:1 ), Strength,QP,dir, img->width, 0 );
-          if( (imgUV != NULL) && !(edge & 1) )
-          {
-            //EdgeLoop( SrcU +  (edge<<2) * ((dir)? img->width_cr:1 ), Strength,QP_SCALE_CR[QP], dir, img->width_cr, 1 ) ; 
-            //EdgeLoop( SrcV +  (edge<<2) * ((dir)? img->width_cr:1 ), Strength, QP_SCALE_CR[QP], dir, img->width_cr, 1 ) ; 
-
-       //modified by cjw 20060310
-       QPchroma=(QP_SCALE_CR[MbP->qp]+QP_SCALE_CR[MbQ->qp]+1)/2;
-       EdgeLoop( SrcU +  (edge<<2) * ((dir)? img->width_cr:1 ), Strength, QPchroma, dir, img->width_cr, 1 ) ; 
-       EdgeLoop( SrcV +  (edge<<2) * ((dir)? img->width_cr:1 ), Strength, QPchroma, dir, img->width_cr, 1 ) ;
-          }
+        if(dir && mb_y)
+        {
+            EdgeCondition = (currMB->slice_nr == mb_data[img->current_mb_nr-mb_width].slice_nr)? EdgeCondition:0;  //  can not filter beyond slice boundaries
         }
-      }
-    }//end edge
-  }//end loop dir
+        for( edge=0 ; edge<2 ; edge++ )                                            // first 4 vertical strips of 16 pel
+        {                                                                          // then  4 horizontal
+            if( edge || EdgeCondition )
+            {
+                MbP = (edge)? MbQ : ((dir)? (MbQ -(img->width>>4))  : (MbQ-1) ) ;    // MbP = Mb of the remote 4x4 block   MbP是否需要重新得到？
+                QP = (MbP->qp + MbQ->qp+1) >> 1 ;                                   // Average QP of the two blocks
+                GetStrength( Strength, MbP, MbQ, dir, edge, mb_y<<2, mb_x<<2);           //Strength for 4 pairs of blks in 1 stripe
+                if( *((short*)Strength) )  // && (QP>= 8) )                    // only if one of the 4 Strength bytes is != 0
+                { 
+                    EdgeLoop( SrcY + (edge<<3)* ((dir)? img->width:1 ), Strength,QP,dir, img->width, 0 );
+                    if( (imgUV != NULL) && !(edge & 1) )
+                    {
+                        QPchroma=(QP_SCALE_CR[MbP->qp]+QP_SCALE_CR[MbQ->qp]+1)/2;
+                        EdgeLoop( SrcU +  (edge<<2) * ((dir)? img->width_cr:1 ), Strength, QPchroma, dir, img->width_cr, 1 ) ; 
+                        EdgeLoop( SrcV +  (edge<<2) * ((dir)? img->width_cr:1 ), Strength, QPchroma, dir, img->width_cr, 1 ) ;
+                    }
+                }
+            }
+        }//end edge
+    }//end loop dir
 }
 
 
@@ -328,17 +323,17 @@ void EdgeLoop(byte* SrcPtr,byte Strength[2],int QP, int dir,int width,int Chro)
   int      C0, Delta, dif, AbsDelta ;
   int      L2, L1, L0, R0, R1, R2, RL0 ;
   int      Alpha, Beta ;
-  int       small_gap;
+  int      small_gap;
   
-  PtrInc  = dir?  1 : width ;
-  inc     = dir?  width : 1 ;                    
+  PtrInc  = dir ?  1 : width ;
+  inc     = dir ?  width : 1 ;                    
   inc2    = inc<<1 ;    
   inc3    = inc + inc2 ;    
   inc4    = inc<<2 ;
  
-  Alpha = ALPHA_TABLE[Clip3(0,63,QP+alpha_offset)];     // jlzheng  7.8                       
+  Alpha = ALPHA_TABLE[Clip3(0,63,QP+alpha_offset)];
 
-  Beta = BETA_TABLE[Clip3(0,63,QP+beta_offset)];         // jlzheng  7.8     
+  Beta = BETA_TABLE[Clip3(0,63,QP+beta_offset)];
 
   for( pel=0 ; pel<16 ; pel++ )
   {
@@ -372,7 +367,7 @@ void EdgeLoop(byte* SrcPtr,byte Strength[2],int QP, int dir,int width,int Chro)
         }
         else  //Strng == 1
         {
-          C0  = CLIP_TAB[Clip3(0,63,QP+alpha_offset)] ;    // jlzheng  7.12
+          C0  = CLIP_TAB[Clip3(0,63,QP+alpha_offset)] ;
           dif             = IClip( -C0, C0, ( (R0 - L0) * 3 + (L1 - R1) + 4) >> 3 ) ;
           SrcPtr[  -inc ] = IClip(0, 255, L0 + dif) ;
           SrcPtr[     0 ] = IClip(0, 255, R0 - dif) ;

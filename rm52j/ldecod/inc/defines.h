@@ -53,7 +53,7 @@
 //#define _OUTPUT_MV
 //#define _OUTPUT_DEC_REC
 //#define _OUTPUT_DISTANCE_
-//#define _OUTPUT_ERROR_MB_
+#define _OUTPUT_ERROR_MB_
 //#define _OUTPUT_CODENUM_
 #ifdef _OUTPUT_CODENUM_
   #define _MBNR_ 0

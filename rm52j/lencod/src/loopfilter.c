@@ -104,15 +104,15 @@ void DeblockMb422(ImageParameters *img, byte **imgY, byte ***imgUV, int blk_y, i
 
 void DeblockFrame(ImageParameters *img, byte **imgY, byte ***imgUV)
 {
-    int       mb_x, mb_y ;
-    img->current_mb_nr = -1;    // jlzheng  7.18
+    int mb_x, mb_y ;
+    img->current_mb_nr = -1;
     for( mb_y=0 ; mb_y<(img->height>>4) ; mb_y++ )
         for( mb_x=0 ; mb_x<(img->width>>4) ; mb_x++ )
         {
-            img->current_mb_nr++;   // jlzheng 7.18
-            if(input->chroma_format==2) //wzm,422
+            img->current_mb_nr++;
+            if(input->chroma_format==2)
                 DeblockMb422( img, imgY, imgUV, mb_y, mb_x ) ;
-            else if(input->chroma_format==1) //wzm,422
+            else if(input->chroma_format==1)
                 DeblockMb( img, imgY, imgUV, mb_y, mb_x ) ;
         }
 } 
@@ -210,18 +210,17 @@ void DeblockMb(ImageParameters *img, byte **imgY, byte ***imgUV, int mb_y, int m
     int           dir, edge, QP ;                                                          
     byte          Strength[2], *SrcY, *SrcU = NULL, *SrcV = NULL;
     Macroblock    *MbP, *MbQ ; 
-    const int mb_width = img->width/MB_BLOCK_SIZE;  //add by wuzhongmou 0610
+    const int mb_width = img->width/MB_BLOCK_SIZE;
     Macroblock *currMB = &img->mb_data[img->current_mb_nr];
     int QPchroma;
 
-    SrcY = imgY[mb_y<<4] + (mb_x<<4) ;    // pointers to source
+    SrcY = imgY[mb_y<<4] + (mb_x<<4) ;
     if (imgUV != NULL)
     {
         SrcU = imgUV[0][mb_y<<3] + (mb_x<<3) ;
         SrcV = imgUV[1][mb_y<<3] + (mb_x<<3) ;
     }
-    MbQ  = &img->mb_data[mb_y*(img->width>>4) + mb_x] ;     // current Mb
-
+    MbQ = &img->mb_data[mb_y*(img->width>>4) + mb_x] ;
     if (MbQ->lf_disable) return;
     for( dir=0 ; dir<2 ; dir++ )                            // vertical edges, than horizontal edges
     {
@@ -229,16 +228,16 @@ void DeblockMb(ImageParameters *img, byte **imgY, byte ***imgUV, int mb_y, int m
 
         if(dir && mb_y)
         {
-            EdgeCondition = (currMB->slice_nr == img->mb_data[img->current_mb_nr-mb_width].slice_nr)? EdgeCondition:0;  //  can not filter beyond slice boundaries   jlzheng 7.8
+            EdgeCondition = (currMB->slice_nr == img->mb_data[img->current_mb_nr-mb_width].slice_nr)? EdgeCondition:0;  //  can not filter beyond slice boundaries
         }
         for( edge=0 ; edge<2 ; edge++ )                                            // first 4 vertical strips of 16 pel
-        {                                                                          // then  4 horicontal
+        {                                                                          // then  4 horizontal
             if( edge || EdgeCondition )
             {
                 MbP = (edge)? MbQ : ((dir)? (MbQ -(img->width>>4))  : (MbQ-1) ) ; // MbP = Mb of the remote 4x4 block 
-                QP = (MbP->qp + MbQ->qp+1) >> 1 ;                                 // Average QP of the two blocks
+                QP = (MbP->qp + MbQ->qp + 1) >> 1 ;                                 // Average QP of the two blocks
                 GetStrength( Strength, MbP, MbQ, dir, edge, mb_y<<2, mb_x<<2);    //Strength for 4 pairs of blks in 1 stripe
-                if( *((short*)Strength) )  // && (QP>= 8) )                       // only if one of the 4 Strength bytes is != 0
+                if( *((short*)Strength) )                                         // only if one of the 4 Strength bytes is != 0
                 { 
                     EdgeLoop( SrcY + (edge<<3)* ((dir)? img->width:1 ), Strength,QP,dir, img->width, 0 );
                     if( (imgUV != NULL) && !(edge & 1) )
@@ -249,8 +248,8 @@ void DeblockMb(ImageParameters *img, byte **imgY, byte ***imgUV, int mb_y, int m
                     }
                 }
             }
-        }//end edge
-    }//end loop dir
+        }
+    }
 }
 
 /*
@@ -321,9 +320,8 @@ void EdgeLoop(byte* SrcPtr,byte Strength[2],int QP, int dir,int width,int Chro)
     inc3    = inc + inc2 ;    
     inc4    = inc<<2 ;
 
-    Alpha = ALPHA_TABLE[Clip3(0,63,QP+input->alpha_c_offset)];   // jlzheng 7.8                        
-
-    Beta = BETA_TABLE[Clip3(0,63,QP+input->beta_offset)];        // jlzheng 7.8
+    Alpha = ALPHA_TABLE[Clip3(0,63,QP+input->alpha_c_offset)];
+    Beta = BETA_TABLE[Clip3(0,63,QP+input->beta_offset)];
 
     for( pel=0 ; pel<16 ; pel++ )
     {
@@ -357,7 +355,7 @@ void EdgeLoop(byte* SrcPtr,byte Strength[2],int QP, int dir,int width,int Chro)
                     }
                     else  //Strng == 2
                     {
-                        C0  =  CLIP_TAB[Clip3(0,63,QP+input->alpha_c_offset)];   // jlzheng 7.12
+                        C0  =  CLIP_TAB[Clip3(0,63,QP+input->alpha_c_offset)];
                         dif = IClip( -C0, C0, ( (R0 - L0) * 3 + (L1 - R1) + 4) >> 3 ) ;
                         SrcPtr[  -inc ] = IClip(0, 255, L0 + dif) ;
                         SrcPtr[     0 ] = IClip(0, 255, R0 - dif) ;
@@ -386,6 +384,6 @@ void EdgeLoop(byte* SrcPtr,byte Strength[2],int QP, int dir,int width,int Chro)
         {
             SrcPtr += PtrInc << (3 - Chro) ;
             pel    += 7 ;
-        }  ;
+        }
     }
 }

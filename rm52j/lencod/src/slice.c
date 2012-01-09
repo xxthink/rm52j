@@ -161,24 +161,19 @@ void picture_data(Picture *pic)
     int slice_nr = 0;
     int slice_qp = img->qp;
     int len;
-
-
-    bot_field_mb_nr = -1;  //Xiaozhen Zheng, HiSilicon, 20070327
+    bot_field_mb_nr = -1;
     while (end_of_picture == FALSE) // loop over macroblocks
     {
         set_MB_parameters (CurrentMbNumber);
-
         if (input->slice_row_nr && (img->current_mb_nr ==0  
             ||(img->current_mb_nr>0 && img->mb_data[img->current_mb_nr].slice_nr != img->mb_data[img->current_mb_nr-1].slice_nr)))
         {
-            // slice header start     jlzheng 7.1
             start_slice (); 
             img->current_slice_qp = img->qp;
             img->current_slice_start_mb = img->current_mb_nr;
             len = SliceHeader(slice_nr, slice_qp);  
             stats.bit_slice += len;  
             slice_nr++; 
-            // slcie header end
         }
 
         start_macroblock ();
@@ -187,13 +182,9 @@ void picture_data(Picture *pic)
         terminate_macroblock (&end_of_picture);
         proceed2nextMacroblock ();
         CurrentMbNumber++;
-
     }
-
     terminate_picture ();
-
     DeblockFrame (img, imgY, imgUV);
-
 }
 
 
