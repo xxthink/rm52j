@@ -364,7 +364,7 @@ void init_img()
     get_mem4Dint(&(img->chromacofAC),2,4,2,17);
     /*Lou End*/
 
-    /*lgp*/
+    
     if(input->InterlaceCodingOption != FRAME_CODING) 
         img->buf_cycle /= 2;
 
@@ -970,12 +970,12 @@ int init_global_buffers()
     int refnum;
     int i;
 
-    if(input->chroma_format==2) //wzm,422
+    if(input->chroma_format==2) 
     {
         imgY_org_buffer = (byte*)malloc(input->img_height*input->img_width*2);
         memory_size += input->img_height*input->img_width*2;
     }
-    else if(input->chroma_format==1) //wzm,422
+    else if(input->chroma_format==1) 
     {
         imgY_org_buffer = (byte*)malloc(input->img_height*input->img_width*3/2); //add by wuzhongmou 0610
         memory_size += input->img_height*input->img_width*3/2;  //add by wuzhongmou 0610
@@ -1390,7 +1390,7 @@ int get_mem_ACcoeff (int***** cofAC)
     int i, j, k;
 
     if ((*cofAC = (int****)calloc (8, sizeof(int***))) == NULL)              no_mem_exit ("get_mem_ACcoeff: cofAC");
-    for (k=0; k<8; k++) //wzm,422
+    for (k=0; k<8; k++) 
     {
         if (((*cofAC)[k] = (int***)calloc (4, sizeof(int**))) == NULL)         no_mem_exit ("get_mem_ACcoeff: cofAC");
         for (j=0; j<4; j++)

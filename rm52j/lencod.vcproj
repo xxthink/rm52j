@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="lencod"
-	ProjectGUID="{50C4EB42-36E4-4EE2-A5BB-B826AEE0B010}"
+	ProjectGUID="{4EFCDB92-273F-4294-86D7-407CE59110B5}"
 	>
 	<Platforms>
 		<Platform

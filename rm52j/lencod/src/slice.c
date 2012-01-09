@@ -157,7 +157,7 @@ void picture_data(Picture *pic)
 {
     Boolean end_of_picture = FALSE;
     int CurrentMbNumber=0;
-    int MBRowSize = img->width / MB_BLOCK_SIZE;         // jlzheng 7.1
+    int MBRowSize = img->width / MB_BLOCK_SIZE;
     int slice_nr = 0;
     int slice_qp = img->qp;
     int len;
@@ -197,28 +197,23 @@ void top_field(Picture *pic)
     int slice_qp = img->qp;
     int len;
 
-    img->top_bot = 0;  // Yulj 2004.07.20
-    bot_field_mb_nr = -1;  //Xiaozhen Zheng, HiSilicon, 20070327
+    img->top_bot = 0;
+    bot_field_mb_nr = -1;
     while (end_of_picture == FALSE) // loop over macroblocks
     {
         set_MB_parameters (CurrentMbNumber);
 
-        img->current_mb_nr_fld = img->current_mb_nr; //qhg 20060327 for de-emulation
-        //img->current_mb_nr_fld is used in start_slice()
+        img->current_mb_nr_fld = img->current_mb_nr;
         if (input->slice_row_nr && (img->current_mb_nr ==0  
             ||(img->current_mb_nr>0 && img->mb_data[img->current_mb_nr].slice_nr != img->mb_data[img->current_mb_nr-1].slice_nr)))
         {
-            // slice header start jlzheng 7.1
             start_slice ();  
             img->current_slice_qp = img->qp;
             img->current_slice_start_mb = img->current_mb_nr;
             len = SliceHeader(slice_nr, slice_qp);
             stats.bit_slice += len;
             slice_nr++;
-            // slice header end
         }
-
-        //img->current_mb_nr_fld = img->current_mb_nr;  //delete by qhg 20060327 for de-emulation
         start_macroblock ();
         encode_one_macroblock ();
         write_one_macroblock (1);

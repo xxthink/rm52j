@@ -577,15 +577,15 @@ int scanquant_B8(int qp, int mode, int block8x8, // block8x8: number of current 
             if(block8x8 <= 3)
                 curr_val = img->mpr[b8_x+xx][b8_y+yy] + curr_blk[yy][xx];
             else
-                curr_val = img->mpr[xx][yy+b8_cy] + curr_blk[yy][xx]; //wzm,422
+                curr_val = img->mpr[xx][yy+b8_cy] + curr_blk[yy][xx]; 
 
             img->m7[xx][yy] = curr_blk[yy][xx] = clamp(curr_val,0,255);
 
             if(block8x8 <= 3)
                 imgY[img->pix_y+b8_y+yy][img->pix_x+b8_x+xx] = (unsigned char)curr_blk[yy][xx];
             else
-                //imgUV[block8x8-4][img->pix_c_y+yy][img->pix_c_x+xx] =  (unsigned char) curr_blk[yy][xx];//wzm,422
-                imgUV[(block8x8-4)%2][img->pix_c_y+b8_cy+yy][img->pix_c_x+xx] = (unsigned char) curr_blk[yy][xx]; //wzm,422
+                //imgUV[block8x8-4][img->pix_c_y+yy][img->pix_c_x+xx] =  (unsigned char) curr_blk[yy][xx];
+                imgUV[(block8x8-4)%2][img->pix_c_y+b8_cy+yy][img->pix_c_x+xx] = (unsigned char) curr_blk[yy][xx]; 
         }
         for(yy=0;yy<8;yy++)
             for(xx=0;xx<8;xx++)
@@ -1049,7 +1049,7 @@ int writeChromaCoeffAVS_B8(int b8,int intra)
     int mb_nr          = img->current_mb_nr;
     Macroblock *currMB = &img->mb_data[mb_nr];
     const int cbp      = currMB->cbp;
-    const int cbp01      = currMB->cbp01;   //wzm,422
+    const int cbp01      = currMB->cbp01;   
     int *bitCount      = currMB->bitcounter;
     SyntaxElement *currSE = &img->MB_SyntaxElements[currMB->currSEnr];
     const char (*AVS_2DVLC_table_chroma)[26][27];
@@ -1088,7 +1088,7 @@ int writeChromaCoeffAVS_B8(int b8,int intra)
     else
         flag=((cbp01>>(b8-6)) & 1);
 
-    if(flag) //wzm,422
+    if(flag) 
     {
         //code all symbols
         for (iblk=0; iblk<1; iblk++)
@@ -1217,8 +1217,8 @@ void intrapred_luma_AVS(int img_x,int img_y)
     int block_available_left,block_available_left_down;
     int bs_x=8;
     int bs_y=8;
-    int MBRowSize = img->width / MB_BLOCK_SIZE;/*lgp*/
-    int off_up=1,incr_y=1,off_y=0;/*lgp*/
+    int MBRowSize = img->width / MB_BLOCK_SIZE;
+    int off_up=1,incr_y=1,off_y=0;
     const int mb_nr    = img->current_mb_nr;    /*oliver*/
     Macroblock *currMB = &img->mb_data[mb_nr];  /*oliver*/
     int mb_left_available = (img_x >= MB_BLOCK_SIZE)?currMB->slice_nr == img->mb_data[mb_nr-1].slice_nr:0;  /*oliver*/
@@ -1269,14 +1269,14 @@ void intrapred_luma_AVS(int img_x,int img_y)
     if(block_available_up)
     {
         for(x=0;x<bs_x;x++)
-            EP[x+1]=imgY[img_y-/*1*/off_up/*lgp*/][img_x+x];
+            EP[x+1]=imgY[img_y-/*1*/off_up][img_x+x];
 
         if(block_available_up_right)
         {
             for(x=0;x<bs_x;x++)
-                EP[1+x+bs_x]=imgY[img_y-/*1*/off_up/*lgp*/][img_x+bs_x+x];
+                EP[1+x+bs_x]=imgY[img_y-/*1*/off_up][img_x+bs_x+x];
             for(;x<bs_y;x++)
-                EP[1+x+bs_x]=imgY[img_y-/*1*/off_up/*lgp*/][img_x+bs_x+bs_x-1];
+                EP[1+x+bs_x]=imgY[img_y-/*1*/off_up][img_x+bs_x+bs_x-1];
         }
         else
         {
@@ -1287,7 +1287,7 @@ void intrapred_luma_AVS(int img_x,int img_y)
         for(;x<bs_y+2;x++)
             EP[1+x+bs_x]=EP[bs_x+x];
 
-        EP[0]=imgY[img_y-/*1*/off_up/*lgp*/][img_x];
+        EP[0]=imgY[img_y-/*1*/off_up][img_x];
     }
     if(block_available_left)
     {
@@ -1310,10 +1310,10 @@ void intrapred_luma_AVS(int img_x,int img_y)
         for(;y<bs_x+2;y++)
             EP[-1-y-bs_y]=EP[-y-bs_y];
 
-        EP[0]=imgY[img_y-off_y/*lgp*/][img_x-1];
+        EP[0]=imgY[img_y-off_y][img_x-1];
     }
     if(block_available_up&&block_available_left)
-        EP[0]=imgY[img_y-/*1*/off_y-off_up/*lgp*/][img_x-1];
+        EP[0]=imgY[img_y-/*1*/off_y-off_up][img_x-1];
 
     //lowpass (Those emlements that are not needed will not disturb)
     last_pix=EP[-(bs_x+bs_y)];

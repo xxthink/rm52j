@@ -340,7 +340,7 @@ FME_SetMotionVectorPredictor (int  pmv[2],
     //FAST MOTION ESTIMATION. ZHIBO CHEN 2003.3
     int SAD_a, SAD_b, SAD_c, SAD_d;
     int temp_pred_SAD[2];
-    /*lgp*/
+    
     int y_up = 1,y_upright=1,y_upleft=1,off_y=0;
     int mva[3] , mvb[3],mvc[3];
     /*Lou 1016 Start*/
@@ -473,10 +473,10 @@ FME_SetMotionVectorPredictor (int  pmv[2],
 
     for (hv=0; hv < 2; hv++)
     {
-        mva[hv] = mv_a = block_available_left    ? tmp_mv[hv][pic_block_y - off_y/*lgp*/][4+pic_block_x-1]              : 0;
-        mvb[hv] = mv_b = block_available_up      ? tmp_mv[hv][pic_block_y-/*1*/y_up/*lgp*/][4+pic_block_x]                : 0;
+        mva[hv] = mv_a = block_available_left    ? tmp_mv[hv][pic_block_y - off_y][4+pic_block_x-1]              : 0;
+        mvb[hv] = mv_b = block_available_up      ? tmp_mv[hv][pic_block_y-/*1*/y_up][4+pic_block_x]                : 0;
         mv_d = block_available_upleft  ? tmp_mv[hv][pic_block_y-y_upleft][4+pic_block_x-1]: 0;
-        mvc[hv] = mv_c = block_available_upright ? tmp_mv[hv][pic_block_y-/*1*/y_upright/*lgp*/][4+pic_block_x+blockshape_x/8] : mv_d;
+        mvc[hv] = mv_c = block_available_upright ? tmp_mv[hv][pic_block_y-/*1*/y_upright][4+pic_block_x+blockshape_x/8] : mv_d;
 
         //--- Yulj 2004.07.04
         // mv_a, mv_b... are not scaled.
@@ -586,11 +586,11 @@ FME_BlockMotionSearch (int       ref,           // <--  reference frame (0... or
     //FAST MOTION ESTIMATION. ZHIBO CHEN 2003.3
     int       N_Bframe = input->successive_Bframe, n_Bframe =(N_Bframe) ? ((Bframe_ctr%N_Bframe) ? Bframe_ctr%N_Bframe : N_Bframe) : 0 ;
 
-    int       incr_y=1,off_y=0;/*lgp*/
-    int       b8_x          = (mb_x>>3);/*lgp*/
-    int       b8_y          = (mb_y>>3);/*lgp*/
-    int       center_x = pic_pix_x;/*lgp*/
-    int       center_y = pic_pix_y;/*lgp*/
+    int       incr_y=1,off_y=0;
+    int       b8_x          = (mb_x>>3);
+    int       b8_y          = (mb_y>>3);
+    int       center_x = pic_pix_x;
+    int       center_y = pic_pix_y;
     //   int MaxMVHRange,MaxMVVRange;        // commented by xiaozhen zheng, 20071009
     int   blocksize_y   = input->blc_size[blocktype][1];            // vertical block size
     int   blocksize_x   = input->blc_size[blocktype][0];  
@@ -619,7 +619,7 @@ FME_BlockMotionSearch (int       ref,           // <--  reference frame (0... or
     {
         for (i = 0; i < bsx; i++)
         {
-            orig_pic[j][i] = imgY_org_pic[pic_pix_y+/*j*/incr_y*j+off_y/*lgp*/][pic_pix_x+i];
+            orig_pic[j][i] = imgY_org_pic[pic_pix_y+/*j*/incr_y*j+off_y][pic_pix_x+i];
         }
     }
 
@@ -717,7 +717,7 @@ FME_BlockMotionSearch (int       ref,           // <--  reference frame (0... or
         mv_y = max (-search_range, min (search_range, mv_y));
     }
 
-    min_mcost = FastIntegerPelBlockMotionSearch(orig_pic, ref, center_x/*lgp*/, center_y/*lgp*/,/*pic_pix_x, pic_pix_y,*/ blocktype,
+    min_mcost = FastIntegerPelBlockMotionSearch(orig_pic, ref, center_x, center_y,/*pic_pix_x, pic_pix_y,*/ blocktype,
         pred_mv_x, pred_mv_y, &mv_x, &mv_y, search_range,
         min_mcost, lambda);
 
@@ -764,7 +764,7 @@ FME_BlockMotionSearch (int       ref,           // <--  reference frame (0... or
     }
     else
     {
-        min_mcost =  SubPelBlockMotionSearch (orig_pic, ref, center_x/*lgp*/, center_y/*lgp*/,/*pic_pix_x, pic_pix_y,*/ blocktype,
+        min_mcost =  SubPelBlockMotionSearch (orig_pic, ref, center_x, center_y,/*pic_pix_x, pic_pix_y,*/ blocktype,
             pred_mv_x, pred_mv_y, &mv_x, &mv_y, 9, 9,
             min_mcost, lambda);
     }
@@ -855,7 +855,7 @@ FME_BlockMotionSearch (int       ref,           // <--  reference frame (0... or
     //===============================================
     //=====   SET MV'S AND RETURN MOTION COST   =====
     //===============================================
-    /*lgp*/
+    
     for (i=0; i < (bsx>>3); i++)
     {
         for (j=0; j < (bsy>>3); j++)
@@ -1020,7 +1020,7 @@ FastIntegerPelBlockMotionSearch  (pel_t**   orig_pic,     // <--  not used
     int   iAbort;
     float betaSec,betaThird;
 
-    int   height        = img->height;/*lgp*/
+    int   height        = img->height;
 
     //===== set function for getting reference picture lines =====
     if ((center_x > search_range) && (center_x < img->width -1-search_range-blocksize_x) &&
@@ -1603,11 +1603,11 @@ FME_BlockMotionSearch_bid (int       ref,           // <--  reference frame (0..
     //FAST MOTION ESTIMATION. ZHIBO CHEN 2003.3
     int       N_Bframe = input->successive_Bframe, n_Bframe =(N_Bframe) ? ((Bframe_ctr%N_Bframe) ? Bframe_ctr%N_Bframe : N_Bframe) : 0 ;
 
-    int       incr_y=1,off_y=0;/*lgp*/
-    int       b8_x          = (mb_x>>3);/*lgp*/
-    int       b8_y          = (mb_y>>3);/*lgp*/
-    int       center_x = pic_pix_x;/*lgp*/
-    int       center_y = pic_pix_y;/*lgp*/
+    int       incr_y=1,off_y=0;
+    int       b8_x          = (mb_x>>3);
+    int       b8_y          = (mb_y>>3);
+    int       center_x = pic_pix_x;
+    int       center_y = pic_pix_y;
     //  int MaxMVHRange,MaxMVVRange;          // commented by xiaozhen zheng, 20071009
     int   blocksize_y   = input->blc_size[blocktype][1];            // vertical block size
     int   blocksize_x   = input->blc_size[blocktype][0];  
@@ -1638,7 +1638,7 @@ FME_BlockMotionSearch_bid (int       ref,           // <--  reference frame (0..
     {
         for (i = 0; i < bsx; i++)
         {
-            orig_pic[j][i] = imgY_org_pic[pic_pix_y+/*j*/incr_y*j+off_y/*lgp*/][pic_pix_x+i];
+            orig_pic[j][i] = imgY_org_pic[pic_pix_y+/*j*/incr_y*j+off_y][pic_pix_x+i];
             //      orig_pic[j][i] = imgY_org_pic[pic_pix_y+j][pic_pix_x+i];
         }
     }
@@ -1736,7 +1736,7 @@ FME_BlockMotionSearch_bid (int       ref,           // <--  reference frame (0..
         mv_y = max (-search_range, min (search_range, mv_y));
     }
 
-    min_mcost = FastIntegerPelBlockMotionSearch(orig_pic, ref, center_x/*lgp*/, center_y/*lgp*/,/*pic_pix_x, pic_pix_y,*/ blocktype,
+    min_mcost = FastIntegerPelBlockMotionSearch(orig_pic, ref, center_x, center_y,/*pic_pix_x, pic_pix_y,*/ blocktype,
         pred_mv_x, pred_mv_y, &mv_x, &mv_y, search_range,
         min_mcost, lambda);
 
@@ -1780,7 +1780,7 @@ FME_BlockMotionSearch_bid (int       ref,           // <--  reference frame (0..
             pred_mv_x, pred_mv_y, &mv_x, &mv_y, 9, 9,min_mcost, lambda, 0);
     }
     else
-        min_mcost =  SubPelBlockMotionSearch_bid (orig_pic, ref, center_x/*lgp*/, center_y/*lgp*/, blocktype,
+        min_mcost =  SubPelBlockMotionSearch_bid (orig_pic, ref, center_x, center_y, blocktype,
         pred_mv_x, pred_mv_y, &mv_x, &mv_y, 9, 9, min_mcost, lambda);
 
     for (i=0; i < (bsx>>2); i++)
@@ -1866,7 +1866,7 @@ FME_BlockMotionSearch_bid (int       ref,           // <--  reference frame (0..
     //===============================================
     //=====   SET MV'S AND RETURN MOTION COST   =====
     //===============================================
-    /*lgp*/
+    
     for (i=0; i < (bsx>>3); i++)
     {
         for (j=0; j < (bsy>>3); j++)

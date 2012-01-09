@@ -183,11 +183,11 @@ typedef struct macroblock
                                                     NULL pointer identifies neighboring MBs which are unavailable */
     // some storage of macroblock syntax elements for global access
     int                 mb_type;
-    int                 mb_type_2;/*lgp*/
+    int                 mb_type_2;
     int                 mvd[2][BLOCK_MULTIPLE][BLOCK_MULTIPLE][2];          //!< indices correspond to [forw,backw][block_y][block_x][x,y]
     int                 intra_pred_modes[BLOCK_MULTIPLE*BLOCK_MULTIPLE];
-    int                 cbp,scbp;/*lgp*/
-    int          cbp01;   //wzm,422
+    int                 cbp,scbp;
+    int          cbp01;   
     int                 cbp_blk ;    //!< 1 bit set for every 4x4 block with coefs (not implemented for INTRA)
     int                 b8mode[4];
     int                 b8pdir[4];
@@ -201,8 +201,8 @@ typedef struct macroblock
     int                 IntraChromaPredModeFlag;
     int                                                                     mb_field;
     int                  ****cofAC;/*lgp*dct*modify*/         //!< AC coefficients [8x8block][4x4block][level/run][scan_pos]
-    int                  ****chromacofAC;/*lgp*/
-    int                 c_ipred_mode_2; /*lgp*/     //!< chroma intra prediction mode
+    int                  ****chromacofAC;
+    int                 c_ipred_mode_2;      //!< chroma intra prediction mode
 
     //rate control
     int                 prev_cbp;
@@ -315,8 +315,8 @@ int  ***tmp_bwMV_top;   //!< For MB level field/frame coding tools
 int  ***tmp_bwMV_bot;   //!< For MB level field/frame coding tools
 int  **field_mb;      //!< For MB level field/frame coding tools
 int  WriteFrameFieldMBInHeader; //! For MB level field/frame coding tools
-int  ***tmp_fwMV_fld;/*lgp*/   //!< For MB level field/frame coding tools
-int  ***tmp_bwMV_fld;/*lgp*/   //!< For MB level field/frame coding tools
+int  ***tmp_fwMV_fld;   //!< For MB level field/frame coding tools
+int  ***tmp_bwMV_fld;   //!< For MB level field/frame coding tools
 
 int  ***dfMV;
 int  ***dbMV;
@@ -376,9 +376,9 @@ int   direct_mode;
 int   **fw_refFrArr_frm;
 int   **bw_refFrArr_frm;
 
-int   **fw_refFrArr_fld;/*lgp*/
-int   **bw_refFrArr_fld;/*lgp*/
-int   ***tmp_mv_fld;  /*lgp*/           //!< motion vector buffer
+int   **fw_refFrArr_fld;
+int   **bw_refFrArr_fld;
+int   ***tmp_mv_fld;             //!< motion vector buffer
 
 int intras;         //!< Counts the intra updates in each frame.
 
@@ -522,7 +522,7 @@ typedef struct
     int total_number_mb;
     int current_slice_nr;
     int type;
-    int ptype;/*lgp*/
+    int ptype;
     int types;                   /*!< This is for SP-Pictures, since all the syntax elements for SP-Pictures
                                  are the same as P-pictures, we keep the img->type as P_IMG but indicate
                                  SP-Pictures by img->types */
@@ -558,7 +558,7 @@ typedef struct
     int mpr[16][16];             //!< current best prediction mode
     int m7[16][16];              //!< the diff pixel values between orginal image and prediction
 
-    int ****chromacofAC; /*lgp*/        //!< AC coefficients [uv][4x4block][level/run][scan_pos]
+    int ****chromacofAC;         //!< AC coefficients [uv][4x4block][level/run][scan_pos]
     int ****cofAC;               //!< AC coefficients [8x8block][4x4block][level/run][scan_pos]
     int ***cofDC;                //!< DC coefficients [yuv][level/run][scan_pos]
 
@@ -592,7 +592,7 @@ typedef struct
     int num_ref_pic_active_fwd_minus1;
     int num_ref_pic_active_bwd_minus1;
 
-    /*lgp*/
+    
     int *****mv_fld;
     int *****p_fwMV_fld;
     int *****p_bwMV_fld;
@@ -628,9 +628,9 @@ typedef struct
     //the following are sent in the slice header
     int NoResidueDirect;
 
-    int coding_stage;/*lgp*/
-    int block8_x;/*lgp*/
-    int block8_y;/*lgp*/
+    int coding_stage;
+    int block8_x;
+    int block8_y;
     int coded_mb_nr;
 
 
@@ -710,7 +710,7 @@ typedef struct
     int64   mode_use_intra[25];     //!< Macroblock mode usage for Intra frames
     int64   mode_use_inter[2][MAXMODE];
 
-    int64   mb_use_mode[2];/*lgp*/
+    int64   mb_use_mode[2];
 
     // B pictures
     int   *mode_use_Bframe;
@@ -746,15 +746,15 @@ typedef struct
     int    rec_mbY[16][16];       // hold the Y component of reconstructed MB
     int    rec_mbU[16][8], rec_mbV[16][8];
     int    ****cofAC;
-    int    ****chromacofAC;/*lgp*/
+    int    ****chromacofAC;
     int    ***cofDC;
-    int    mvd[2][BLOCK_MULTIPLE][BLOCK_MULTIPLE][2];/*lgp*/
+    int    mvd[2][BLOCK_MULTIPLE][BLOCK_MULTIPLE][2];
     int    mb_type;
     int    b8mode[4], b8pdir[4];
     int    frefar[2][2], brefar[2][2];
     int    **ipredmode;
     int    intra_pred_modes[4];
-    int    cbp, cbp_blk,cbp01;  //wzm,422
+    int    cbp, cbp_blk,cbp01;  
     int    mode;
     int    *****mv, *****p_fwMV, *****p_bwMV ;
     int    *****all_mv;
@@ -771,7 +771,7 @@ float singlefactor;
 RD_DATA rddata_top_frame_mb, rddata_bot_frame_mb; //!< For MB level field/frame coding tools
 RD_DATA rddata_top_field_mb, rddata_bot_field_mb; //!< For MB level field/frame coding tools
 */
-/*lgp*/
+
 extern InputParameters *input;
 extern ImageParameters *img;
 extern StatParameters *stat;

@@ -1555,7 +1555,7 @@ static void CopyFrameToOldImgOrgVariables ()
     int input_height_cr = input->chroma_format==1?input->img_height/2 : input->img_height; //X ZHENG,422
     int img_height_cr   = input->chroma_format==1?img->height/2 : img->height;             //X ZHENG,422
     u_buffer=imgY_org_buffer+input->img_width*input->img_height;
-    if(input->chroma_format==2)  //wzm,422
+    if(input->chroma_format==2)  
         v_buffer=imgY_org_buffer+input->img_width*input->img_height*3/2;
     else if(input->chroma_format==1)
         v_buffer=imgY_org_buffer+input->img_width*input->img_height*5/4;
@@ -1710,10 +1710,10 @@ static void ReadOneFrame (int FrameNoInFile, int HeaderSize, int xs, int ys)
 {
     //const unsigned int  bytes_y = input->img_width *input->stuff_height; //modify by wuzhongmou 0610
     unsigned int  bytes_y /*= input->img_width *input->img_height*/; //add by wuzhongmou 0610,422
-    unsigned int bytes_uv /*= bytes_y/4*/;              //wzm,422
-    int framesize_in_bytes /*= bytes_y + 2*bytes_uv*/;  //wzm,422
-    int off_y /*= input->img_width*input->img_height*/;       //wzm,422
-    int off_uv /*= off_y/4*/;    //wzm,422
+    unsigned int bytes_uv /*= bytes_y/4*/;              
+    int framesize_in_bytes /*= bytes_y + 2*bytes_uv*/;  
+    int off_y /*= input->img_width*input->img_height*/;       
+    int off_uv /*= off_y/4*/;    
     int bytespos_overflow;     //Carmen, 2008/02/25
 
     //added by wzm,422
@@ -1731,7 +1731,7 @@ static void ReadOneFrame (int FrameNoInFile, int HeaderSize, int xs, int ys)
         off_y    = input->img_width*input->img_height;
         off_uv   = off_y/4;
     }
-    //wzm,422
+    
 
     assert (FrameNumberInFile == FrameNoInFile);
 
@@ -1777,7 +1777,7 @@ static void ReadOneFrame (int FrameNoInFile, int HeaderSize, int xs, int ys)
 
 
 
-    if (fread (imgY_org_buffer + off_y + off_uv, 1, bytes_uv, p_in) != (unsigned )bytes_uv)  //wzm,422
+    if (fread (imgY_org_buffer + off_y + off_uv, 1, bytes_uv, p_in) != (unsigned )bytes_uv)  
     {
         printf ("ReadOneFrame: cannot read %d bytes from input file, unexpected EOF?, exiting", bytes_y);
         exit (-1);

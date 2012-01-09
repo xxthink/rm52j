@@ -64,7 +64,7 @@
 extern const byte QP_SCALE_CR[64];
 extern const int NCBP[64][2];
 
-int chroma_trans8x8(int tmp_block[2][8][8],int tmp_mpr[2][8][8],int *cbpc);/*lgp*/
+int chroma_trans8x8(int tmp_block[2][8][8],int tmp_mpr[2][8][8],int *cbpc);
 
 //Rate control
 int predict_error,dq;
@@ -99,16 +99,16 @@ void set_MB_parameters (int mb)
     img->mb_y = mb / number_mb_per_row;
 
     // Define vertical positions
-    img->block8_y= img->mb_y * BLOCK_SIZE/2;/*lgp*/
+    img->block8_y= img->mb_y * BLOCK_SIZE/2;
     img->block_y = img->mb_y * BLOCK_SIZE;      // vertical luma block position
     img->pix_y   = img->mb_y * MB_BLOCK_SIZE;   // vertical luma macroblock position
     if(input->chroma_format==2)
-        img->pix_c_y = img->mb_y * MB_BLOCK_SIZE; // vertical chroma macroblock position  //wzm,422
+        img->pix_c_y = img->mb_y * MB_BLOCK_SIZE; // vertical chroma macroblock position  
     else
         img->pix_c_y = img->mb_y * MB_BLOCK_SIZE/2; // vertical chroma macroblock position
 
     // Define horizontal positions
-    img->block8_x= img->mb_x * BLOCK_SIZE/2;/*lgp*/
+    img->block8_x= img->mb_x * BLOCK_SIZE/2;
     img->block_x = img->mb_x * BLOCK_SIZE;        // luma block
     img->pix_x   = img->mb_x * MB_BLOCK_SIZE;     // luma pixel
     img->block_c_x = img->mb_x * BLOCK_SIZE/2;    // chroma block
@@ -338,7 +338,7 @@ void start_macroblock()
     currMB->mb_type   = 0;
     currMB->cbp_blk   = 0;
     currMB->cbp       = 0;
-    currMB->cbp01     = 0;  //wzm,422
+    currMB->cbp01     = 0;  
     currMB->mb_field  = 0;
 
     for (l=0; l < 2; l++)
@@ -844,7 +844,7 @@ LumaResidualCoding8x8 (int  *cbp,         //  --> cbp (updated according to proc
     int    direct    = (fw_mode == 0 && bw_mode == 0 && (img->type==B_IMG));
     int    skipped   = (fw_mode == 0 && bw_mode == 0 && (img->type!=B_IMG));
     short    curr_blk[B8_SIZE][B8_SIZE]; // AVS 8x8 pred.error buffer
-    int  incr_y=1,off_y=0; /*lgp*/
+    int  incr_y=1,off_y=0; 
 
     int IntraPrediction=IS_INTRA (currMB);  //cjw 20060321
 
@@ -856,8 +856,8 @@ LumaResidualCoding8x8 (int  *cbp,         //  --> cbp (updated according to proc
     //===== loop over 4x4 blocks =====
     for (byy=0, block_y=mb_y; block_y<mb_y+8; byy+=4, block_y+=4)
     {
-        //pic_pix_y = pix_y + block_y;/*lgp*/
-        pic_pix_y = pix_y + mb_y;/*lgp*/
+        //pic_pix_y = pix_y + block_y;
+        pic_pix_y = pix_y + mb_y;
 
         for (bxx=0, block_x=mb_x; block_x<mb_x+8; bxx+=4, block_x+=4)
         {
@@ -885,7 +885,7 @@ LumaResidualCoding8x8 (int  *cbp,         //  --> cbp (updated according to proc
                 for (i=0; i<4; i++)
                 {
                     img->m7[i][j] = curr_blk[byy+j][bxx+i] = 
-                        imgY_original[pic_pix_y+incr_y*(j+byy)+off_y/*lgp*/][pic_pix_x+i] - img->mpr[i+block_x][j+block_y];
+                        imgY_original[pic_pix_y+incr_y*(j+byy)+off_y][pic_pix_x+i] - img->mpr[i+block_x][j+block_y];
                 }
         }
     }
@@ -942,7 +942,7 @@ LumaPrediction (int  *cbp,         //  --> cbp (updated according to processed 8
     int  pix_y    = img->pix_y;
     Macroblock* currMB = &img->mb_data[img->current_mb_nr];
     int    skipped    = (fw_mode == 0 && bw_mode == 0 && (img->type!=B_IMG));
-    int  incr_y=1,off_y=0; /*lgp*/
+    int  incr_y=1,off_y=0; 
 
     if (img->type==B_IMG)
         scrFlag = 1;
@@ -951,7 +951,7 @@ LumaPrediction (int  *cbp,         //  --> cbp (updated according to processed 8
     for (byy=0, block_y=mb_y; block_y<mb_y+8; byy+=4, block_y+=4)
     {
 
-        pic_pix_y = pix_y + mb_y;/*lgp*/
+        pic_pix_y = pix_y + mb_y;
 
         for (bxx=0, block_x=mb_x; block_x<mb_x+8; bxx+=4, block_x+=4)
         {
@@ -1062,8 +1062,8 @@ void LumaResidualCoding ()
     int fw_mode, bw_mode, refframe;
     int sum_cnt_nonz;
     Macroblock *currMB = &img->mb_data[img->current_mb_nr];
-    int incr_y=1,off_y=0;/*lgp*/
-    int stage_block8x8_pos=0;/*lgp*/
+    int incr_y=1,off_y=0;
+    int stage_block8x8_pos=0;
     int skipped;/*lgp*dct*/
     int sad1 , sad2 ;
     byte** imgY_original = imgY_org;
@@ -1100,7 +1100,7 @@ void LumaResidualCoding ()
     currMB->cbp_blk = 0 ;
     sum_cnt_nonz    = 0 ;
 
-    for (block8x8=stage_block8x8_pos/*lgp*/; block8x8<4; block8x8++)
+    for (block8x8=stage_block8x8_pos; block8x8<4; block8x8++)
     {
         int bw_ref;
 
@@ -1183,12 +1183,12 @@ OneComponentChromaPrediction4x4 (int*     mpred,      //  --> array to store pre
     for (j=pix_c_y; j<je; j++)
         for (i=pix_c_x; i<ie; i++)
         {
-            if(input->chroma_format==2)  { //wzm,422
+            if(input->chroma_format==2)  { 
                 mvb  = mv [(i-img_pic_c_x)>>2][(j-img_pic_c_y)>>3][refframe][blocktype]; 
                 ii   = (i<<s1) + mvb[0];
                 jj   = (j<<s1) + 2*mvb[1];   
             }
-            else { //wzm,422
+            else { 
                 mvb  = mv [(i-img_pic_c_x)>>2][(j-img_pic_c_y)>>2][refframe][blocktype];
                 ii   = (i<<s1) + mvb[0];
                 jj   = (j<<s1) + mvb[1];
@@ -1261,7 +1261,7 @@ OneComponentChromaPrediction4x4_dir (int*     mpred,      //  --> array to store
         {
             //xyji 11.27
             //sw 9.30
-            if(input->chroma_format==2) //wzm,422
+            if(input->chroma_format==2) 
                 mvb  = mv [(i-img->pix_c_x)>>2][(j-img_pic_c_y)>>3][refframe][blocktype]; 
             else 
                 mvb  = mv [(i-img->pix_c_x)>>2][(j-img_pic_c_y)>>2][refframe][blocktype];
@@ -1295,7 +1295,7 @@ OneComponentChromaPrediction4x4_dir (int*     mpred,      //  --> array to store
                 DistanceIndexBw    = (TRp - DistanceIndexFw+512)%512; // Added by Zhijie Yang, 20070419, Broadcom
 
                 ii   = (i<<s1) - ((mvb[0]*DistanceIndexBw*(512/DistanceIndexFw)+256)>>9);
-                if(input->chroma_format==2) //wzm,422
+                if(input->chroma_format==2) 
                     jj   = (j<<s1) - 2*((mvb[1]*DistanceIndexBw*(512/DistanceIndexFw)+256)>>9); 
                 else 
                     jj   = (j<<s1) - ((mvb[1]*DistanceIndexBw*(512/DistanceIndexFw)+256)>>9);
@@ -1374,7 +1374,7 @@ ChromaPrediction4x4 (int  uv,           // <-- colour component
     int  pic_pix_y = img->pix_c_y + block_y;
     int* fpred     = fw_pred;
     int* bpred     = bw_pred;
-    int  by /*= block_y >>2*/; //wzm,422
+    int  by /*= block_y >>2*/; 
     int  bx = (block_x >>2);
 
     int  direct    = (fw_mode == 0 && bw_mode == 0 && (img->type==B_IMG));
@@ -1393,12 +1393,12 @@ ChromaPrediction4x4 (int  uv,           // <-- colour component
     int bw_ref_num ;
     int fw_ref_num ;
 
-    //wzm,422
+    
     if(input->chroma_format ==2)
         by= (block_y >>3);
     else
         by= (block_y >>2);
-    //wzm,422
+    
 
     direct_mode = direct;
 
@@ -1543,34 +1543,34 @@ void ChromaResidualCoding (int* cr_cbp)
     int   incr_x = 1, offset_x = 0; 
     int   bw_ref;
     short   tmp_block_88[8][8];
-    int   b8;     //wzm,422
+    int   b8;     
     int   tmp_cbp_blk;
-    int   tmp_block[2][8][8];/*lgp*/
-    int   tmp_mpr[2][8][8];/*lgp*/
-    int   incr_y=1,off_y=0;/*lgp*/
-    int   cbpc=0;/*lgp*/
-    int   stage_block8x8_pos=0;/*lgp*/
+    int   tmp_block[2][8][8];
+    int   tmp_mpr[2][8][8];
+    int   incr_y=1,off_y=0;
+    int   cbpc=0;
+    int   stage_block8x8_pos=0;
 
     //cjw 20051219
     Macroblock *currMB   = &img->mb_data[img->current_mb_nr];
     int IntraPrediction=IS_INTRA (currMB);
     int  direct;
 
-    int   block8x8_idx[4][4] =   //wzm,422
+    int   block8x8_idx[4][4] =   
     { {0, 1, 0, 0}, 
     {0, 1, 0, 0}, 
     {2, 3, 0, 0},
     {2, 3, 0, 0}  
     };  
 
-    currMB->cbp01=0;  //wzm,422
+    currMB->cbp01=0;  
 
-    if(input->chroma_format==2) { //wzm,422
+    if(input->chroma_format==2) { 
         for (*cr_cbp=0, uv=0; uv<2; uv++)
         {
             //===== prediction of chrominance blocks ===d==
             b8 = 0;
-            for (block_y=0/*lgp*/; block_y<16; block_y+=4)  
+            for (block_y=0; block_y<16; block_y+=4)  
                 for (block_x=0; block_x<8; block_x+=4)
                 {
 
@@ -1661,15 +1661,15 @@ void ChromaResidualCoding (int* cr_cbp)
 
         img->mb_data[img->current_mb_nr].cbp +=(*cr_cbp); 
     } 
-    else { //wzm,422
+    else { 
         for (*cr_cbp=0, uv=0; uv<2; uv++)
         {
             //===== prediction of chrominance blocks ===d==
             block8 = 0;
-            for (block_y=/*0*/4*(stage_block8x8_pos/2)/*lgp*/; block_y<8; block_y+=4)
+            for (block_y=/*0*/4*(stage_block8x8_pos/2); block_y<8; block_y+=4)
                 for (block_x=0; block_x<8; block_x+=4, block8++)
                 {
-                    block8 = (block_y/4)*2 + block_x/4;/*lgp*/
+                    block8 = (block_y/4)*2 + block_x/4;
 
                     SetModesAndRefframe (block8, &fw_mode, &bw_mode, &refframe, &bw_ref);
 
@@ -1726,7 +1726,7 @@ void ChromaResidualCoding (int* cr_cbp)
 
         //===== update currMB->cbp =====
         img->mb_data[img->current_mb_nr].cbp +=(*cr_cbp);//((*cr_cbp)<<4); /*lgp*dct*/
-    } //wzm,422
+    } 
 }
 
 /* added by X ZHENG,422
@@ -1781,8 +1781,8 @@ void IntraChromaPrediction8x8_422 (int *mb_up, int *mb_left, int*mb_up_left)
     int     cost;
     int     min_cost;
     int     diff[16];
-    int     incr_y=1,off_y=0;/*lgp*/
-    int     stage_block8x8_pos=0;/*lgp*/
+    int     incr_y=1,off_y=0;
+    int     stage_block8x8_pos=0;
 
     if (mb_up)
         *mb_up = mb_available_up;
@@ -1963,7 +1963,7 @@ void IntraChromaPrediction8x8_422 (int *mb_up, int *mb_left, int*mb_up_left)
                 if (mb_available_left)
                 {
                     for (j=0; j<4; j++)
-                        vline[block_y+j-8] = image[img_cy+block_y+incr_y*j+off_y/*lgp*/-8][img_cx_1];
+                        vline[block_y+j-8] = image[img_cy+block_y+incr_y*j+off_y-8][img_cx_1];
                     for (j=block_y; j<block_y+4; j++)
                         for (i=block_x; i<block_x+4; i++)
                             img->mprr_c[uv][HOR_PRED_8][i][j] = vline[j-8];
@@ -2013,7 +2013,7 @@ void IntraChromaPrediction8x8_422 (int *mb_up, int *mb_left, int*mb_up_left)
                     for (k=0,j=block_y; j<block_y+4; j++)
                         for (i=block_x; i<block_x+4; i++,k++)
                         {
-                            diff[k] = image[img_cy+/*j*/incr_y*j + off_y/*lgp*/][img_cx+i] - img->mprr_c[uv][mode][i][j+8];
+                            diff[k] = image[img_cy+/*j*/incr_y*j + off_y][img_cx+i] - img->mprr_c[uv][mode][i][j+8];
                         }
                         cost += SATD(diff, input->hadamard);
                 }
@@ -2089,8 +2089,8 @@ void IntraChromaPrediction8x8 (int *mb_up, int *mb_left, int*mb_up_left)
     int     cost;
     int     min_cost;
     int     diff[16];
-    int     incr_y=1,off_y=0;/*lgp*/
-    int     stage_block8x8_pos=0;/*lgp*/
+    int     incr_y=1,off_y=0;
+    int     stage_block8x8_pos=0;
 
 
 
@@ -2273,7 +2273,7 @@ void IntraChromaPrediction8x8 (int *mb_up, int *mb_left, int*mb_up_left)
                 if (mb_available_left)
                 {
                     for (j=0; j<4; j++)
-                        vline[block_y+j] = image[img_cy+block_y+incr_y*j+off_y/*lgp*/][img_cx_1];
+                        vline[block_y+j] = image[img_cy+block_y+incr_y*j+off_y][img_cx_1];
                     for (j=block_y; j<block_y+4; j++)
                         for (i=block_x; i<block_x+4; i++)
                             img->mprr_c[uv][HOR_PRED_8][i][j] = vline[j];
@@ -2323,7 +2323,7 @@ void IntraChromaPrediction8x8 (int *mb_up, int *mb_left, int*mb_up_left)
                         for (k=0,j=block_y; j<block_y+4; j++)
                             for (i=block_x; i<block_x+4; i++,k++)
                             {
-                                diff[k] = image[img_cy+/*j*/incr_y*j + off_y/*lgp*/][img_cx+i] - img->mprr_c[uv][mode][i][j];
+                                diff[k] = image[img_cy+/*j*/incr_y*j + off_y][img_cx+i] - img->mprr_c[uv][mode][i][j];
                             }
                             cost += SATD(diff, input->hadamard);
                     }
@@ -2340,7 +2340,7 @@ void IntraChromaPrediction8x8 (int *mb_up, int *mb_left, int*mb_up_left)
 
 }
 
-/*lgp*/
+
 /*
 16x8_direct  0
 16x8_fwd     1
@@ -2398,7 +2398,7 @@ int SubMBType2Value (Macroblock* currMB,int layer)
 
     }
 }
-/*lgp*/
+
 
 /*
 *************************************************************************
@@ -2565,11 +2565,11 @@ int writeMBHeader (int rdopt)  // GB CHROMA !!!!!!!!
     int             no_bits   = 0;
     int             mb_x      = img->mb_x;
     int             mb_y      = img->mb_y;
-    //  int             skip      = currMB->mb_type ? 0:((img->type==B_IMG) ? !currMB->cbp:1); //wzm,422
-    int        skip;    //wzm,422
-    int        tempcbp; //wzm,422
+    //  int             skip      = currMB->mb_type ? 0:((img->type==B_IMG) ? !currMB->cbp:1); 
+    int        skip;    
+    int        tempcbp; 
 
-    //wzm,422
+    
     if(input->chroma_format==2)
     {
         skip= currMB->mb_type ? 0:((img->type==B_IMG) ? (!currMB->cbp||!currMB->cbp01):1); //add by wuzhongmou 422
@@ -2586,7 +2586,7 @@ int writeMBHeader (int rdopt)  // GB CHROMA !!!!!!!!
         else
             tempcbp=0;
     }
-    //wzm,422
+    
 
     currMB->IntraChromaPredModeFlag = IS_INTRA(currMB);
     currMB->mb_field = img->field_mode;
@@ -2597,7 +2597,7 @@ int writeMBHeader (int rdopt)  // GB CHROMA !!!!!!!!
     }
     else if (input->skip_mode_flag)
     {    
-        if (currMB->mb_type != 0 || ((img->type==B_IMG) && (tempcbp))) //wzm,422
+        if (currMB->mb_type != 0 || ((img->type==B_IMG) && (tempcbp))) 
         {
             //===== Run Length Coding: Non-Skipped macorblock =====
             //Ð´ÈëÌø¹ýºê¿é
@@ -3267,8 +3267,8 @@ int writeCBPandDqp (int pos,int *rate_top,int *rate_bot)
     Macroblock*     currMB    = &img->mb_data[img->current_mb_nr];
     int*            bitCount  = currMB->bitcounter;
     SyntaxElement*  currSE    = &img->MB_SyntaxElements[currMB->currSEnr];
-    int             tempcbp;       //wzm,422
-    if(input->chroma_format==2) {  //wzm,422  
+    int             tempcbp;       
+    if(input->chroma_format==2) {    
         if(currMB->cbp||currMB->cbp01)
             tempcbp=1;
         else
@@ -3279,7 +3279,7 @@ int writeCBPandDqp (int pos,int *rate_top,int *rate_bot)
             tempcbp=1;
         else
             tempcbp=0;
-    } //wzm,422 
+    }  
 
     //=====   C B P   =====
     //---------------------
@@ -3328,11 +3328,11 @@ int writeCBPandDqp (int pos,int *rate_top,int *rate_bot)
         currSE++;
         currMB->currSEnr++;
     }
-    //wzm,422
+    
 
     //=====   DQUANT   =====
     //----------------------
-    if ((tempcbp)&&!input->fixed_picture_qp)     //wzm,422
+    if ((tempcbp)&&!input->fixed_picture_qp)     
     {
         currSE->value1 = currMB->delta_qp;
 
@@ -3361,7 +3361,7 @@ int writeCBPandDqp (int pos,int *rate_top,int *rate_bot)
 }
 
 
-/*lgp*/
+
 /*
 *************************************************************************
 * Function:Writes motion info
@@ -3647,7 +3647,7 @@ int writeMVD (int pos,int *rate_top,int *rate_bot)
             for (i0=0; i0<2; )
             {
                 k=j0*2+i0;
-                /*lgp*/
+                
                 no_bits = 0;
 
                 if ((currMB->b8pdir[k]==1) && currMB->b8mode[k]!=0)//has backward vector
@@ -3706,7 +3706,7 @@ writeBlockCoeff (int block8x8)
             }
         }
     }
-    else if(block8x8==6 ||block8x8==7 )  //wzm,422
+    else if(block8x8==6 ||block8x8==7 )  
     {
         if((currMB->cbp01>>(block8x8-6))&1)                     
             rate += writeChromaCoeffAVS_B8(block8x8,IS_INTRA(currMB)); 
@@ -3768,13 +3768,13 @@ void write_one_macroblock (int eos_bit)
     int i;
     int mb_x = img->mb_x;
     int mb_y = img->mb_y;
-    int dummy;/*lgp*/
+    int dummy;
 
     //--- write header ---
     writeMBHeader (0);
 
     //  Do nothing more if copy and inter mode
-    if(input->chroma_format==2) //wzm,422
+    if(input->chroma_format==2) 
     {
         if ((IS_INTERMV (currMB)  || IS_INTRA (currMB)  ) ||
             ((img->type==B_IMG)&& (currMB->cbp != 0 ||currMB->cbp01 != 0)) )
@@ -3807,7 +3807,7 @@ void write_one_macroblock (int eos_bit)
         //Rate control
         img->NumberofCodedMacroBlocks++;
     }
-    else if(input->chroma_format==1) //wzm,422
+    else if(input->chroma_format==1) 
     {
         if ((IS_INTERMV (currMB)  || IS_INTRA (currMB)  ) ||
             ((img->type==B_IMG)     && currMB->cbp != 0)  )

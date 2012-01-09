@@ -55,10 +55,10 @@
 //#define _DISABLE_SUB_ME_
 //#define _OUTPUT_MB_QSTEP_BITS_
 
-/*lgp*/
+
 #define RD_EST_FACTOR_I   0.2
 #define RD_EST_FACTOR_P   0.005
-/*lgp*/
+
 #define  DIRECTSCALE
 
 // CAVLC
@@ -163,7 +163,7 @@
 #define DIR_TEMPORAL    0   //!< Temporal Direct Mode
 #define DIR_SPATIAL     1    //!< Spatial Direct Mode
 #define BLOCK_SIZE      4
-#define DCT_BLOCK_SIZE  8 /*lgp*/
+#define DCT_BLOCK_SIZE  8 
 #define MB_BLOCK_SIZE   16
 #define BLOCK_MULTIPLE      (MB_BLOCK_SIZE/(2*BLOCK_SIZE))
 #define NO_INTRA_PMODE  5        //!< #intra prediction modes

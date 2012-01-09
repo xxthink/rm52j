@@ -440,7 +440,7 @@ void SetMotionVectorPredictor (int  pmv[2],
     int mvPredType, rFrameL, rFrameU, rFrameUR;
     int hv;
     int mva[3] , mvb[3],mvc[3];
-    /*lgp*/
+    
     int y_up = 1,y_upright=1,y_upleft=1,off_y=0;
 
     /*Lou 1016 Start*/
@@ -517,11 +517,11 @@ void SetMotionVectorPredictor (int  pmv[2],
     /*Lou 1016 Start*/
     mvPredType = MVPRED_MEDIAN;
 
-    rFrameL    = block_available_left    ? refFrArr[pic_block_y  -off_y/*lgp*/]  [pic_block_x-1] : -1;
-    rFrameU    = block_available_up      ? refFrArr[pic_block_y-/*1*/y_up/*lgp*/][pic_block_x]   : -1;
-    rFrameUR   = block_available_upright ? refFrArr[pic_block_y-/*1*/y_upright/*lgp*/][pic_block_x+blockshape_x/8] :
-        block_available_upleft  ? refFrArr[pic_block_y-/*1*/y_upleft/*lgp*/][pic_block_x-1] : -1;
-    rFrameUL   = block_available_upleft  ? refFrArr[pic_block_y-/*1*/y_upleft/*lgp*/][pic_block_x-1] : -1;
+    rFrameL    = block_available_left    ? refFrArr[pic_block_y  -off_y]  [pic_block_x-1] : -1;
+    rFrameU    = block_available_up      ? refFrArr[pic_block_y-/*1*/y_up][pic_block_x]   : -1;
+    rFrameUR   = block_available_upright ? refFrArr[pic_block_y-/*1*/y_upright][pic_block_x+blockshape_x/8] :
+        block_available_upleft  ? refFrArr[pic_block_y-/*1*/y_upleft][pic_block_x-1] : -1;
+    rFrameUL   = block_available_upleft  ? refFrArr[pic_block_y-/*1*/y_upleft][pic_block_x-1] : -1;
 
     if((rFrameL != -1)&&(rFrameU == -1)&&(rFrameUR == -1))
         mvPredType = MVPRED_L;
@@ -561,10 +561,10 @@ void SetMotionVectorPredictor (int  pmv[2],
 
     for (hv=0; hv < 2; hv++)
     {
-        mva[hv] = mv_a = block_available_left    ? tmp_mv[hv][pic_block_y - off_y/*lgp*/][4+pic_block_x-1]              : 0;
-        mvb[hv] = mv_b = block_available_up      ? tmp_mv[hv][pic_block_y-/*1*/y_up/*lgp*/][4+pic_block_x]                : 0;
-        mv_d = block_available_upleft  ? tmp_mv[hv][pic_block_y-/*1*/y_upleft/*lgp*/][4+pic_block_x-1]              : 0;
-        mvc[hv] = mv_c = block_available_upright ? tmp_mv[hv][pic_block_y-/*1*/y_upright/*lgp*/][4+pic_block_x+blockshape_x/8] : mv_d;
+        mva[hv] = mv_a = block_available_left    ? tmp_mv[hv][pic_block_y - off_y][4+pic_block_x-1]              : 0;
+        mvb[hv] = mv_b = block_available_up      ? tmp_mv[hv][pic_block_y-/*1*/y_up][4+pic_block_x]                : 0;
+        mv_d = block_available_upleft  ? tmp_mv[hv][pic_block_y-/*1*/y_upleft][4+pic_block_x-1]              : 0;
+        mvc[hv] = mv_c = block_available_upright ? tmp_mv[hv][pic_block_y-/*1*/y_upright][4+pic_block_x+blockshape_x/8] : mv_d;
 
         //--- Yulj 2004.07.04
         // mv_a, mv_b... are not scaled.
@@ -783,7 +783,7 @@ FullPelBlockMotionSearch_c (pel_t**   orig_pic,     // <--  original pixel value
     int   center_y      = pic_pix_y + *mv_y;                        // center position y (in pel units)
     int   check_for_00  = (blocktype==1 && !input->rdopt && img->type!=B_IMG && ref==0);
 
-    int   height        = img->height;/*lgp*/
+    int   height        = img->height;
 
     //===== set function for getting reference picture lines =====
     if ((center_x > search_range) && (center_x < img->width -1-search_range-blocksize_x) &&
@@ -889,7 +889,7 @@ FullPelBlockMotionSearch_sse (pel_t**   orig_pic,     // <--  original pixel val
     int   center_y      = pic_pix_y + *mv_y;                        // center position y (in pel units)
     int   check_for_00  = (blocktype==1 && !input->rdopt && img->type!=B_IMG && ref==0);
 
-    int   height        = img->height;/*lgp*/
+    int   height        = img->height;
 
     //===== set function for getting reference picture lines =====
     if ((center_x > search_range) && (center_x < img->width -1-search_range-blocksize_x) &&
@@ -1621,9 +1621,9 @@ BlockMotionSearch (int       ref,           // <--  reference frame (0... or -1 
     int*****  all_bmv       = img->all_bmv;
     int*****  all_mv        = (ref/*==-1*/ <0/*lgp13*/? img->all_bmv : img->all_mv);
     byte**    imgY_org_pic  = imgY_org;
-    int       incr_y=1,off_y=0;/*lgp*/
-    int       center_x = pic_pix_x;/*lgp*/
-    int       center_y = pic_pix_y;/*lgp*/
+    int       incr_y=1,off_y=0;
+    int       center_x = pic_pix_x;
+    int       center_y = pic_pix_y;
     //  int       temp_x,temp_y;      // commented by xiaozhen zheng, 20071009
     //  int MaxMVHRange, MaxMVVRange;    // commented by xiaozhen zheng, 20071009
     int   blocksize_y   = input->blc_size[blocktype][1];            // vertical block size
@@ -1643,7 +1643,7 @@ BlockMotionSearch (int       ref,           // <--  reference frame (0... or -1 
     {
         for (i = 0; i < bsx; i++)
         {
-            orig_pic[j][i] = imgY_org_pic[pic_pix_y+/*j*/incr_y*j+off_y/*lgp*/][pic_pix_x+i];
+            orig_pic[j][i] = imgY_org_pic[pic_pix_y+/*j*/incr_y*j+off_y][pic_pix_x+i];
         }
     }
 
@@ -1670,7 +1670,7 @@ BlockMotionSearch (int       ref,           // <--  reference frame (0... or -1 
     }
 
     //--- perform motion search ---
-    min_mcost = FullPelBlockMotionSearch     (orig_pic, ref, center_x/*lgp*/, center_y/*lgp*/, blocktype,
+    min_mcost = FullPelBlockMotionSearch     (orig_pic, ref, center_x, center_y, blocktype,
         pred_mv_x, pred_mv_y, &mv_x, &mv_y, search_range,
         min_mcost, lambda);
 
@@ -1684,7 +1684,7 @@ BlockMotionSearch (int       ref,           // <--  reference frame (0... or -1 
     {
         min_mcost = max_value;
     }
-    min_mcost =  SubPelBlockMotionSearch (orig_pic, ref, center_x/*lgp*/, center_y/*lgp*/, blocktype,
+    min_mcost =  SubPelBlockMotionSearch (orig_pic, ref, center_x, center_y, blocktype,
         pred_mv_x, pred_mv_y, &mv_x, &mv_y, 9, 9,
         min_mcost, lambda);
 
@@ -1812,9 +1812,9 @@ BlockMotionSearch_bid (int       ref,           // <--  reference frame (0... or
     //sw 10.1
     //int*****  all_mv    = (ref==-1 ? img->all_bmv : img->all_mv);
     byte**    imgY_org_pic = imgY_org;
-    int       incr_y=1,off_y=0;/*lgp*/
-    int       center_x = pic_pix_x;/*lgp*/
-    int       center_y = pic_pix_y;/*lgp*/
+    int       incr_y=1,off_y=0;
+    int       center_x = pic_pix_x;
+    int       center_y = pic_pix_y;
     //   int MaxMVHRange, MaxMVVRange;      // commented by xiaozhen zheng, 20071009
     //   int  temp_x,temp_y;          // commented by xiaozhen zheng, 20071009
     int   blocksize_y   = input->blc_size[blocktype][1];            // vertical block size
@@ -1837,7 +1837,7 @@ BlockMotionSearch_bid (int       ref,           // <--  reference frame (0... or
     {
         for (i = 0; i < bsx; i++)
         {
-            orig_pic[j][i] = imgY_org_pic[pic_pix_y+/*j*/incr_y*j+off_y/*lgp*/][pic_pix_x+i];
+            orig_pic[j][i] = imgY_org_pic[pic_pix_y+/*j*/incr_y*j+off_y][pic_pix_x+i];
         }
     }
 
@@ -1865,7 +1865,7 @@ BlockMotionSearch_bid (int       ref,           // <--  reference frame (0... or
     }
 
     //--- perform motion search ---
-    min_mcost = FullPelBlockMotionSearch     (orig_pic, ref, center_x/*lgp*/, center_y/*lgp*/, blocktype,
+    min_mcost = FullPelBlockMotionSearch     (orig_pic, ref, center_x, center_y, blocktype,
         pred_mv_x, pred_mv_y, &mv_x, &mv_y, search_range,
         min_mcost, lambda);
 
@@ -1876,7 +1876,7 @@ BlockMotionSearch_bid (int       ref,           // <--  reference frame (0... or
     {
         min_mcost = max_value;
     }
-    min_mcost =  SubPelBlockMotionSearch_bid (orig_pic, ref, center_x/*lgp*/, center_y/*lgp*/, blocktype,
+    min_mcost =  SubPelBlockMotionSearch_bid (orig_pic, ref, center_x, center_y, blocktype,
         pred_mv_x, pred_mv_y, &mv_x, &mv_y, 9, 9,
         min_mcost, lambda);
 
@@ -1995,8 +1995,8 @@ BIDPartitionCost (int   blocktype,
 
     int   bsx       = min(input->blc_size[blocktype][0],8);
     int   bsy       = min(input->blc_size[blocktype][1],8);
-    int   incr_y=1,off_y=0;/*lgp*/
-    int   pic_pix_y = img->pix_y + ((block8x8 / 2) << 3);/*lgp*///b
+    int   incr_y=1,off_y=0;
+    int   pic_pix_y = img->pix_y + ((block8x8 / 2) << 3);//b
 
     int   bxx, byy;                               // indexing curr_blk
     byte** imgY_original  = imgY_org;
@@ -2029,8 +2029,8 @@ BIDPartitionCost (int   blocktype,
             //----- cost of residual signal -----
             for (byy=0, v=by0[parttype][block8x8]; v<by0[parttype][block8x8]+step_v0; byy+=4, v++)
             {
-                //pic_pix_y = pix_y + (block_y = (v<<2));/*lgp*///b
-                block_y = (v<<2);/*lgp*///b
+                //pic_pix_y = pix_y + (block_y = (v<<2));//b
+                block_y = (v<<2);//b
 
                 for (bxx=0, h=bx0[parttype][block8x8]; h<bx0[parttype][block8x8]+step_h0; bxx+=4, h++)
                 {
@@ -2042,7 +2042,7 @@ BIDPartitionCost (int   blocktype,
                         for (  i=0; i<4; i++, k++)
                         {            
                             diff[k] = curr_blk[byy+j][bxx+i] = 
-                                imgY_original[pic_pix_y+incr_y*(j+byy)+off_y/*lgp*/][pic_pix_x+i] - img->mpr[i+block_x][j+block_y];/*lgp*///b
+                                imgY_original[pic_pix_y+incr_y*(j+byy)+off_y][pic_pix_x+i] - img->mpr[i+block_x][j+block_y];//b
                         }
                 }
             }
@@ -2070,13 +2070,13 @@ int GetSkipCostMB (double lambda)
     int pix_x = img->pix_x;
     int pix_y = img->pix_y;
     byte**    imgY_org_pic = imgY_org;
-    //int   incr_y=1,off_y=0;/*lgp*///b
+    //int   incr_y=1,off_y=0;//b
 
     for (block_y=0; block_y<16; block_y+=4)
     {
         pic_pix_y = pix_y + block_y;
 
-        /*lgp*///b
+        //b
 
         for (block_x=0; block_x<16; block_x+=4)
         {
@@ -2089,7 +2089,7 @@ int GetSkipCostMB (double lambda)
             for (k=j=0; j<4; j++)
                 for (i=0; i<4; i++, k++)
                 {
-                    diff[k] = imgY_org_pic[pic_pix_y+j][pic_pix_x+i] - img->mpr[i+block_x][j+block_y];/*lgp*///b
+                    diff[k] = imgY_org_pic[pic_pix_y+j][pic_pix_x+i] - img->mpr[i+block_x][j+block_y];//b
                 }
 
                 cost += SATD (diff, input->hadamard);
@@ -2188,7 +2188,7 @@ int Get_Direct_Cost8x8 (int block, double lambda)
     byte **imgY_original = imgY_org;
     int pix_y = img->pix_y;
 
-    /*lgp*///b
+    //b
 
 
     for (byy=0, block_y=mb_y; block_y<mb_y+8; byy+=4, block_y+=4)
@@ -2232,7 +2232,7 @@ int Get_Direct_CostMB (double lambda)
     int i;
     int cost = 0;
 
-    /*lgp*///b
+    //b
 
     mv_out_of_range = 1;  // mv_range, 20071009
 
@@ -2280,7 +2280,7 @@ void PartitionMotionSearch (int    blocktype,
     int   block_y   = img->block_y;
     int   min_ref   = (bframe?-1:0);/*lgp13*/
 
-    if(img->type==B_IMG)  max_ref =1;  /*lgp*/
+    if(img->type==B_IMG)  max_ref =1;  
 
     if (max_ref > img->buf_cycle)
         max_ref = img->buf_cycle;

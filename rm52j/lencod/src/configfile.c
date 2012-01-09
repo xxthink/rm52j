@@ -667,7 +667,7 @@ static void LevelCheck()
 static void PatchInp ()
 {
     // consistency check of QPs
-    input->fixed_picture_qp = 1;/*lgp*/
+    input->fixed_picture_qp = 1;
     if (input->qp0 > MAX_QP || input->qp0 < MIN_QP)
     {
         snprintf(errortext, ET_SIZE, "Error input parameter quant_0,check configuration file");

@@ -90,7 +90,7 @@ byte CLIP_TAB[64] = {
 void GetStrength(byte Strength[2],Macroblock* MbP,Macroblock* MbQ,int dir,int edge,int block_y,int block_x);
 void EdgeLoop(byte* SrcPtr,byte Strength[2],int QP,  int dir,int width,int Chro);
 void DeblockMb(ImageParameters *img, byte **imgY, byte ***imgUV, int blk_y, int blk_x) ;
-void DeblockMb422(ImageParameters *img, byte **imgY, byte ***imgUV, int blk_y, int blk_x) ; //wzm,422
+void DeblockMb422(ImageParameters *img, byte **imgY, byte ***imgUV, int blk_y, int blk_x) ; 
 
 /*
 *************************************************************************
@@ -107,6 +107,7 @@ void DeblockFrame(ImageParameters *img, byte **imgY, byte ***imgUV)
     int mb_x, mb_y ;
     img->current_mb_nr = -1;
     for( mb_y=0 ; mb_y<(img->height>>4) ; mb_y++ )
+    {
         for( mb_x=0 ; mb_x<(img->width>>4) ; mb_x++ )
         {
             img->current_mb_nr++;
@@ -115,9 +116,10 @@ void DeblockFrame(ImageParameters *img, byte **imgY, byte ***imgUV)
             else if(input->chroma_format==1)
                 DeblockMb( img, imgY, imgUV, mb_y, mb_x ) ;
         }
+    }
 } 
 
-/*added by wzm
+/*
 *************************************************************************
 * Function: Deblocking for 4:2:2 image
 * Input:
@@ -222,7 +224,7 @@ void DeblockMb(ImageParameters *img, byte **imgY, byte ***imgUV, int mb_y, int m
     }
     MbQ = &img->mb_data[mb_y*(img->width>>4) + mb_x] ;
     if (MbQ->lf_disable) return;
-    for( dir=0 ; dir<2 ; dir++ )                            // vertical edges, than horizontal edges
+    for( dir=0 ; dir<2 ; dir++ )      // 1st, deblock vertical edges, 2nd, deblock horizontal edges
     {
         EdgeCondition = (dir && mb_y) || (!dir && mb_x)  ;    // can not filter beyond frame boundaries
 

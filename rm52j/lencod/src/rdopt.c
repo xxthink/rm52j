@@ -80,7 +80,7 @@ int   ****cofAC=NULL, ****cofAC8x8=NULL;        // [8x8block][4x4block][level/ru
 int   ***cofDC=NULL;                       // [yuv][level/run][scan_pos]
 int   ***cofAC4x4=NULL, ****cofAC4x4intern=NULL; // [level/run][scan_pos]
 int   ****chromacofAC4x4=NULL;
-int   cbp, cbp8x8, cnt_nonz_8x8,cbp01;  //wzm,422
+int   cbp, cbp8x8, cnt_nonz_8x8,cbp01;  
 int   cbp_blk, cbp_blk8x8;
 int   frefframe[2][2], brefframe[2][2], b8mode[4], b8pdir[4];
 int   best8x8mode [4];                // [block]
@@ -121,7 +121,7 @@ void clear_rdopt ()
     free_mem_ACcoeff (cofAC);
     free_mem_ACcoeff (cofAC8x8);
     free_mem_ACcoeff (cofAC4x4intern);
-    free_mem4Dint(chromacofAC4x4, 4, 4 );  //wzm,422
+    free_mem4Dint(chromacofAC4x4, 4, 4 );  
 
     // structure for saving the coding state
     delete_coding_state (cs_mb);
@@ -147,7 +147,7 @@ void init_rdopt ()
     get_mem_ACcoeff (&cofAC8x8);
     get_mem_ACcoeff (&cofAC4x4intern);
     cofAC4x4 = cofAC4x4intern[0];
-    get_mem4Dint(&(chromacofAC4x4),4,8,2,17); //wzm,422
+    get_mem4Dint(&(chromacofAC4x4),4,8,2,17); 
 
     // structure for saving the coding state
     cs_mb  = create_coding_state ();
@@ -185,7 +185,7 @@ double RDCost_for_AVSIntraBlocks(int *nonzero,
     short tmp_block_88_inv[8][8];
     Macroblock  *currMB;
     SyntaxElement *currSE;
-    int incr_y=1,off_y=0;/*lgp*/
+    int incr_y=1,off_y=0;
 
     block_x    =8*(b8%2);
     block_y    =8*(b8/2);
@@ -215,7 +215,7 @@ double RDCost_for_AVSIntraBlocks(int *nonzero,
     //===== get distortion (SSD) of 4x4 block =====
     distortion =0;
 
-    /*lgp*/
+    
     for (y=0; y<8; y++)
         for (x=0; x<8; x++)
             distortion += img->quad [imgY_org[pic_pix_y+incr_y*y+off_y][pic_pix_x+x] - imgY[pic_pix_y+incr_y*y+off_y][pic_pix_x+x]];
@@ -273,8 +273,8 @@ int Mode_Decision_for_AVS_IntraBlocks(int b8,double lambda,int *min_cost)
     int mostProbableMode;
     Macroblock *currMB;
     double min_rdcost ;
-    int incr_y=1,off_y=0;/*lgp*/
-    int MBRowSize = img->width / MB_BLOCK_SIZE;/*lgp*/
+    int incr_y=1,off_y=0;
+    int MBRowSize = img->width / MB_BLOCK_SIZE;
     int k;
 
     currMB=img->mb_data+img->current_mb_nr;
@@ -307,7 +307,7 @@ int Mode_Decision_for_AVS_IntraBlocks(int b8,double lambda,int *min_cost)
             {
                 for (j=0;j<8;j++)
                     for (i=0;i<8;i++)
-                        diff[j][i] = imgY_org[pic_pix_y+/*j*/incr_y*j+off_y/*lgp*/][pic_pix_x+i] - img->mprr[ipmode][j][i]; // bug fix: index of diff was flipped. mwi 020701
+                        diff[j][i] = imgY_org[pic_pix_y+/*j*/incr_y*j+off_y][pic_pix_x+i] - img->mprr[ipmode][j][i]; // bug fix: index of diff was flipped. mwi 020701
 
                 //       cost  = (ipmode == mostProbableMode) ? 0 : (int)floor(4 * lambda );
                 cost  = (ipmode == mostProbableMode) ? 0 : (int)floor(3 * lambda );   // jlzheng  7.20
@@ -327,7 +327,7 @@ int Mode_Decision_for_AVS_IntraBlocks(int b8,double lambda,int *min_cost)
                     for (i=0;i<8;i++)
                     {
                         img->mpr[block_x+i][block_y+j]=img->mprr[ipmode][j][i];
-                        img->m7[i][j] = imgY_org[pic_pix_y+/*j*/incr_y*j+off_y/*lgp*/][pic_pix_x+i] - img->mpr[block_x+i][block_y+j] ;
+                        img->m7[i][j] = imgY_org[pic_pix_y+/*j*/incr_y*j+off_y][pic_pix_x+i] - img->mpr[block_x+i][block_y+j] ;
                     }
 
                     //===== store the coding state =====
@@ -345,7 +345,7 @@ int Mode_Decision_for_AVS_IntraBlocks(int b8,double lambda,int *min_cost)
                         //--- set reconstruction ---
                         for(y=0; y<8; y++)
                             for(x=0; x<8; x++)
-                                rec4x4[y][x]=imgY[pic_pix_y+/*y*/incr_y*y+off_y/*lgp*/][pic_pix_x+x];
+                                rec4x4[y][x]=imgY[pic_pix_y+/*y*/incr_y*y+off_y][pic_pix_x+x];
 
                         //--- flag if dct-coefficients must be coded ---
                         nonzero = c_nz;
@@ -371,7 +371,7 @@ int Mode_Decision_for_AVS_IntraBlocks(int b8,double lambda,int *min_cost)
     best_ipmode = mostProbableMode;*/
 
 
-    /*lgp*/
+    
     if (!input->rdopt)
     {
 
@@ -380,7 +380,7 @@ int Mode_Decision_for_AVS_IntraBlocks(int b8,double lambda,int *min_cost)
             for (i=0;i<8; i++)
             {
                 img->mpr[block_x+i][block_y+j] = img->mprr[best_ipmode][j][i];
-                tmp_block_88[j][i] = imgY_org[pic_pix_y+/*j*/incr_y*j+off_y/*lgp*/][pic_pix_x+i] - img->mprr[best_ipmode][j][i];
+                tmp_block_88[j][i] = imgY_org[pic_pix_y+/*j*/incr_y*j+off_y][pic_pix_x+i] - img->mprr[best_ipmode][j][i];
             }
 
             loc_cbp=loc_cbp_blk=0;
@@ -396,7 +396,7 @@ int Mode_Decision_for_AVS_IntraBlocks(int b8,double lambda,int *min_cost)
             currMB->cbp_blk|=loc_cbp_blk;
     }
     else
-    {/*lgp*/
+    {
         //===== restore coefficients =====
         for(j=0;j<2;j++)
             for(k=0;k<4;k++)
@@ -410,7 +410,7 @@ int Mode_Decision_for_AVS_IntraBlocks(int b8,double lambda,int *min_cost)
                 imgY[pic_pix_y+incr_y*y+off_y][pic_pix_x+x] = rec4x4[y][x];
                 img->mpr[block_x+i][block_y+j] = img->mprr[best_ipmode][j][i];
             }      
-    }/*lgp*/
+    }
 
 
     return nonzero;
@@ -486,7 +486,7 @@ int Mode_Decision_for_8x8IntraBlocks(int b8,double lambda,int *cost)
 int Mode_Decision_for_Intra4x4Macroblock (double lambda,  int* cost)
 {
     int  cbp=0, b8, cost8x8;
-    int  stage_block8x8_pos=0;/*lgp*/
+    int  stage_block8x8_pos=0;
 
     for (*cost=0, b8=stage_block8x8_pos; b8<4; b8++)
     {
@@ -540,7 +540,7 @@ double RDCost_for_8x8blocks (int*    cnt_nonz,   // --> number of nonzero coeffi
     int pix_y = img->pix_y;
     int pix_x = img->pix_x;
     byte **imgY_original  =  imgY_org;
-    int  incr_y=1,off_y=0;/*lgp*/
+    int  incr_y=1,off_y=0;
 
     //=====  GET COEFFICIENTS, RECONSTRUCTIONS, CBP
     if (direct)
@@ -555,10 +555,10 @@ double RDCost_for_8x8blocks (int*    cnt_nonz,   // --> number of nonzero coeffi
         *cnt_nonz = LumaResidualCoding8x8 (&cbp, cbp_blk, block, fw_mode, bw_mode, ref, bwd_ref);
     }
 
-    for (j=0; j<8; j++)/*lgp*/
+    for (j=0; j<8; j++)
         for (i=pax; i<pax+8; i++)
         {
-            distortion += img->quad [imgY_original[pix_y+pay+/*j*/incr_y*j+off_y/*lgp*/][pix_x+i] - imgY[img->pix_y+pay+/*j*/incr_y*j+off_y/*lgp*/][img->pix_x+i]];
+            distortion += img->quad [imgY_original[pix_y+pay+/*j*/incr_y*j+off_y][pix_x+i] - imgY[img->pix_y+pay+/*j*/incr_y*j+off_y][img->pix_x+i]];
         }
 
         //=====   GET RATE
@@ -612,7 +612,7 @@ void SetModesAndRefframeForBlocks (int mode)
     int  block_y = img->block_y;
     int  block_x = img->block_x;
 
-    int  stage_block8x8_pos=0;/*lgp*/
+    int  stage_block8x8_pos=0;
 
     //--- macroblock type ---
     currMB->mb_type = mode;
@@ -621,7 +621,7 @@ void SetModesAndRefframeForBlocks (int mode)
     switch (mode)
     {
     case 0:
-        for(i=stage_block8x8_pos/*lgp*/;i<4;i++)
+        for(i=stage_block8x8_pos;i<4;i++)
         {
             currMB->b8mode[i] = 0;
             currMB->b8pdir[i] = (bframe?2:0);
@@ -630,7 +630,7 @@ void SetModesAndRefframeForBlocks (int mode)
     case 1:
     case 2:
     case 3:
-        for(i=stage_block8x8_pos/*lgp*/;i<4;i++)
+        for(i=stage_block8x8_pos;i<4;i++)
         {
             currMB->b8mode[i] = mode;
             currMB->b8pdir[i] = best8x8pdir[mode][i];
@@ -638,14 +638,14 @@ void SetModesAndRefframeForBlocks (int mode)
         break;
         //case 4:
     case P8x8:
-        for(i=stage_block8x8_pos/*lgp*/;i<4;i++)
+        for(i=stage_block8x8_pos;i<4;i++)
         {
             currMB->b8mode[i]   = best8x8mode[i];
             currMB->b8pdir[i]   = best8x8pdir[mode][i];
         }
         break;
     case I4MB:
-        for(i=stage_block8x8_pos/*lgp*/;i<4;i++)
+        for(i=stage_block8x8_pos;i<4;i++)
         {
             currMB->b8mode[i] = IBLOCK;
             currMB->b8pdir[i] = -1;
@@ -661,7 +661,7 @@ void SetModesAndRefframeForBlocks (int mode)
     {
         if (bframe)
         { 
-            for (j=stage_block8x8_pos/2/*lgp*/;j<2;j++)
+            for (j=stage_block8x8_pos/2;j<2;j++)
                 for (i=0;i<2;i++)
                 {
                     k = 2*j+i;
@@ -737,7 +737,7 @@ void SetModesAndRefframeForBlocks (int mode)
         }
         else
         {
-            for (j=stage_block8x8_pos/2/*lgp*/;j<2;j++)
+            for (j=stage_block8x8_pos/2;j<2;j++)
                 for (i=0;i<2;i++)
                 {
                     k = 2*j+i;
@@ -764,8 +764,8 @@ void SetCoeffAndReconstruction8x8 (Macroblock* currMB)
     int block_x = img->block_x;
     int block_y = img->block_y;
     int **ipredmodes = img->ipredmode;
-    int  stage_block8x8_pos=0; /*lgp*/
-    int  incr_y=1,off_y=0;/*lgp*/
+    int  stage_block8x8_pos=0; 
+    int  incr_y=1,off_y=0;
 
     //--- restore coefficients ---
     for (block=0; block<6; block++)
@@ -774,7 +774,7 @@ void SetCoeffAndReconstruction8x8 (Macroblock* currMB)
                 for (i=0; i<65; i++)
                     img->cofAC[block][k][j][i] = cofAC8x8[block][k][j][i];
 
-    if (cnt_nonz_8x8<=5)/*lgp*/
+    if (cnt_nonz_8x8<=5)
     {
         currMB->cbp     = 0;
         currMB->cbp_blk = 0;
@@ -835,9 +835,9 @@ void SetMotionVectorsMB (Macroblock* currMB, int bframe)
     int block_x      = img->block_x>>1;
     int **brefar     = bw_refFrArr;
     int  bw_ref;
-    int stage_block8x8_pos=0;/*lgp*/
+    int stage_block8x8_pos=0;
 
-    for (j=stage_block8x8_pos/2/*lgp*/;j<2;j++)
+    for (j=stage_block8x8_pos/2;j<2;j++)
         for (i=0; i<2; i++)
         {
             mode8 = currMB->b8mode[k=2*j+i];
@@ -1008,14 +1008,14 @@ int RDCost_for_macroblocks (double   lambda,      // <-- lagrange multiplier
     int         pix_c_y       = img->pix_c_y;
     int         pix_x         = img->pix_x;
     int         pix_c_x       = img->pix_c_x;
-    /*lgp*/
+    
     int         rate_tmp,rate_top=0,rate_bot=0,distortion_blk,distortion_top=0,distortion_bot=0;
     double      rdcost_top,rdcost_bot;
     int         incr_y=1,off_y=0;
     int         block8x8,block_x,block_y;
     int         stage_block8x8_pos=0;
     int         c_distortion=0,lum_bits;
-    int         cp_table[2][8] = {{1,1,1,1,1,1,1,1},{0,0,1,1,0,1,0,1}};  //wzm,422
+    int         cp_table[2][8] = {{1,1,1,1,1,1,1,1},{0,0,1,1,0,1,0,1}};  
 
     //cjw 20060321 for MV limit
     //  mv_out_of_range=0;    // 20071009
@@ -1045,13 +1045,13 @@ int RDCost_for_macroblocks (double   lambda,      // <-- lagrange multiplier
 
     dummy = 0;
     ChromaResidualCoding (&dummy);
-    //wzm,422
+    
     if(input->chroma_format==2)
     {
         img->mb_data[img->current_mb_nr].cbp01=(img->mb_data[img->current_mb_nr].cbp)>>6;
         img->mb_data[img->current_mb_nr].cbp=(img->mb_data[img->current_mb_nr].cbp&63);
     }
-    //wzm,422
+    
 
 
     //////////////////////////////////////////////////////////////////////////
@@ -1069,7 +1069,7 @@ int RDCost_for_macroblocks (double   lambda,      // <-- lagrange multiplier
         int mb_y;
 
         img->weighting_prediction=0;
-        for (block8x8=stage_block8x8_pos/*lgp*/; block8x8<4; block8x8++)
+        for (block8x8=stage_block8x8_pos; block8x8<4; block8x8++)
         {
             mb_x = (block8x8 % 2) << 3;
             mb_y = (block8x8 / 2) << 3;
@@ -1087,7 +1087,7 @@ int RDCost_for_macroblocks (double   lambda,      // <-- lagrange multiplier
 
     //=====   GET DISTORTION
     // LUMA
-    /*lgp*/
+    
     for(block8x8=stage_block8x8_pos; block8x8<4;block8x8++)
     {
         block_y = (block8x8/2)*8;
@@ -1105,7 +1105,7 @@ int RDCost_for_macroblocks (double   lambda,      // <-- lagrange multiplier
             block_x = (block8x8%2)*4;
 
             // CHROMA
-            if(input->chroma_format==2) //wzm,422
+            if(input->chroma_format==2) 
             {
                 for (j=0; j<8; j++)     
                     for (i=0; i<4; i++)
@@ -1118,7 +1118,7 @@ int RDCost_for_macroblocks (double   lambda,      // <-- lagrange multiplier
 
                     }
             }
-            else if(input->chroma_format==1)//wzm,422
+            else if(input->chroma_format==1)
             {
                 for (j=0; j<4; j++)
                     for (i=0; i<4; i++)
@@ -1144,7 +1144,7 @@ int RDCost_for_macroblocks (double   lambda,      // <-- lagrange multiplier
 
     //=====   GET RATE
     //----- macroblock header -----
-    if (input->chroma_format==2) //wzm,422
+    if (input->chroma_format==2) 
     {
         if (use_of_cc)
         {
@@ -1154,7 +1154,7 @@ int RDCost_for_macroblocks (double   lambda,      // <-- lagrange multiplier
                 tmp_cc = img->cod_counter;
                 rate_top   = writeMBHeader (1); 
                 ue_linfo (tmp_cc, dummy, &cc_rate, &dummy);
-                rate_top  -= cc_rate;/*lgp*/
+                rate_top  -= cc_rate;
                 img->cod_counter = tmp_cc;
             }
             else
@@ -1162,12 +1162,12 @@ int RDCost_for_macroblocks (double   lambda,      // <-- lagrange multiplier
                 // cod counter is just increased  ==> get additional rate
                 ue_linfo (img->cod_counter+1, dummy, &rate_top,    &dummy);
                 ue_linfo (img->cod_counter,   dummy, &cc_rate, &dummy);
-                rate_top -= cc_rate;/*lgp*/
+                rate_top -= cc_rate;
             }
         }
-        else if (!(stage_block8x8_pos/2))/*lgp*/
+        else if (!(stage_block8x8_pos/2))
         {
-            rate_top = writeMBHeader (1); /*lgp*/
+            rate_top = writeMBHeader (1); 
         }
         if (mode)
         {
@@ -1204,7 +1204,7 @@ int RDCost_for_macroblocks (double   lambda,      // <-- lagrange multiplier
 
         }
     }
-    else if(input->chroma_format==1) //wzm,422
+    else if(input->chroma_format==1) 
     {
         if (use_of_cc)
         {
@@ -1214,7 +1214,7 @@ int RDCost_for_macroblocks (double   lambda,      // <-- lagrange multiplier
                 tmp_cc = img->cod_counter;
                 rate_top   = writeMBHeader (1); 
                 ue_linfo (tmp_cc, dummy, &cc_rate, &dummy);
-                rate_top  -= cc_rate;/*lgp*/
+                rate_top  -= cc_rate;
                 img->cod_counter = tmp_cc;
             }
             else
@@ -1222,12 +1222,12 @@ int RDCost_for_macroblocks (double   lambda,      // <-- lagrange multiplier
                 // cod counter is just increased  ==> get additional rate
                 ue_linfo (img->cod_counter+1, dummy, &rate_top,    &dummy);
                 ue_linfo (img->cod_counter,   dummy, &cc_rate, &dummy);
-                rate_top -= cc_rate;/*lgp*/
+                rate_top -= cc_rate;
             }
         }
-        else if (!(stage_block8x8_pos/2))/*lgp*/
+        else if (!(stage_block8x8_pos/2))
         {
-            rate_top = writeMBHeader (1); /*lgp*/
+            rate_top = writeMBHeader (1); 
         }
 
         if (mode)
@@ -1311,7 +1311,7 @@ void store_macroblock_parameters (int mode)
     int    block_y  = img->block_y;
     int    pix_y    = img->pix_y;
     int    pix_c_y  = img->pix_c_y;
-    int    stage_block8x8_pos=0;/*lgp*/
+    int    stage_block8x8_pos=0;
     int    temp_chroma;
 
     //--- store best mode ---
@@ -1322,7 +1322,7 @@ void store_macroblock_parameters (int mode)
     // !! shenyanfei 
     best_weight_flag = img->weighting_prediction ;
 
-    for (i=/*0*/stage_block8x8_pos/*lgp*/; i<4; i++)
+    for (i=/*0*/stage_block8x8_pos; i<4; i++)
     {
         b8mode[i]   = currMB->b8mode[i];
         b8pdir[i]   = currMB->b8pdir[i];
@@ -1335,7 +1335,7 @@ void store_macroblock_parameters (int mode)
             rec_mbY[j][i] = imgY[img->pix_y+j][img->pix_x+i];
         }
 
-        if(input->chroma_format==2) //wzm,422
+        if(input->chroma_format==2) 
         {
             for (j=0; j<16; j++)   
                 for (i=0; i<8; i++)
@@ -1344,7 +1344,7 @@ void store_macroblock_parameters (int mode)
                     rec_mbV[j][i] = imgUV[1][img->pix_c_y+j][img->pix_c_x+i];
                 }
         }
-        else //wzm,422
+        else 
         {
             for (j=0; j<8; j++)
                 for (i=0; i<8; i++)
@@ -1356,10 +1356,10 @@ void store_macroblock_parameters (int mode)
 
         if(best_mode == I4MB)    //add by qwang
         {
-            for(i=stage_block8x8_pos/*lgp*/; i<4; i++)
+            for(i=stage_block8x8_pos; i<4; i++)
                 best_intra_pred_modes_tmp[i]=currMB->intra_pred_modes[i];
 
-            for(j=stage_block8x8_pos/2/*lgp*/;j<2;j++)
+            for(j=stage_block8x8_pos/2;j<2;j++)
                 for(i=0;i<2;i++)
                     best_ipredmode_tmp[i][j]=img->ipredmode[ 1 + img->block8_x + i ][ 1 + img->block8_y + j ];
 
@@ -1401,7 +1401,7 @@ void store_macroblock_parameters (int mode)
             cbp = cbp_blk = 0;
         }
 
-        for(j=stage_block8x8_pos/2/*lgp*/;j<2;j++)
+        for(j=stage_block8x8_pos/2;j<2;j++)
             for (i=0; i<2; i++)
             {  
                 frefframe[j][i] = frefar[(block_y>>1)+j  ][(block_x>>1) +i ];
@@ -1435,8 +1435,8 @@ void set_stored_macroblock_parameters ()
     int     block_x = img->block_x; 
     int     block_y = img->block_y; 
 
-    int         cp_table[2][6] = {{1,1,1,1,1,1},{0,0,1,1,0,1}};/*lgp*/
-    int         stage_block8x8_pos=0;/*lgp*/
+    int         cp_table[2][6] = {{1,1,1,1,1,1},{0,0,1,1,0,1}};
+    int         stage_block8x8_pos=0;
     int    temp_chroma;
 
     //===== reconstruction values =====
@@ -1446,7 +1446,7 @@ void set_stored_macroblock_parameters ()
             imgY[img->pix_y+j][img->pix_x+i] = rec_mbY[j][i];
         }
 
-        if(input->chroma_format==2) //wzm,422
+        if(input->chroma_format==2) 
         {
             for (j=0; j<16; j++)   
                 for (i=0; i<8; i++)
@@ -1455,7 +1455,7 @@ void set_stored_macroblock_parameters ()
                     imgUV[1][img->pix_c_y+j][img->pix_c_x+i] = rec_mbV[j][i];
                 }
         }
-        else //wzm,422
+        else 
         {
             for (j=0; j<8; j++)
                 for (i=0; i<8; i++)
@@ -1470,7 +1470,7 @@ void set_stored_macroblock_parameters ()
         i3p=cofDC; cofDC=img->cofDC; img->cofDC=i3p;
         currMB->cbp      = cbp;
         currMB->cbp_blk = cbp_blk;
-        currMB->cbp01      = cbp01;  //wzm,422
+        currMB->cbp01      = cbp01;  
         //==== macroblock type ====
         currMB->mb_type = mode;
 
@@ -1770,24 +1770,22 @@ void encode_one_macroblock ()
     int         adjust_ref;
     Macroblock* currMB      = &img->mb_data[img->current_mb_nr];
     int     **ipredmodes = img->ipredmode;
-    int     block_x   = img->block_x;/*lgp*/
+    int     block_x   = img->block_x;
     int     block_y   = img->block_y;
-    int         best_bw_ref;
+    int     best_bw_ref;
     int     ***tmpmvs = tmp_mv;
     int     *****allmvs = img->all_mv;
     int     **refar     = refFrArr;
-    int     incr_y=1,off_y=0;/*lgp*/
-    int     stage_block8x8_pos=0;/*lgp*/
+    int     incr_y=1,off_y=0;
+    int     stage_block8x8_pos=0;
     int    best_bid_ref = 0;
     int    bid_best_fw_ref = 0, bid_best_bw_ref = 0;
     int    scale_refframe;
-    int     min_cost_8x8;
-
+    int    min_cost_8x8;
 
     adjust_ref  = (img->type==B_IMG? (mref==mref_fld)? 2 : 1 : 0);
     adjust_ref  = min(adjust_ref, max_ref-1);
 
-    // 20071009
     img->mv_range_flag = 1;
 
     if(!img->picture_structure)
@@ -1798,7 +1796,8 @@ void encode_one_macroblock ()
             max_ref = 2;
         if(img->old_type!=img->type)
             max_ref = 1;
-    }else
+    }
+    else
     {
         max_ref = min (img->nb_references, img->buf_cycle);
         adjust_ref = 0;
@@ -1814,7 +1813,7 @@ void encode_one_macroblock ()
 
     //===== SET VALID MODES =====
     valid[I4MB]   = 1;
-    valid[I16MB]  = 0;//Lou
+    valid[I16MB]  = 0;
 
     valid[0]      =  (!intra );
     valid[1]      =  (!intra && input->InterSearch16x16);
@@ -1829,13 +1828,11 @@ void encode_one_macroblock ()
     //===== SET LAGRANGE PARAMETERS =====
     if (input->rdopt)
     {
-        qp            = (double)img->qp - SHIFT_QP;
+        qp = (double)img->qp - SHIFT_QP;
 
         if (input->successive_Bframe>0)
-            //Lou 1014 lambda_mode   = 0.68 * pow (2, qp/3.0) * (img->type==B_IMG? max(2.00,min(4.00,(qp / 6.0))):1.0);  
             lambda_mode   = 0.68 * pow (2, qp/4.0) * (img->type==B_IMG? max(2.00,min(4.00,(qp / 8.0))):1.0);  
         else
-            //Lou 1014 lambda_mode   = 0.85 * pow (2, qp/3.0) * (img->type==B_IMG? 4.0:1.0);  
             lambda_mode   = 0.85 * pow (2, qp/4.0) * (img->type==B_IMG? 4.0:1.0);  
 
         lambda_motion = sqrt (lambda_mode);
@@ -1849,12 +1846,11 @@ void encode_one_macroblock ()
 
     // reset chroma intra predictor to default
     currMB->c_ipred_mode = DC_PRED_8;
-    currMB->c_ipred_mode_2 = DC_PRED_8; //X ZHENG,422
+    currMB->c_ipred_mode_2 = DC_PRED_8;
 
     if (!intra)
     {
         //===== set direct motion vectors =====
-
         if (bframe)
         {
             Get_IP_direct();
@@ -1877,14 +1873,13 @@ void encode_one_macroblock ()
                     i = (block==1 && mode==3 ? 2 : 0);
 
                     //--- get cost and reference frame for forward prediction ---
-                    if(img->type==INTER_IMG)/*lgp*/
+                    if(img->type==INTER_IMG)
                     {
                         for (fw_mcost=max_mcost, ref=0; ref<max_ref-adjust_ref; ref++)
                         {
-                            //if (!checkref || ref==0)/*lgp*13*/
                             {
                                 mcost  = (input->rdopt ? write_ref ? REF_COST_FWD (lambda_motion_factor, ref) : 0 : (int)(2*lambda_motion*min(ref,1)));
-                                mcost += motion_cost[mode][ref+/*1*/1/*lgp*13*/][block];
+                                mcost += motion_cost[mode][ref+1][block];
                                 if (mcost < fw_mcost)
                                 {
                                     fw_mcost    = mcost;
@@ -1892,15 +1887,13 @@ void encode_one_macroblock ()
                                 }
                             }
                         }
-                        best_bw_ref = 0;//xyji
+                        best_bw_ref = 0;
                     }
                     else
                     {            
                         for (fw_mcost=max_mcost, ref=0; ref<max_ref-adjust_ref; ref++)
                         {
-                            //if (!checkref || ref==0)/*lgp*13*/
                             {
-                                //mcost  = (input->rdopt ? write_ref ? REF_COST_FWD (lambda_motion_factor, ref) : 0 : (int)(2*lambda_motion*min(ref,1)));
                                 mcost = motion_cost[mode][img->picture_structure ? ref+1 : ref+2][block];
                                 if (mcost < fw_mcost)
                                 {
@@ -1922,9 +1915,7 @@ void encode_one_macroblock ()
 
                         for (bw_mcost=max_mcost, ref=0; ref<max_ref-adjust_ref; ref++)
                         {
-                            //if (!checkref || ref==0)/*lgp*13*/
                             {
-                                //mcost  = (input->rdopt ? write_ref ? REF_COST_FWD (lambda_motion_factor, ref) : 0 : (int)(2*lambda_motion*min(ref,1)));
                                 mcost = motion_cost[mode][ref][block];
                                 if (mcost < bw_mcost)
                                 {
@@ -1936,16 +1927,12 @@ void encode_one_macroblock ()
 
                         for (bid_mcost=max_mcost, ref=0; ref<max_ref-adjust_ref; ref++)
                         {
-                            //if (!checkref || ref==0)/*lgp*13*/
+                            mcost = motion_cost_bid[mode][img->picture_structure ? ref+1 : ref+2][block];
+                            if (mcost < bid_mcost)
                             {
-                                //mcost  = (input->rdopt ? write_ref ? REF_COST_FWD (lambda_motion_factor, ref) : 0 : (int)(2*lambda_motion*min(ref,1)));
-                                mcost = motion_cost_bid[mode][img->picture_structure ? ref+1 : ref+2][block];
-                                if (mcost < bid_mcost)
-                                {
-                                    bid_mcost    = mcost;
-                                    bid_best_fw_ref = ref;
-                                    bid_best_bw_ref = ref;
-                                }
+                                bid_mcost    = mcost;
+                                bid_best_fw_ref = ref;
+                                bid_best_bw_ref = ref;
                             }
                         }
 
@@ -1960,7 +1947,7 @@ void encode_one_macroblock ()
                         {
                             best_pdir = 1;
                             cost += bw_mcost;    
-                            best_fw_ref = 0;/*lgp*13*/
+                            best_fw_ref = 0;
                         }
                         else
                         {
@@ -2005,8 +1992,6 @@ void encode_one_macroblock ()
                         SetRefAndMotionVectors (block, mode, best_pdir==2?bid_best_fw_ref:best_fw_ref,
                         best_pdir==2?bid_best_bw_ref:best_bw_ref, best_pdir);  
                 } 
-
-                // mv_range, 20071009      
                 if(cost<0)
                     cost=1<<30;
 
@@ -2032,25 +2017,21 @@ void encode_one_macroblock ()
                 j0 = ((block/2)<<3);    j1 = (j0>>2);
                 i0 = ((block%2)<<3);    i1 = (i0>>2);
                 //=====  LOOP OVER POSSIBLE CODING MODES FOR 8x8 SUB-PARTITION  =====
-                for (min_cost_8x8=/*(1<<20)*/(1<<30), min_rdcost=1e30, index=(bframe?0:1); index<2; index++) // mv_range, 20071009
+                for (min_cost_8x8=(1<<30), min_rdcost=1e30, index=(bframe?0:1); index<2; index++)
                 {
                     if (valid[mode=b8_mode_table[index]])
                     {
-                        //           if(mode==0 && img->type==B_IMG && img->VEC_FLAG==1 && input->vec_ext==3)// M1956 by Grandview 2006.12.12
-                        //             continue;
                         curr_cbp_blk = 0;
                         if (mode==0)
                         {
                             //--- Direct Mode ---
                             if (!input->rdopt)
                             {
-                                // mv_range, 20071009
                                 mv_out_of_range = 1;
 
                                 cost_direct += (cost = Get_Direct_Cost8x8 ( block, lambda_mode ));
                                 have_direct ++;
 
-                                // xiaozhen zheng, mv_range, 20071009
                                 if (!mv_out_of_range) 
                                 {
                                     cost_direct = 1<<30;
@@ -2062,13 +2043,13 @@ void encode_one_macroblock ()
                             if(!img->picture_structure)
                             {
                                 scale_refframe = refFrArr[img->block8_y+block/2][img->block8_x+block%2];
-                                if (img->current_mb_nr_fld < img->total_number_mb) //top field
+                                if (img->current_mb_nr_fld < img->total_number_mb)
                                 {
                                     scale_refframe =   scale_refframe == 0 ? 0 : 1;
                                 }
                                 else
                                 {
-                                    scale_refframe =   scale_refframe == 1 ? 0 : 1; //?????xyji
+                                    scale_refframe =   scale_refframe == 1 ? 0 : 1;
                                 }
                                 bid_best_fw_ref = scale_refframe;
                                 if(img->current_mb_nr_fld < img->total_number_mb)
@@ -2095,44 +2076,31 @@ void encode_one_macroblock ()
                         {
                             //--- motion estimation for all reference frames ---
                             PartitionMotionSearch (mode, block, lambda_motion);
-                            //--- get cost and reference frame for forward prediction ---
-                            //--- get cost and reference frame for forward prediction ---
-                            if(img->type == INTER_IMG)/*lgp*/
+                            if(img->type == INTER_IMG)
                             {
-                                for (fw_mcost=max_mcost, ref=0; ref<max_ref-adjust_ref; ref++) // Tian Dong. PLUS1. -adjust_ref. June 06, 2002
-                                {  /*lgp*13*/                
+                                for (fw_mcost=max_mcost, ref=0; ref<max_ref-adjust_ref; ref++)
+                                {
+                                    mcost  = (input->rdopt ? write_ref ? REF_COST_FWD (lambda_motion_factor, ref) : 0 : (int)(2*lambda_motion*min(ref,1)));
+                                    mcost += motion_cost[mode][ref+1][block];
+                                    if(mcost<0)
+                                        mcost=1<<30;
+
+                                    if (mcost < fw_mcost)
                                     {
-                                        mcost  = (input->rdopt ? write_ref ? REF_COST_FWD (lambda_motion_factor, ref) : 0 : (int)(2*lambda_motion*min(ref,1)));
-
-                                        mcost += motion_cost[mode][ref+/*1*/1/*lgp*13*/][block];
-
-                                        // mv_range, 20071009
-                                        if(mcost<0)
-                                            mcost=1<<30;
-
-                                        if (mcost < fw_mcost)
-                                        {
-                                            fw_mcost    = mcost;
-                                            best_fw_ref = ref;
-                                        }
+                                        fw_mcost    = mcost;
+                                        best_fw_ref = ref;
                                     }
                                 }
                             }
                             else
                             {
-                                //xyji
                                 for (fw_mcost=max_mcost, ref=0; ref<max_ref-adjust_ref; ref++)
                                 {
-                                    //if (!checkref || ref==0)/*lgp*13*/
+                                    mcost = motion_cost[mode][img->picture_structure ? ref+1 : ref+2][block];
+                                    if (mcost < fw_mcost)
                                     {
-                                        //mcost  = (input->rdopt ? write_ref ? REF_COST_FWD (lambda_motion_factor, ref) : 0 : (int)(2*lambda_motion*min(ref,1)));
-                                        mcost = motion_cost[mode][img->picture_structure ? ref+1 : ref+2][block];
-
-                                        if (mcost < fw_mcost)
-                                        {
-                                            fw_mcost    = mcost;
-                                            best_fw_ref = ref;
-                                        }
+                                        fw_mcost    = mcost;
+                                        best_fw_ref = ref;
                                     }
                                 }
                                 best_bw_ref = 0;
@@ -2144,49 +2112,39 @@ void encode_one_macroblock ()
 
                                 best_bw_ref = 0;
                                 bw_mcost   = motion_cost[mode][0][block];
-                                //xyji 11.26
                                 for (bw_mcost=max_mcost, ref=0; ref<max_ref-adjust_ref; ref++)
                                 {
+                                    mcost = motion_cost[mode][ref][block];
+                                    if (mcost < bw_mcost)
                                     {
-                                        //mcost  = (input->rdopt ? write_ref ? REF_COST_FWD (lambda_motion_factor, ref) : 0 : (int)(2*lambda_motion*min(ref,1)));
-                                        mcost = motion_cost[mode][ref][block];
-                                        if (mcost < bw_mcost)
-                                        {
-                                            bw_mcost    = mcost;
-                                            best_bw_ref = ref;
-                                        }
+                                        bw_mcost    = mcost;
+                                        best_bw_ref = ref;
                                     }
                                 }
 
                                 for (bid_mcost=max_mcost, ref=0; ref<max_ref-adjust_ref; ref++)
                                 {
-                                    //if (!checkref || ref==0)/*lgp*13*/
+                                    mcost = motion_cost_bid[mode][img->picture_structure ? ref+1 : ref+2][block];
+                                    if (mcost < bid_mcost)
                                     {
-                                        //mcost  = (input->rdopt ? write_ref ? REF_COST_FWD (lambda_motion_factor, ref) : 0 : (int)(2*lambda_motion*min(ref,1)));
-                                        mcost = motion_cost_bid[mode][img->picture_structure ? ref+1 : ref+2][block];
-                                        if (mcost < bid_mcost)
-                                        {
-                                            bid_mcost    = mcost;
-                                            bid_best_fw_ref = ref;
-                                            bid_best_bw_ref = ref;
-                                        }
+                                        bid_mcost    = mcost;
+                                        bid_best_fw_ref = ref;
+                                        bid_best_bw_ref = ref;
                                     }
                                 }        
 
                                 //--- get prediction direction ----
-                                //              if(fw_mcost<=bw_mcost && fw_mcost<=bid_mcost)
                                 if(fw_mcost<bw_mcost && fw_mcost<bid_mcost)
                                 {
                                     best_pdir = 0;
                                     cost = fw_mcost;
                                     best_bw_ref = 0;
                                 }
-                                //              else if (bw_mcost<=fw_mcost && bw_mcost<=bid_mcost)
                                 else if (bw_mcost<fw_mcost && bw_mcost<bid_mcost)
                                 {
                                     best_pdir = 1;
                                     cost = bw_mcost;
-                                    best_fw_ref = 0;/*lgp*13*/
+                                    best_fw_ref = 0;
                                 }
                                 else
                                 {
@@ -2215,7 +2173,6 @@ void encode_one_macroblock ()
                             cost += (REF_COST (lambda_motion_factor, B8Mode2Value (mode, best_pdir)) - 1);
                         }
 
-                        // xiaozhen zheng, mv_range, 20071009
                         if (!img->mv_range_flag &&!mode && input->rdopt) {
                             rdcost = (1<<30);
                             img->mv_range_flag = 1;
@@ -2224,7 +2181,6 @@ void encode_one_macroblock ()
                             cost   = (1<<30);
                             img->mv_range_flag = 1;
                         }
-                        // xiaozhen zheng, mv_range, 20071009
 
                         //--- set variables if best mode has changed ---
                         if (( input->rdopt && rdcost < min_rdcost) ||
@@ -2266,14 +2222,13 @@ void encode_one_macroblock ()
                     pdir = best8x8pdir[P8x8][block];
 
                     curr_cbp_blk  = 0;
-                    //by oliver 
                     if(pdir==2)
                         best_cnt_nonz = LumaResidualCoding8x8 (&dummy, &curr_cbp_blk, block,
                         (pdir==0||pdir==2?mode:0),
                         (pdir==1||pdir==2?mode:0),
                         (mode!=0?best8x8symref[P8x8][block][0]:max(0,refar[block_y+j1][block_x+i1])),
                         (mode!=0?best8x8symref[P8x8][block][1]:0));
-                    else//0502
+                    else
                         best_cnt_nonz = LumaResidualCoding8x8 (&dummy, &curr_cbp_blk, block,
                         (pdir==0||pdir==2?mode:0),
                         (pdir==1||pdir==2?mode:0),
@@ -2292,8 +2247,8 @@ void encode_one_macroblock ()
                     for (j=0; j<8; j++)
                         for (i=i0; i<i0+8; i++)
                         {
-                            rec_mbY8x8[j0+incr_y*j+off_y/*lgp*/][i] = imgY[img->pix_y+j0+incr_y*j+off_y/*lgp*/][img->pix_x+i];
-                            mpr8x8    [j+j0][i] = img->mpr[i][j+j0];/*lgp*/
+                            rec_mbY8x8[j0+incr_y*j+off_y][i] = imgY[img->pix_y+j0+incr_y*j+off_y][img->pix_x+i];
+                            mpr8x8    [j+j0][i] = img->mpr[i][j+j0];
                         }
                 }
 
@@ -2312,11 +2267,9 @@ void encode_one_macroblock ()
                 for (j=img->block8_y+stage_block8x8_pos/2+1; j<img->block8_y+3; j++)
                     for (i=img->block8_x+1; i<img->block8_x+3; i++)
                     {            
-                        //    ipredmodes    [i][j] = DC_PRED;
                         ipredmodes    [i][j] = -1;
                     }
                     currMB->intra_pred_modes[block]  = DC_PRED;
-                    //  currMB->intra_pred_modes[block]  = -1;
 
                     if (block<3)
                     {
@@ -2350,8 +2303,7 @@ void encode_one_macroblock ()
                 if(cost8x8<min_cost)
                 {
                     best_mode = P8x8;
-                    //min_cost = best_mode;
-                    min_cost=cost8x8;  //by oliver 
+                    min_cost=cost8x8;
                 }
         }
         else // if (valid[P8x8])
@@ -2374,7 +2326,7 @@ void encode_one_macroblock ()
                     i = (block==1 && mode==3 ? 2 : 0);
 
                     //--- get cost and reference frame for forward prediction ---
-                    if(img->type == INTER_IMG)/*lgp*/
+                    if(img->type == INTER_IMG)
                     {
                         for (fw_mcost=max_mcost, ref=0; ref<max_ref-adjust_ref; ref++)   // Tian Dong. PLUS1. -adjust_ref. June 06, 2002
                         {
@@ -2534,15 +2486,13 @@ void encode_one_macroblock ()
             } // if (valid[mode])
         } // for (mode=3; mode>0; mode--)*/
 #endif
-
         // Find a motion vector for the Skip mode
         if(img->type == INTER_IMG)
             FindSkipModeMotionVector ();
     }
-    else // if (img->type!=INTRA_IMG)
+    else
     {
-        //    min_cost = (1<<20);  // 20071009
-        min_cost = (1<<30);    // 20071009
+        min_cost = (1<<30);
     }
 
     if (input->rdopt)
@@ -2568,20 +2518,12 @@ void encode_one_macroblock ()
             for (ctr16x16=0, index=0; index<7; index++)
             {
                 mode = mb_mode_table[index];
-                //       if(mode==0 && img->type==B_IMG && img->VEC_FLAG==1 && input->vec_ext==3)// M1956 by Grandview 2006.12.12
-                //         continue;
-
-                // xiaozhen zheng, mv_range, 20071009
                 if (img->type==INTER_IMG && !mode && !img->mv_range_flag) {
                     img->mv_range_flag = 1;
                     continue;
                 }
-                // xiaozhen zheng, mv_range, 20071009
-
                 //--- for INTER16x16 check all prediction directions ---
                 if (mode==1 && img->type==B_IMG) 
-                    //       if (mode==1 && img->type==B_IMG && // M1956 by Grandview 2006.12.12
-                    //         ((img->VEC_FLAG==1 && input->vec_ext!=3) || img->VEC_FLAG==0)) 
                 {
                     best8x8pdir[1][0] = best8x8pdir[1][1] = best8x8pdir[1][2] = best8x8pdir[1][3] = ctr16x16;
                     if (ctr16x16 < 2) index--;
@@ -2614,27 +2556,12 @@ void encode_one_macroblock ()
                         }
                     }
                 }
-
-                //if (bframe && mode == 0 && currMB->cbp && (currMB->cbp&15) != 15)
-                //{
-                //  img->NoResidueDirect = 1;
-                //  if (RDCost_for_macroblocks (lambda_mode, mode, &min_rdcost))
-                //  {
-                //    //Rate control
-                //    for (i=0; i<16; i++)
-                //      for(j=0; j<16; j++)
-                //        diffy[j][i] = imgY_org[img->pix_y+j][img->pix_x+i] - pred[j][i];
-                //      
-                //      store_macroblock_parameters (mode);
-                //  }
-                //}
             }
         }
     }
     else
     {
         if (valid[0] && bframe) // check DIRECT MODE
-            //&&((img->VEC_FLAG==1 && input->vec_ext!=3) || img->VEC_FLAG==0)) // M1956 by Grandview 2006.12.12
         {
             cost  = (have_direct?cost_direct:Get_Direct_CostMB (lambda_mode));
             cost -= (int)floor(16*lambda_motion+0.4999);
@@ -2690,7 +2617,7 @@ void encode_one_macroblock ()
     {
         //===== set parameters for chosen mode =====
         SetModesAndRefframeForBlocks (best_mode);
-        storeMotionInfo (stage_block8x8_pos/2);          //fix for rdo off   jlzheng 6.25
+        storeMotionInfo (stage_block8x8_pos/2);
         if (best_mode==P8x8)
         {
             SetCoeffAndReconstruction8x8 (currMB);
@@ -2700,12 +2627,10 @@ void encode_one_macroblock ()
             if (best_mode!=I4MB)
             {
                 for (k=0, j=(block_y>>1)+1; j<(block_y>>1)+3; j++)
-                    for (     i=(block_x>>1)+1; i<(block_x>>1)+3; i++, k++)
+                    for (i=(block_x>>1)+1; i<(block_x>>1)+3; i++, k++)
                     {
-                        //        ipredmodes    [i][j] = DC_PRED;
                         currMB->intra_pred_modes[k] = DC_PRED;
-                        ipredmodes    [i][j] = -1;
-                        //          currMB->intra_pred_modes[k] = -1;
+                        ipredmodes[i][j] = -1;
                     }
 
                     if (best_mode!=I16MB)
@@ -2720,26 +2645,21 @@ void encode_one_macroblock ()
         dummy = 0;
         img->NoResidueDirect = 0;
         ChromaResidualCoding (&dummy);
-        SetMotionVectorsMB (currMB, bframe);
-
-        //wzm,422
+        SetMotionVectorsMB (currMB, bframe);        
         if(input->chroma_format==2)
         {
             img->mb_data[img->current_mb_nr].cbp01=(img->mb_data[img->current_mb_nr].cbp)>>6;
             img->mb_data[img->current_mb_nr].cbp=(img->mb_data[img->current_mb_nr].cbp&63);
-        }
-        //wzm,422
-
+        }       
         //===== check for SKIP mode =====
         if (img->type==INTER_IMG && best_mode==1 && currMB->cbp==0 &&
             refFrArr [block_y>>1][block_x>>1  ]==0 &&
             tmpmvs[0][block_y>>1][(block_x>>1)+4]==allmvs[0][0][0][0][0] &&
             tmpmvs[1][block_y>>1][(block_x>>1)+4]==allmvs[0][0][0][0][1])
         {
-            currMB->mb_type=currMB->b8mode[0]=currMB->b8mode[1]=currMB->b8mode[2]=currMB->b8mode[3]=0;/*lgp*/
+            currMB->mb_type=currMB->b8mode[0]=currMB->b8mode[1]=currMB->b8mode[2]=currMB->b8mode[3]=0;
         }
 
-        // RC 20071224
         if(input->RCEnable)
         {
             if(img->type==INTER_IMG)
@@ -2749,15 +2669,12 @@ void encode_one_macroblock ()
                 else
                 {
                     img->qp -= currMB->delta_qp;
-
                     currMB->delta_qp = 0;
                     currMB->qp = img->qp;
-
                     currMB->prev_cbp = 0;
                 }
             }    
         }  
-        // RC 20071224
     }
 
     if (img->current_mb_nr==0)
