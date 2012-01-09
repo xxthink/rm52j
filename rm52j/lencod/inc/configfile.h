@@ -50,9 +50,9 @@
 #define _CONFIGFILE_H_
 
 typedef struct {
-  char *TokenName;
-  void *Place;
-  int Type;
+    char *TokenName;
+    void *Place;
+    int Type;
 } Mapping;
 
 InputParameters configinput;
@@ -60,11 +60,11 @@ InputParameters configinput;
 #ifdef INCLUDED_BY_CONFIGFILE_C
 
 Mapping Map[] = {
-  {"ProfileID",                &configinput.profile_id,              0},
-  {"LevelID",           &configinput.level_id,                0},
+    {"ProfileID",                &configinput.profile_id,              0},
+    {"LevelID",           &configinput.level_id,                0},
     {"IntraPeriod",              &configinput.intra_period,            0},
-  {"VECPeriod",                &configinput.vec_period,              0},
-  {"SeqHeaderPeriod",          &configinput.seqheader_period,        0},
+    {"VECPeriod",                &configinput.vec_period,              0},
+    {"SeqHeaderPeriod",          &configinput.seqheader_period,        0},
     {"FramesToBeEncoded",        &configinput.no_frames,               0},
     {"QPFirstFrame",             &configinput.qp0,                     0},
     {"QPRemainingFrame",         &configinput.qpN,                     0},
@@ -87,23 +87,23 @@ Mapping Map[] = {
     {"InterSearch8x8",           &configinput.InterSearch8x8 ,         0},
     {"RDOptimization",           &configinput.rdopt,                   0},
     {"InterlaceCodingOption",    &configinput.InterlaceCodingOption,   0},
-  {"repeat_first_field",       &configinput.repeat_first_field,      0},
+    {"repeat_first_field",       &configinput.repeat_first_field,      0},
     {"top_field_first",          &configinput.top_field_first,         0},
     {"LoopFilterDisable",        &configinput.loop_filter_disable,     0},
-  {"LoopFilterParameter",      &configinput.loop_filter_parameter_flag,     0},
-  {"LoopFilterAlphaOffset",    &configinput.alpha_c_offset,       0},
-  {"LoopFilterBetaOffset",     &configinput.beta_offset,         0},
+    {"LoopFilterParameter",      &configinput.loop_filter_parameter_flag,     0},
+    {"LoopFilterAlphaOffset",    &configinput.alpha_c_offset,       0},
+    {"LoopFilterBetaOffset",     &configinput.beta_offset,         0},
     {"Progressive_frame",        &configinput.progressive_frame,       0},
-  {"Dct_Adaptive_Flag",        &configinput.dct_adaptive_flag,       0},
-//    {"SliceEnable",              &configinput.slice_enable,             0},
-    
-  {"NumberOfRowsInSlice",      &configinput.slice_row_nr,            0},
+    {"Dct_Adaptive_Flag",        &configinput.dct_adaptive_flag,       0},
+    //    {"SliceEnable",              &configinput.slice_enable,             0},
+
+    {"NumberOfRowsInSlice",      &configinput.slice_row_nr,            0},
 
     {"SliceParameter",           &configinput.slice_parameter,         0},
-  {"WeightEnable",             &configinput.slice_weighting_flag,    0},
-  {"FrameRate",         &configinput.frame_rate_code,       0},
-  {"ChromaFormat",             &configinput.chroma_format,       0},
-      // Rate Control on AVS Standard
+    {"WeightEnable",             &configinput.slice_weighting_flag,    0},
+    {"FrameRate",         &configinput.frame_rate_code,       0},
+    {"ChromaFormat",             &configinput.chroma_format,       0},
+    // Rate Control on AVS Standard
     {"RateControlEnable",        &configinput.RCEnable,                0},
     {"Bitrate",                  &configinput.bit_rate,                0},
     {"InitialQP",                &configinput.SeinitialQP,         0},

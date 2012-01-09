@@ -64,29 +64,29 @@
 
 void encode_golomb_word(unsigned int symbol,unsigned int grad0,unsigned int max_levels,unsigned int *res_bits,unsigned int *res_len)
 {
-  unsigned int level,res,numbits;
-  
-  res=1UL<<grad0;
-  level=1UL;numbits=1UL+grad0;
+    unsigned int level,res,numbits;
 
-  //find golomb level
-  while( symbol>=res && level<max_levels )
-  {
-    symbol-=res;
-    res=res<<1;
-    level++;
-    numbits+=2UL;
-  }
+    res=1UL<<grad0;
+    level=1UL;numbits=1UL+grad0;
 
-  if(level>=max_levels)
-  {
-    if(symbol>=res)
-      symbol=res-1UL;  //crop if too large.
-  }
+    //find golomb level
+    while( symbol>=res && level<max_levels )
+    {
+        symbol-=res;
+        res=res<<1;
+        level++;
+        numbits+=2UL;
+    }
 
-  //set data bits
-  *res_bits=res|symbol;
-  *res_len=numbits;
+    if(level>=max_levels)
+    {
+        if(symbol>=res)
+            symbol=res-1UL;  //crop if too large.
+    }
+
+    //set data bits
+    *res_bits=res|symbol;
+    *res_len=numbits;
 }
 
 /*
@@ -101,27 +101,27 @@ void encode_golomb_word(unsigned int symbol,unsigned int grad0,unsigned int max_
 
 void encode_multilayer_golomb_word(unsigned int symbol,const unsigned int *grad,const unsigned int *max_levels,unsigned int *res_bits,unsigned int *res_len)
 {
-  unsigned accbits,acclen,bits,len,tmp;
+    unsigned accbits,acclen,bits,len,tmp;
 
-  accbits=acclen=0UL;
-  
-  while(1)
-  {
-    encode_golomb_word(symbol,*grad,*max_levels,&bits,&len);
-    accbits=(accbits<<len)|bits;
-    acclen+=len;
-    assert(acclen<=32UL);  //we'l be getting problems if this gets longer than 32 bits.
-    tmp=*max_levels-1UL;
+    accbits=acclen=0UL;
 
-    if(!(( len == (tmp<<1)+(*grad) )&&( bits == (1UL<<(tmp+*grad))-1UL )))  //is not last possible codeword? (Escape symbol?)
-      break;
+    while(1)
+    {
+        encode_golomb_word(symbol,*grad,*max_levels,&bits,&len);
+        accbits=(accbits<<len)|bits;
+        acclen+=len;
+        assert(acclen<=32UL);  //we'l be getting problems if this gets longer than 32 bits.
+        tmp=*max_levels-1UL;
 
-    tmp=*max_levels;
-    symbol-=(((1UL<<tmp)-1UL)<<(*grad))-1UL;
-    grad++;max_levels++;
-  }
-  *res_bits=accbits;
-  *res_len=acclen;
+        if(!(( len == (tmp<<1)+(*grad) )&&( bits == (1UL<<(tmp+*grad))-1UL )))  //is not last possible codeword? (Escape symbol?)
+            break;
+
+        tmp=*max_levels;
+        symbol-=(((1UL<<tmp)-1UL)<<(*grad))-1UL;
+        grad++;max_levels++;
+    }
+    *res_bits=accbits;
+    *res_len=acclen;
 }
 
 /*
@@ -136,31 +136,31 @@ void encode_multilayer_golomb_word(unsigned int symbol,const unsigned int *grad,
 
 int writeSyntaxElement_GOLOMB(SyntaxElement *se, Bitstream *bitstream)
 {
- unsigned int bits,len,i;
- unsigned int grad[4],max_lev[4];
+    unsigned int bits,len,i;
+    unsigned int grad[4],max_lev[4];
 
-  if(!( se->golomb_maxlevels&~0xFF ))    //only bits 0-7 used? This means normal Golomb word.
-    encode_golomb_word(se->value1,se->golomb_grad,se->golomb_maxlevels,&bits,&len);
-  else
-  {
-    for(i=0UL;i<4UL;i++)
+    if(!( se->golomb_maxlevels&~0xFF ))    //only bits 0-7 used? This means normal Golomb word.
+        encode_golomb_word(se->value1,se->golomb_grad,se->golomb_maxlevels,&bits,&len);
+    else
     {
-      grad[i]=(se->golomb_grad>>(i<<3))&0xFFUL;
-      max_lev[i]=(se->golomb_maxlevels>>(i<<3))&0xFFUL;
+        for(i=0UL;i<4UL;i++)
+        {
+            grad[i]=(se->golomb_grad>>(i<<3))&0xFFUL;
+            max_lev[i]=(se->golomb_maxlevels>>(i<<3))&0xFFUL;
+        }
+        encode_multilayer_golomb_word(se->value1,grad,max_lev,&bits,&len);
     }
-    encode_multilayer_golomb_word(se->value1,grad,max_lev,&bits,&len);
-  }
 
-  se->len=len;
-  se->bitpattern=bits;
+    se->len=len;
+    se->bitpattern=bits;
 
-  writeUVLC2buffer(se, bitstream);
+    writeUVLC2buffer(se, bitstream);
 
 #if TRACE
-  snprintf(se->tracestring, TRACESTRING_SIZE, "Coefficients");
-  if(se->type <= 1)
-    trace2out (se);
+    snprintf(se->tracestring, TRACESTRING_SIZE, "Coefficients");
+    if(se->type <= 1)
+        trace2out (se);
 #endif
 
-  return (se->len);
+    return (se->len);
 }

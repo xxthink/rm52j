@@ -47,7 +47,7 @@
 */
 
 
- 
+
 #ifndef _REBUF_H_
 #define _REBUF_H_
 

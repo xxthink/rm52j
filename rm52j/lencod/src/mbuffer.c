@@ -65,21 +65,21 @@
 
 void init_frame_buffers(InputParameters *inp, ImageParameters *img)
 {
-  int i;
+    int i;
 
-  //for (i=0;i<img->buf_cycle;i++)
-  for (i=0;i<2;i++)
-  {
-    get_mem2D(&(mref_frm[i]), (img->height+2*IMG_PAD_SIZE)*4, (img->width+2*IMG_PAD_SIZE)*4);
-  }
-
-  if(!(input->InterlaceCodingOption == FRAME_CODING)) //add by wuzhongmou 0610
-  {
-    //for (i=0;i<2*img->buf_cycle;i++)
-    for (i=0;i<4;i++)
+    //for (i=0;i<img->buf_cycle;i++)
+    for (i=0;i<2;i++)
     {
-      get_mem2D(&(mref_fld[i]), (img->height/2+2*IMG_PAD_SIZE)*4, (img->width+2*IMG_PAD_SIZE)*4); //X ZHENG,20080515
+        get_mem2D(&(mref_frm[i]), (img->height+2*IMG_PAD_SIZE)*4, (img->width+2*IMG_PAD_SIZE)*4);
     }
-  }
+
+    if(!(input->InterlaceCodingOption == FRAME_CODING)) //add by wuzhongmou 0610
+    {
+        //for (i=0;i<2*img->buf_cycle;i++)
+        for (i=0;i<4;i++)
+        {
+            get_mem2D(&(mref_fld[i]), (img->height/2+2*IMG_PAD_SIZE)*4, (img->width+2*IMG_PAD_SIZE)*4); //X ZHENG,20080515
+        }
+    }
 }
 

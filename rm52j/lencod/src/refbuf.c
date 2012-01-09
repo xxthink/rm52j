@@ -68,7 +68,7 @@ static pel_t line[16];
 
 void PutPel_14 (pel_t **Pic, int y, int x, pel_t val)
 {
-  Pic [IMG_PAD_SIZE*4+y][IMG_PAD_SIZE*4+x] = val;
+    Pic [IMG_PAD_SIZE*4+y][IMG_PAD_SIZE*4+x] = val;
 }
 
 /*
@@ -83,7 +83,7 @@ void PutPel_14 (pel_t **Pic, int y, int x, pel_t val)
 
 pel_t *FastLineX (int dummy, pel_t* Pic, int y, int x)
 {
-  return Pic + y*img->width + x;
+    return Pic + y*img->width + x;
 }
 
 /*
@@ -97,47 +97,47 @@ pel_t *FastLineX (int dummy, pel_t* Pic, int y, int x)
 */
 pel_t *UMVLineX (int size, pel_t* Pic, int y, int x)
 {
-  int i, maxx;
-  pel_t *Picy;
+    int i, maxx;
+    pel_t *Picy;
 
-  Picy = Pic + max(0,min(img->height-1,y)) * img->width;
+    Picy = Pic + max(0,min(img->height-1,y)) * img->width;
 
-  if (x < 0)                            // Left edge
-  {
-    maxx = min(0,x+size);
-
-    for (i = x; i < maxx; i++)
+    if (x < 0)                            // Left edge
     {
-      line[i-x] = Picy [0];             // Replicate left edge pixel
+        maxx = min(0,x+size);
+
+        for (i = x; i < maxx; i++)
+        {
+            line[i-x] = Picy [0];             // Replicate left edge pixel
+        }
+
+        maxx = x+size;
+
+        for (i = 0; i < maxx; i++)          // Copy non-edge pixels
+            line[i-x] = Picy [i];
+    }
+    else if (x > img->width-size)         // Right edge
+    {
+        maxx = img->width;
+
+        for (i = x; i < maxx; i++)
+        {
+            line[i-x] = Picy [i];             // Copy non-edge pixels
+        }
+
+        maxx = x+size;
+
+        for (i = max(img->width,x); i < maxx; i++)
+        {
+            line[i-x] = Picy [img->width-1];  // Replicate right edge pixel
+        }
+    }
+    else                                  // No edge
+    {
+        return Picy + x;
     }
 
-    maxx = x+size;
-
-    for (i = 0; i < maxx; i++)          // Copy non-edge pixels
-      line[i-x] = Picy [i];
-  }
-  else if (x > img->width-size)         // Right edge
-  {
-    maxx = img->width;
-
-    for (i = x; i < maxx; i++)
-    {
-      line[i-x] = Picy [i];             // Copy non-edge pixels
-    }
-
-    maxx = x+size;
-
-    for (i = max(img->width,x); i < maxx; i++)
-    {
-      line[i-x] = Picy [img->width-1];  // Replicate right edge pixel
-    }
-  }
-  else                                  // No edge
-  {
-    return Picy + x;
-  }
-
-  return line;
+    return line;
 }
 
 /*
@@ -152,41 +152,41 @@ pel_t *UMVLineX (int size, pel_t* Pic, int y, int x)
 
 pel_t UMVPelY_14 (pel_t **Pic, int y, int x)
 {
-  int width4  = ((img->width+2*IMG_PAD_SIZE-1)<<2);
-  int height4 = ((img->height+2*IMG_PAD_SIZE-1)<<2);
+    int width4  = ((img->width+2*IMG_PAD_SIZE-1)<<2);
+    int height4 = ((img->height+2*IMG_PAD_SIZE-1)<<2);
 
-  x = x + IMG_PAD_SIZE*4;
-  y = y + IMG_PAD_SIZE*4;
+    x = x + IMG_PAD_SIZE*4;
+    y = y + IMG_PAD_SIZE*4;
 
-  if (x < 0)
-  {
-    if (y < 0)
-      return Pic [y&3][x&3];
+    if (x < 0)
+    {
+        if (y < 0)
+            return Pic [y&3][x&3];
+        if (y > height4)
+            return Pic [height4+(y&3)][x&3];
+        return Pic [y][x&3];
+    }
+
+    if (x > width4)
+    {
+        if (y < 0)
+            return Pic [y&3][width4+(x&3)];
+        if (y > height4)
+            return Pic [height4+(y&3)][width4+(x&3)];
+        return Pic [y][width4+(x&3)];
+    }
+
+    if (y < 0)    // note: corner pixels were already processed
+        return Pic [y&3][x];
     if (y > height4)
-      return Pic [height4+(y&3)][x&3];
-    return Pic [y][x&3];
-  }
+        return Pic [height4+(y&3)][x];
 
-  if (x > width4)
-  {
-    if (y < 0)
-      return Pic [y&3][width4+(x&3)];
-    if (y > height4)
-      return Pic [height4+(y&3)][width4+(x&3)];
-    return Pic [y][width4+(x&3)];
-  }
-
-  if (y < 0)    // note: corner pixels were already processed
-    return Pic [y&3][x];
-  if (y > height4)
-    return Pic [height4+(y&3)][x];
-
-  return Pic [y][x];
+    return Pic [y][x];
 }
 
 pel_t FastPelY_14 (pel_t **Pic, int y, int x)
 {
-  return Pic [IMG_PAD_SIZE*4+y][IMG_PAD_SIZE*4+x];
+    return Pic [IMG_PAD_SIZE*4+y][IMG_PAD_SIZE*4+x];
 }
 
 

@@ -57,13 +57,13 @@
 
 #define SVA_STREAM_BUF_SIZE 1024 //must large than 3
 typedef struct {
-  FILE *f;
-  unsigned char  buf[SVA_STREAM_BUF_SIZE];  //流缓冲区
-  unsigned int  uPreBytes;//最近写入的3个字节，初始值是0xFFFFFFFF
-  int  iBytePosition;    //当前字节位置
-  int  iBitOffset;      //当前位偏移，0表示最高位
-  int  iNumOfStuffBits;  //已插入的填充位的个数，遇到开始码时置0
-  int iBitsCount;      //码流总位数
+    FILE *f;
+    unsigned char  buf[SVA_STREAM_BUF_SIZE];  //流缓冲区
+    unsigned int  uPreBytes;//最近写入的3个字节，初始值是0xFFFFFFFF
+    int  iBytePosition;    //当前字节位置
+    int  iBitOffset;      //当前位偏移，0表示最高位
+    int  iNumOfStuffBits;  //已插入的填充位的个数，遇到开始码时置0
+    int iBitsCount;      //码流总位数
 } OutputStream;
 int write_start_code(OutputStream *p,unsigned char code);
 extern OutputStream *pORABS;

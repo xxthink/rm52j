@@ -72,8 +72,8 @@ short MB_16[8][8], MB_16_temp[8][8];
 // typedefs
 typedef enum
 {
-  PIX,
-  LIN
+    PIX,
+    LIN
 } Direction;
 
 // functions

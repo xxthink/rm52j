@@ -63,18 +63,18 @@
 
 int get_mem2D(byte ***array2D, int rows, int columns)
 {
-  int i;
+    int i;
 
-  if((*array2D      = (byte**)calloc(rows,        sizeof(byte*))) == NULL)
-    no_mem_exit("get_mem2D: array2D");
-  
-  if(((*array2D)[0] = (byte* )calloc(columns*rows,sizeof(byte ))) == NULL)
-    no_mem_exit("get_mem2D: array2D");
+    if((*array2D      = (byte**)calloc(rows,        sizeof(byte*))) == NULL)
+        no_mem_exit("get_mem2D: array2D");
 
-  for(i=1;i<rows;i++)
-    (*array2D)[i] = (*array2D)[i-1] + columns ;
+    if(((*array2D)[0] = (byte* )calloc(columns*rows,sizeof(byte ))) == NULL)
+        no_mem_exit("get_mem2D: array2D");
 
-  return rows*columns;
+    for(i=1;i<rows;i++)
+        (*array2D)[i] = (*array2D)[i-1] + columns ;
+
+    return rows*columns;
 }
 
 /*
@@ -89,17 +89,17 @@ int get_mem2D(byte ***array2D, int rows, int columns)
 
 int get_mem2Dint(int ***array2D, int rows, int columns)
 {
-  int i;
+    int i;
 
-  if((*array2D      = (int**)calloc(rows,        sizeof(int*))) == NULL)
-    no_mem_exit("get_mem2Dint: array2D");
-  if(((*array2D)[0] = (int* )calloc(rows*columns,sizeof(int ))) == NULL)
-    no_mem_exit("get_mem2Dint: array2D");
+    if((*array2D      = (int**)calloc(rows,        sizeof(int*))) == NULL)
+        no_mem_exit("get_mem2Dint: array2D");
+    if(((*array2D)[0] = (int* )calloc(rows*columns,sizeof(int ))) == NULL)
+        no_mem_exit("get_mem2Dint: array2D");
 
-  for(i=1 ; i<rows ; i++)
-    (*array2D)[i] =  (*array2D)[i-1] + columns  ;
+    for(i=1 ; i<rows ; i++)
+        (*array2D)[i] =  (*array2D)[i-1] + columns  ;
 
-  return rows*columns*sizeof(int);
+    return rows*columns*sizeof(int);
 }
 /*
 *************************************************************************
@@ -113,15 +113,15 @@ int get_mem2Dint(int ***array2D, int rows, int columns)
 
 int get_mem3D(byte ****array3D, int frames, int rows, int columns)
 {
-  int  j;
+    int  j;
 
-  if(((*array3D) = (byte***)calloc(frames,sizeof(byte**))) == NULL)
-    no_mem_exit("get_mem3D: array3D");
+    if(((*array3D) = (byte***)calloc(frames,sizeof(byte**))) == NULL)
+        no_mem_exit("get_mem3D: array3D");
 
-  for(j=0;j<frames;j++)
-    get_mem2D( (*array3D)+j, rows, columns ) ;
+    for(j=0;j<frames;j++)
+        get_mem2D( (*array3D)+j, rows, columns ) ;
 
-  return frames*rows*columns;
+    return frames*rows*columns;
 }
 
 /*
@@ -136,15 +136,15 @@ int get_mem3D(byte ****array3D, int frames, int rows, int columns)
 
 int get_mem3Dint(int ****array3D, int frames, int rows, int columns)
 {
-  int  j;
+    int  j;
 
-  if(((*array3D) = (int***)calloc(frames,sizeof(int**))) == NULL)
-    no_mem_exit("get_mem3Dint: array3D");
+    if(((*array3D) = (int***)calloc(frames,sizeof(int**))) == NULL)
+        no_mem_exit("get_mem3Dint: array3D");
 
-  for(j=0;j<frames;j++)
-    get_mem2Dint( (*array3D)+j, rows, columns ) ;
+    for(j=0;j<frames;j++)
+        get_mem2Dint( (*array3D)+j, rows, columns ) ;
 
-  return frames*rows*columns*sizeof(int);
+    return frames*rows*columns*sizeof(int);
 }
 
 /*
@@ -159,15 +159,15 @@ int get_mem3Dint(int ****array3D, int frames, int rows, int columns)
 
 int get_mem4Dint(int *****array4D, int idx, int frames, int rows, int columns )
 {
-  int  j;
+    int  j;
 
-  if(((*array4D) = (int****)calloc(idx,sizeof(int**))) == NULL)
-    no_mem_exit("get_mem4Dint: array4D");
+    if(((*array4D) = (int****)calloc(idx,sizeof(int**))) == NULL)
+        no_mem_exit("get_mem4Dint: array4D");
 
-  for(j=0;j<idx;j++)
-    get_mem3Dint( (*array4D)+j, frames, rows, columns ) ;
+    for(j=0;j<idx;j++)
+        get_mem3Dint( (*array4D)+j, frames, rows, columns ) ;
 
-  return idx*frames*rows*columns*sizeof(int);
+    return idx*frames*rows*columns*sizeof(int);
 }
 
 /*
@@ -182,26 +182,26 @@ int get_mem4Dint(int *****array4D, int idx, int frames, int rows, int columns )
 
 void free_mem2D(byte **array2D)
 {
-  if (array2D)
-  {
-    if (array2D[0])
-      free (array2D[0]);
-    else
-      error ("free_mem2D: trying to free unused memory",100);
+    if (array2D)
+    {
+        if (array2D[0])
+            free (array2D[0]);
+        else
+            error ("free_mem2D: trying to free unused memory",100);
 
-    free (array2D);
-  } 
-  else
-  {
-    error ("free_mem2D: trying to free unused memory",100);
-  }
+        free (array2D);
+    } 
+    else
+    {
+        error ("free_mem2D: trying to free unused memory",100);
+    }
 
 }
 
 /*
 *************************************************************************
 * Function:free 2D memory array
-      which was alocated with get_mem2Dint()
+which was alocated with get_mem2Dint()
 * Input:
 * Output:
 * Return: 
@@ -212,26 +212,26 @@ void free_mem2D(byte **array2D)
 
 void free_mem2Dint(int **array2D)
 {
-  if (array2D)
-  {
-    if (array2D[0]) 
-      free (array2D[0]);
+    if (array2D)
+    {
+        if (array2D[0]) 
+            free (array2D[0]);
+        else
+            error ("free_mem2D: trying to free unused memory",100);
+
+        free (array2D);
+
+    }
     else
-      error ("free_mem2D: trying to free unused memory",100);
-
-    free (array2D);
-
-  }
-  else
-  {
-    error ("free_mem2D: trying to free unused memory",100);
-  }
+    {
+        error ("free_mem2D: trying to free unused memory",100);
+    }
 
 }
 /*
 *************************************************************************
 * Function:free 3D memory array
-      which was alocated with get_mem3D()
+which was alocated with get_mem3D()
 * Input:
 * Output:
 * Return: 
@@ -241,26 +241,26 @@ void free_mem2Dint(int **array2D)
 
 void free_mem3D(byte ***array3D, int frames)
 {
-  int i;
+    int i;
 
-  if (array3D)
-  {
-    for (i=0;i<frames;i++)
-    { 
-      free_mem2D(array3D[i]);
+    if (array3D)
+    {
+        for (i=0;i<frames;i++)
+        { 
+            free_mem2D(array3D[i]);
+        }
+        free (array3D);
+    } 
+    else
+    {
+        error ("free_mem3D: trying to free unused memory",100);
     }
-   free (array3D);
-  } 
-  else
-  {
-    error ("free_mem3D: trying to free unused memory",100);
-  }
 }
 
 /*
 *************************************************************************
 * Function:free 3D memory array 
-      which was alocated with get_mem3Dint()
+which was alocated with get_mem3Dint()
 * Input:
 * Output:
 * Return: 
@@ -270,26 +270,26 @@ void free_mem3D(byte ***array3D, int frames)
 
 void free_mem3Dint(int ***array3D, int frames)
 {
-  int i;
+    int i;
 
-  if (array3D)
-  {
-    for (i=0;i<frames;i++)
-    { 
-      free_mem2Dint(array3D[i]);
+    if (array3D)
+    {
+        for (i=0;i<frames;i++)
+        { 
+            free_mem2Dint(array3D[i]);
+        }
+        free (array3D);
+    } 
+    else
+    {
+        error ("free_mem3D: trying to free unused memory",100);
     }
-   free (array3D);
-  } 
-  else
-  {
-    error ("free_mem3D: trying to free unused memory",100);
-  }
 }
 
 /*
 *************************************************************************
 * Function:free 4D memory array 
-      which was alocated with get_mem4Dint()
+which was alocated with get_mem4Dint()
 * Input:
 * Output:
 * Return: 
@@ -299,25 +299,25 @@ void free_mem3Dint(int ***array3D, int frames)
 
 void free_mem4Dint(int ****array4D, int idx, int frames )
 {
-  int  j;
+    int  j;
 
-  if (array4D)
-  {
-    for(j=0;j<idx;j++)
-      free_mem3Dint( array4D[j], frames) ;
-    free (array4D);
-  }
-  else
-  {
-    error ("free_mem4D: trying to free unused memory",100);
-  }
+    if (array4D)
+    {
+        for(j=0;j<idx;j++)
+            free_mem3Dint( array4D[j], frames) ;
+        free (array4D);
+    }
+    else
+    {
+        error ("free_mem4D: trying to free unused memory",100);
+    }
 
 }
 /*
 *************************************************************************
 * Function:Exit program if memory allocation failed (using error())
 * Input: where
-      string indicating which memory allocation failed
+string indicating which memory allocation failed
 * Output:
 * Return: 
 * Attention:
@@ -326,7 +326,7 @@ void free_mem4Dint(int ****array4D, int idx, int frames )
 
 void no_mem_exit(char *where)
 {
-   snprintf(errortext, ET_SIZE, "Could not allocate memory: %s",where);
-   error (errortext, 100);
+    snprintf(errortext, ET_SIZE, "Could not allocate memory: %s",where);
+    error (errortext, 100);
 }
 

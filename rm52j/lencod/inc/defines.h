@@ -192,8 +192,8 @@
 
 
 #define MAX_SYMBOLS_PER_MB  1200  //!< Maximum number of different syntax elements for one MB
-                                  // CAVLC needs more symbols per MB
+// CAVLC needs more symbols per MB
 #define MAXPICTURETYPESEQUENCELEN 100   /*!< Maximum size of the string that defines the picture
-                                             types to be coded, e.g. "IBBPBBPBB" */
+types to be coded, e.g. "IBBPBBPBB" */
 #endif
 

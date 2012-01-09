@@ -42,8 +42,8 @@
 *************************************************************************************
 * File name: rdopt_coding_state.c
 * Function:  
-    Storing/restoring coding state for
-    Rate-Distortion optimized mode decision
+Storing/restoring coding state for
+Rate-Distortion optimized mode decision
 *
 *************************************************************************************
 */
@@ -67,15 +67,15 @@
 
 void delete_coding_state (CSptr cs)
 {
-  if (cs != NULL)
-  {
-    if (cs->bitstream != NULL)
-      free (cs->bitstream);
+    if (cs != NULL)
+    {
+        if (cs->bitstream != NULL)
+            free (cs->bitstream);
 
-    //=== coding state structure ===
-    free (cs);
-    cs=NULL;
-  }
+        //=== coding state structure ===
+        free (cs);
+        cs=NULL;
+    }
 
 }
 
@@ -91,18 +91,18 @@ void delete_coding_state (CSptr cs)
 
 CSptr create_coding_state ()
 {
-  CSptr cs;
+    CSptr cs;
 
-  //=== coding state structure ===
-  if ((cs = (CSptr) calloc (1, sizeof(CSobj))) == NULL)
-    no_mem_exit("init_coding_state: cs");
+    //=== coding state structure ===
+    if ((cs = (CSptr) calloc (1, sizeof(CSobj))) == NULL)
+        no_mem_exit("init_coding_state: cs");
 
-  //=== important variables of data partition array ===
+    //=== important variables of data partition array ===
 
-  if ((cs->bitstream = (Bitstream*) calloc (1, sizeof(Bitstream))) == NULL)
-    no_mem_exit("init_coding_state: cs->bitstream");
+    if ((cs->bitstream = (Bitstream*) calloc (1, sizeof(Bitstream))) == NULL)
+        no_mem_exit("init_coding_state: cs->bitstream");
 
-  return cs;
+    return cs;
 }
 
 /*
@@ -117,25 +117,25 @@ CSptr create_coding_state ()
 
 void store_coding_state (CSptr cs)
 {
-  Bitstream            *bs_src, *bs_dest;
-  Macroblock           *currMB  = &(img->mb_data [img->current_mb_nr]);
+    Bitstream            *bs_src, *bs_dest;
+    Macroblock           *currMB  = &(img->mb_data [img->current_mb_nr]);
 
-  if (!input->rdopt)
-    return;
+    if (!input->rdopt)
+        return;
 
-  //=== important variables of data partition array ===
-  bs_src  =  currBitStream;
-  bs_dest = cs->bitstream;
-  
-  memcpy (bs_dest, bs_src, sizeof(Bitstream));
+    //=== important variables of data partition array ===
+    bs_src  =  currBitStream;
+    bs_dest = cs->bitstream;
 
-  //=== syntax element number and bitcounters ===
-  cs->currSEnr = currMB->currSEnr;
-  memcpy (cs->bitcounter, currMB->bitcounter, MAX_BITCOUNTER_MB*sizeof(int));
+    memcpy (bs_dest, bs_src, sizeof(Bitstream));
 
-  //=== elements of current macroblock ===
-  memcpy (cs->mvd, currMB->mvd, 2*2*BLOCK_MULTIPLE*BLOCK_MULTIPLE*sizeof(int));
-  cs->cbp_bits = currMB->cbp_bits;
+    //=== syntax element number and bitcounters ===
+    cs->currSEnr = currMB->currSEnr;
+    memcpy (cs->bitcounter, currMB->bitcounter, MAX_BITCOUNTER_MB*sizeof(int));
+
+    //=== elements of current macroblock ===
+    memcpy (cs->mvd, currMB->mvd, 2*2*BLOCK_MULTIPLE*BLOCK_MULTIPLE*sizeof(int));
+    cs->cbp_bits = currMB->cbp_bits;
 
 }
 
@@ -151,24 +151,24 @@ void store_coding_state (CSptr cs)
 
 void reset_coding_state (CSptr cs)
 {
-  Bitstream            *bs_src, *bs_dest;
-  Macroblock           *currMB  = &(img->mb_data [img->current_mb_nr]);
+    Bitstream            *bs_src, *bs_dest;
+    Macroblock           *currMB  = &(img->mb_data [img->current_mb_nr]);
 
-  if (!input->rdopt)
-    return;
-  
-  bs_dest =   currBitStream;
-  bs_src  =   cs->bitstream;
-  
-  memcpy (bs_dest, bs_src, sizeof(Bitstream));
+    if (!input->rdopt)
+        return;
 
-  //=== syntax element number and bitcounters ===
-  currMB->currSEnr = cs->currSEnr;
-  memcpy (currMB->bitcounter, cs->bitcounter, MAX_BITCOUNTER_MB*sizeof(int));
+    bs_dest =   currBitStream;
+    bs_src  =   cs->bitstream;
 
-  //=== elements of current macroblock ===
-  memcpy (currMB->mvd, cs->mvd, 2*2*BLOCK_MULTIPLE*BLOCK_MULTIPLE*sizeof(int));
-  currMB->cbp_bits = cs->cbp_bits;
+    memcpy (bs_dest, bs_src, sizeof(Bitstream));
+
+    //=== syntax element number and bitcounters ===
+    currMB->currSEnr = cs->currSEnr;
+    memcpy (currMB->bitcounter, cs->bitcounter, MAX_BITCOUNTER_MB*sizeof(int));
+
+    //=== elements of current macroblock ===
+    memcpy (currMB->mvd, cs->mvd, 2*2*BLOCK_MULTIPLE*BLOCK_MULTIPLE*sizeof(int));
+    currMB->cbp_bits = cs->cbp_bits;
 
 }
 

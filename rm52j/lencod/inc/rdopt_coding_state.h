@@ -42,7 +42,7 @@
 *************************************************************************************
 * File name: rdopt_coding_state.h
 * Function:  Headerfile for storing/restoring coding state
-       (for rd-optimized mode decision)
+(for rd-optimized mode decision)
 *
 *************************************************************************************
 */
@@ -55,15 +55,15 @@
 
 typedef struct {
 
-  Bitstream            *bitstream;
+    Bitstream            *bitstream;
 
-  // syntax element number and bitcounters
-  int                   currSEnr;
-  int                   bitcounter[MAX_BITCOUNTER_MB];
+    // syntax element number and bitcounters
+    int                   currSEnr;
+    int                   bitcounter[MAX_BITCOUNTER_MB];
 
-  // elements of current macroblock
-  int                   mvd[2][BLOCK_MULTIPLE][BLOCK_MULTIPLE][2];
-  unsigned long         cbp_bits;
+    // elements of current macroblock
+    int                   mvd[2][BLOCK_MULTIPLE][BLOCK_MULTIPLE][2];
+    unsigned long         cbp_bits;
 } CSobj;
 
 typedef CSobj* CSptr;

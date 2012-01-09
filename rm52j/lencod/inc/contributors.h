@@ -47,65 +47,65 @@
 */
 
 /*
- * \par Copyright statements
-    \verbatim
-   AVS RM encoder/decoder
-   Copyright (C) 2003 by
-      Institute of Computing Technology Chinese Acacdemy of Sciences, China
-      Tsinghua University, China
-      Zhejiang University, China
-      sva, China        
-      Huawei-HiSilicon Technologies Co. Ltd. 
-      Grandview Semiconductor Co., Ltd.
-      Longjing Microelectronic Compnay, Ltd.
-  \endverbatim
-  
- \par Full Contact Information
-  \verbatim
+* \par Copyright statements
+\verbatim
+AVS RM encoder/decoder
+Copyright (C) 2003 by
+Institute of Computing Technology Chinese Acacdemy of Sciences, China
+Tsinghua University, China
+Zhejiang University, China
+sva, China        
+Huawei-HiSilicon Technologies Co. Ltd. 
+Grandview Semiconductor Co., Ltd.
+Longjing Microelectronic Compnay, Ltd.
+\endverbatim
 
-  Siwei Ma                 <swma@jdl.ac.cn>
-    Institute of Computing Technology
-    Chinese Acacdemy of Sciences 
-    Beijing, China
+\par Full Contact Information
+\verbatim
 
-  Qiang Wang    <qwang@jdl.ac.cn>
-    Institute of Computing Technology
-    Chinese Acacdemy of Sciences 
-    Beijing, China
+Siwei Ma                 <swma@jdl.ac.cn>
+Institute of Computing Technology
+Chinese Acacdemy of Sciences 
+Beijing, China
 
-  Jianwen Chen          <jianwen.chen@gmail.com>
-     Dept.of E&E, Tsinghua University
-     Beijing China, 100084
+Qiang Wang    <qwang@jdl.ac.cn>
+Institute of Computing Technology
+Chinese Acacdemy of Sciences 
+Beijing, China
 
-  Jian Lou                  <edward_lou@hotmail.com>
-     Dept. of Infomation Science & Electronic Engineering, Zhejiang University
-                                 Hangzhou China, 310027
-          
-  Guiping Li               <li_gp@sva.com.cn>
-    Central Research Academy of SVA GROUP
-    2F,757 Yisan Road, Shanghai, 200233, China
+Jianwen Chen          <jianwen.chen@gmail.com>
+Dept.of E&E, Tsinghua University
+Beijing China, 100084
 
-  Haiwu Zhao              <zhao_hw@sva.com.cn>  
-    Central Research Academy of SVA GROUP
-    2F,757 Yisan Road, Shanghai, 200233, China
+Jian Lou                  <edward_lou@hotmail.com>
+Dept. of Infomation Science & Electronic Engineering, Zhejiang University
+Hangzhou China, 310027
 
-  Xiaozhen Zheng        <xiaozhenzheng@hisilicon.com>
-    Advanced Research Dept.,
-    HiSilicon Technologies Co. Ltd. Huawei 
-    Bantian Longgang District, Shenzhen 518129, P.R. China
+Guiping Li               <li_gp@sva.com.cn>
+Central Research Academy of SVA GROUP
+2F,757 Yisan Road, Shanghai, 200233, China
 
-  Junhao Zheng          <jhzheng@grandviewsemi.com>
-     Yingchuang Building A, 601 
-    Shangdi, Haidian District 
-    Grandview Semiconductor Co., Ltd.
-    Beijing China, 100084
-                                
-  Zhiming Wang         <jimmy.wang@penstartechnology.com>
-    Building 4, 3/F, Digital Hub
-    Longjing Microelectronic Compnay, Ltd.
-    Zizhu Science Park
-    No. 555 Dong Chuan Road,
-    Minhang, Shanghai, P.R. China, 200241
-  \endverbatim
+Haiwu Zhao              <zhao_hw@sva.com.cn>  
+Central Research Academy of SVA GROUP
+2F,757 Yisan Road, Shanghai, 200233, China
+
+Xiaozhen Zheng        <xiaozhenzheng@hisilicon.com>
+Advanced Research Dept.,
+HiSilicon Technologies Co. Ltd. Huawei 
+Bantian Longgang District, Shenzhen 518129, P.R. China
+
+Junhao Zheng          <jhzheng@grandviewsemi.com>
+Yingchuang Building A, 601 
+Shangdi, Haidian District 
+Grandview Semiconductor Co., Ltd.
+Beijing China, 100084
+
+Zhiming Wang         <jimmy.wang@penstartechnology.com>
+Building 4, 3/F, Digital Hub
+Longjing Microelectronic Compnay, Ltd.
+Zizhu Science Park
+No. 555 Dong Chuan Road,
+Minhang, Shanghai, P.R. China, 200241
+\endverbatim
 */
 
