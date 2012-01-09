@@ -1,0 +1,50 @@
+RM52e Compared with RM52c
+--encoder/decoder:fixed bug for Chroma intra prediction
+--encoder/decoder:fixed bug for direct MV storage
+--encoder/decoder:fixed bug for intra prediction initialization
+--encoder/decoder:implemented the Weighted Prediction of AVS_M1208
+
+RM52c Compared with RM52b 
+--encoder: bug for RDO off: correct 8x8 cost calculation and comparison with other modes (SW)
+
+RM52b Compared with RM52a_rc  
+--encoder: NumberOfRowsInSlice=0 means one slice per frame (SW)
+--encoder/decoder: clear most garbage code for 4x4 block coding, interlace coding (SW)
+
+RM52a_rc Compared with RM52
+-- add H.264 rate control for AVS visual testing and comparison between AVS and H.264 (SW)
+
+
+RM52 Compared with RM51x
+-- weighting prediction sytanx change (SW)
+-- add H.264/AVC rate control scheme for visual test (SW)
+-- add image extending for visual test (for example, support 1920x1080 input, in fact, coded as 1920x1088) (SW)
+
+****** RM51a Compared with RM51 ******
+--fixed bug for frame_rate and chroma_format (XF)
+--fixed bug for mbtype
+--fixed bug for picture_reference_flag
+****** RM51 Compared with RM50f ******
+--fixed bug for random read
+--fixed slice
+--fixed block calculation
+--fixed table of CBP in VLC
+
+****** RM50f Compared with RM50e ******
+--fixed MVD base on AVS standard paper
+
+****** RM50e Compared with RM50d ******
+--fixed bugs for loopfilter off
+
+****** RM50d Compared with RM50c ******
+--fixed motion vector prediction
+
+****** RM50c Compared with RM50b ******
+--bug fix for RDOptimization off
+--slice  support
+
+****** RM50b Compared with RM50a ******
+--bug fix for 1/4 interpolation(using 1/2 interpolation results directly)
+
+****** RM50a Compared with RM50  ******
+--B frame loop filter support

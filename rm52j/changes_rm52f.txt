@@ -1,0 +1,420 @@
+from rm52d  to  rm52e
+from rm52e  to rm52f Beta
+1.Chroma的帧内预测
+
+macroblock.c中的int decode_one_macroblock(struct img_par *img,struct inp_par *inp)
+
+int mb_available_up_right = (img->mb_y == 0 || img->mb_x == img->width/MB_BLOCK_SIZE-1) ? 0 
+	  : (mb_data[mb_nr].slice_nr == mb_data[mb_nr-mb_width+1].slice_nr);
+
+					//for(x=0;x<bs_y;x++)
+					//	EPU[1+x+bs_x]=EPU[bs_x];
+					if ( mb_available_up_right )
+					{
+						for(x=0;x<bs_x;x++)
+							EPU[1+x+bs_x]=imgUV[uv][img->pix_c_y-1][img->pix_c_x+x+bs_x];
+					}
+					else
+					{
+						for(x=0;x<bs_x;x++)
+						EPU[1+x+bs_x]=EPU[bs_x];
+					}
+
+					//for(x=0;x<bs_y;x++)
+					//	EPV[1+x+bs_x]=EPV[bs_x];
+					if ( mb_available_up_right )
+					{
+						for(x=0;x<bs_x;x++)
+							EPV[1+x+bs_x]=imgUV[uv][img->pix_c_y-1][img->pix_c_x+x+bs_x];
+					}
+					else
+					{
+						for(x=0;x<bs_x;x++)
+						EPV[1+x+bs_x]=EPV[bs_x];
+					}
+
+
+2.直接模式的MV存储;
+
+
+image.c中的void store_field_MV(struct img_par *img)
+              //refFrArr_top[j][i] = refFrArr_bot[j][i] = refFrArr_frm[2*j][i]*2;
+              refFrArr_top[j][i] = refFrArr_frm[2*j][i]*2;
+              refFrArr_bot[j][i] = refFrArr_frm[2*j][i]*2 + 1;
+
+
+3. 帧内预测模式的初始值
+
+  解码端：
+（1）macroblock.c中init_macroblock()
+ for (i=0;i<2;i++)
+  {                           // reset vectors and pred. modes
+    for(j=0;j<2;j++)
+    {
+    //  img->ipredmode[img->block_x+i+1][img->block_y+j+1] = DC_PRED;
+		img->ipredmode[img->block_x+i+1][img->block_y+j+1] = -1;            //by oliver 0512
+    }
+  }
+
+(2)ldecod.c中init_globel_buffers()
+加上
+// Prediction mode is set to -1 outside the frame, indicating that no prediction can be made from this part
+	for (i=0; i < img->width/(B8_SIZE)+2; i++)
+	{
+		for (j=0; j < vertical_size/(B8_SIZE)+2; j++)
+		{
+				img->ipredmode[i][j]=-1;
+		}
+	}
+//by oliver 0512
+
+编码端：
+（1）rdopt.c中set_stored_macroblock_parameters ()中1378行
+
+//        ipredmodes    [i][j] = DC_PRED;
+        currMB->intra_pred_modes[k] = DC_PRED;
+
+		ipredmodes    [i][j] = -1;
+（2）rdopt.c中2109行
+		//		ipredmodes    [i][j] = DC_PRED;
+				ipredmodes    [i][j] = -1;
+（3）rdopt.c中2479行
+
+//		ipredmodes    [i][j] = DC_PRED;
+				ipredmodes    [i][j] = -1;
+（4）macroblock.c 的1576行
+/*
+  int     mb_available_up   = (img_cy/BLOCK_SIZE == 0 || (img_cy/BLOCK_SIZE >0 && img->ipredmode[1+b8_x][1+b8_y-1]<0)) ? 0 : 1;
+   int     mb_available_left = (img_cx/BLOCK_SIZE == 0 || (img_cx/BLOCK_SIZE >0 && img->ipredmode[1+b8_x - 1][1+b8_y]<0)) ? 0 : 1;
+   int     mb_available_up_left = (img_cx/BLOCK_SIZE == 0 || img_cy/BLOCK_SIZE == 0 || (img_cy/BLOCK_SIZE >0 && img->ipredmode[1+b8_x][1+b8_y-1]<0) || 
+ 	                             (img_cx/BLOCK_SIZE >0 && img->ipredmode[1+b8_x - 1][1+b8_y]<0)) ? 0 : 1;
+    int     mb_available_up_right= (img_cy > 0)&&(b8_x<(img->width_cr/BLOCK_SIZE-2))&&(img->ipredmode[1+b8_x+1][1+b8_y-1]>=0);
+   int	  mb_available_left_down=(img_cx > 0)&&(b8_y<(img->height_cr/BLOCK_SIZE-2))&&(img->ipredmode[1+b8_x - 1][1+b8_y+1]>=0);
+  //by oliver according to 1658*/
+ /***********************************/
+int	mb_available_up_right=((img_cy==0)||(b8_x>=(img->width_cr/BLOCK_SIZE-2))) ? 0 : (img->mb_data[img->current_mb_nr].slice_nr == img->mb_data[img->current_mb_nr-mb_width+1].slice_nr);
+int  mb_available_left_down=((img_cx==0)||(b8_y>=(img->height_cr/BLOCK_SIZE-2))) ? 0 : (img->mb_data[img->current_mb_nr].slice_nr == img->mb_data[img->current_mb_nr+mb_width-1].slice_nr);
+int mb_available_up   = (img_cy == 0) ? 0 : (img->mb_data[img->current_mb_nr].slice_nr == img->mb_data[img->current_mb_nr-mb_width].slice_nr);
+int mb_available_left = (img_cx == 0) ? 0 : (img->mb_data[img->current_mb_nr].slice_nr == img->mb_data[img->current_mb_nr-1].slice_nr);
+int mb_available_up_left = (img_cx/BLOCK_SIZE == 0 || img_cy/BLOCK_SIZE == 0 ) ? 0 : (img->mb_data[img->current_mb_nr].slice_nr == img->mb_data[img->current_mb_nr-mb_width-1].slice_nr);
+
+  //changed by oliver 0512
+
+
+以上注释的是原来的代码，紧跟变后面的是修改后的代码
+
+
+4. 加权预测部分的修改
+
+编码端：
+   A.在帧模式编码下添加了加权预测的参数估计函数estimate_weighting_factor_field
+   采用了自适应的加权算法，此算法不唯一,仅仅是编码端的问题。
+   在场编码模式下也加入了此参数估计算法
+   B. 支持编码色度加权预测
+     ChromaPrediction4x4() 色度加权部分应该加上对应的条件
+     ChromaResidualCoding()函数中应该赋值加权后的值
+   C. Direct宏块进行加权
+   D. I帧的底场应该进行加
+   E. 修改了img->allframeweight变量的意义使得跟文档一致。
+     修改为:img->allframeweight=0全帧宏块都加权；
+            img->allframeweight=1宏块根据宏块内的mb_weighting_flag判断是否进行加权。
+   F. 根据文档，如果使用加权预测，解码的加权预测参数按参考索引值由小到
+大依次分配给各参考图像（或场）。如果当前图像是B帧，对参考索引值相同的前
+后参考图像（或场），解码的加权预测参数先分配给前向参考图像（或场），再分
+配给后向参考图像（或场）。在代码里面这里是有问题的。
+	//cjw weighted prediction parameter map 20060112
+  	///frame coding/////////
+	P		img->lum_scale[0]  fw[0] 
+			img->lum_scale[1]  fw[1]			
+	B	    img->lum_scale[0]  fw[0]
+			img->lum_scale[1]  bw[0]
+	///field coding////////
+	P		img->lum_scale[0]  fw[0] ; img->lum_scale[1]  fw[1] 
+			img->lum_scale[2]  fw[2] ; img->lum_scale[3]  fw[3] 			
+	B		img->lum_scale[0]  fw[0] ; img->lum_scale[1]  bw[0] 
+			img->lum_scale[2]  fw[1] ; img->lum_scale[3]  bw[1] 
+   	//For B framecoding		 
+			fw	[fw_ref]
+			bw	[bw_ref+1]
+	//For B fieldcoding      
+			fw	[fw_ref*2]
+			bw	[bw_ref*2+1]	
+
+解码端：
+   A. 支持解码色度加权
+	具体实现在Decode_one_macroblock()函数
+   B. Direct宏块进行加权
+   C. I帧的底场应该进行加权
+   D. 修改了img->allframeweight变量的意义使得跟文档一致。
+      修改为:img->allframeweight=0全帧宏块都加权；
+             img->allframeweight=1宏块根据宏块内的mb_weighting_flag判断是否进行加权。 
+   F. But in spec p50, 如果使用加权预测，解码的加权预测参数按参考索引值由小到
+大依次分配给各参考图像（或场）。如果当前图像是B帧，对参考索引值相同的前
+后参考图像（或场），解码的加权预测参数先分配给前向参考图像（或场），再分
+配给后向参考图像（或场）。
+	//cjw weighted prediction parameter map 20060112
+  	///frame coding/////////
+	P		img->lum_scale[0]  fw[0] 
+			img->lum_scale[1]  fw[1]			
+	B	        img->lum_scale[0]  fw[0]
+			img->lum_scale[1]  bw[0]
+	///field coding////////
+	P		img->lum_scale[0]  fw[0] ; img->lum_scale[1]  fw[1] 
+			img->lum_scale[2]  fw[2] ; img->lum_scale[3]  fw[3] 			
+	B		img->lum_scale[0]  fw[0] ; img->lum_scale[1]  bw[0] 
+			img->lum_scale[2]  fw[1] ; img->lum_scale[3]  bw[1] 
+   	//For B framecoding		 
+			fw	[fw_ref]
+			bw	[bw_ref+1]
+	//For B fieldcoding      
+			fw	[fw_ref*2]
+			bw	[bw_ref*2+1]
+	refframe=(img->picture_structure)?(refframe):(2*refframe);  //cjw 20060112 fw 
+	refframe=(img->picture_structure)?(refframe+1):(2*refframe+1);  //cjw 20060112 bw
+  	fw_refframe=(img->picture_structure)?(fw_refframe):(2*fw_refframe);  //cjw 20060112 fw 
+	bw_refframe=(img->picture_structure)?(bw_refframe+1):(2*bw_refframe+1);  //cjw 20060112 bw
+
+文档中修改的相关内容：
+   A. 对weighting_prediction进行了初值操作，如果没有这个标志位，则初值为0。即对skip宏块不进行加权。
+   B. Direct宏块进行加权
+   C. I帧的底场应该进行加权
+
+在编码和解码端代码里面搜索cjw 就可以看到所有跟加权预测相关的修改。
+
+
+5.关于帧内预测周围参考块可得性的修改
+
+编码端：
+
+函数intrapred_luma_AVS()中1225行
+
+block_available_up=( b8_y-1>=0 && mb_up_available);
+  
+  //check block up right
+  block_available_up_right=( b8_x+1<(img->width>>3) && b8_y-1>=0 && mb_up_right_available);
+  
+  //check block left
+  block_available_left=( b8_x - 1 >=0 && mb_left_available);
+  
+  //check block left down
+  block_available_left_down=( b8_x - 1>=0 && b8_y + 1 < (img->height>>3) && mb_left_down_available);
+
+ if((img->mb_y==0)||(img->mb_x==img->width/MB_BLOCK_SIZE-1))
+  mb_up_right_available =1;
+  else if((img_y-img->pix_y)>0)
+  mb_up_right_available =(img_x-img->pix_x)>0? (currMB->slice_nr == img->mb_data[mb_nr+1].slice_nr):1;  /*oliver*/
+   else
+  mb_up_right_available =((img_x-img->pix_x)>0? (currMB->slice_nr == img->mb_data[mb_nr-MBRowSize+1].slice_nr):(currMB->slice_nr== img->mb_data[mb_nr-MBRowSize].slice_nr));  /*oliver*/
+
+  
+  if((img->mb_x==0)||(img->mb_y==img->height/MB_BLOCK_SIZE-1))
+  mb_left_down_available = 1;
+  else if(img_x-img->pix_x>0)
+  mb_left_down_available =(img_y-img->pix_y)>0? (currMB->slice_nr == img->mb_data[mb_nr+MBRowSize].slice_nr):1;  /*oliver*/
+  else
+  mb_left_down_available =((img_y-img->pix_y)>0? (currMB->slice_nr == img->mb_data[mb_nr+MBRowSize-1].slice_nr):(currMB->slice_nr == img->mb_data[mb_nr-1].slice_nr));  /*oliver*/
+
+去掉了ipredmode[][]>=0的限制
+
+
+解码端：
+
+intrapred（）函数982行：
+
+ block_available_up=( b8_y-1>=0 && mb_up_available);
+  
+  //check block up right
+  block_available_up_right=( b8_x+1<(img->width>>3) && b8_y-1>=0 &&  mb_up_right_available);
+  
+  //check block left
+  block_available_left=( b8_x - 1 >=0 &&  mb_left_available);
+  
+  //check block left down
+  block_available_left_down=( b8_x - 1>=0 && b8_y + 1 < (img->height>>3) &&  mb_left_down_available);
+  
+ if((img->mb_y==0)||(img->mb_x==img->width/MB_BLOCK_SIZE-1))
+  mb_up_right_available =1;
+  else if((img_y-img->pix_y)>0)
+  mb_up_right_available =(img_x-img->pix_x)>0? (currMB->slice_nr == mb_data[mb_nr+1].slice_nr):1;  /*oliver*/
+  else
+  mb_up_right_available =((img_x-img->pix_x)>0? (currMB->slice_nr == mb_data[mb_nr-MBRowSize+1].slice_nr):(currMB->slice_nr== mb_data[mb_nr-MBRowSize].slice_nr));  /*oliver*/
+  
+  if((img->mb_x==0)||(img->mb_y==img->height/MB_BLOCK_SIZE-1))
+  mb_left_down_available = 1;
+ else if(img_x-img->pix_x>0)
+  mb_left_down_available =(img_y-img->pix_y)>0? (currMB->slice_nr == mb_data[mb_nr+MBRowSize].slice_nr):1;  /*oliver*/
+ else
+  mb_left_down_available =((img_y-img->pix_y)>0? (currMB->slice_nr == mb_data[mb_nr+MBRowSize-1].slice_nr):(currMB->slice_nr == mb_data[mb_nr-1].slice_nr));  /*oliver*/
+  //0512
+
+	
+6. 关于deblock量化部分的修改 N1204
+编码解码的 DeblockMB函数里面
+//EdgeLoop( SrcU +  (edge<<2) * ((dir)? img->width_cr:1 ), Strength, QP_SCALE_CR[QP], dir, img->width_cr, 1 ) ; 
+//EdgeLoop( SrcV +  (edge<<2) * ((dir)? img->width_cr:1 ), Strength, QP_SCALE_CR[QP], dir, img->width_cr, 1 ) ;
+			
+//modified by cjw 20060310
+QPchroma=(QP_SCALE_CR[MbP->qp]+QP_SCALE_CR[MbQ->qp]+1)/2;
+EdgeLoop( SrcU +  (edge<<2) * ((dir)? img->width_cr:1 ), Strength, QPchroma, dir, img->width_cr, 1 ) ; 
+EdgeLoop( SrcV +  (edge<<2) * ((dir)? img->width_cr:1 ), Strength, QPchroma, dir, img->width_cr, 1 ) ;
+
+7. 关于第二个GOP I后的B帧无法解码的错误
+ 编码端main()函数里面对应代码位置添加一句话，恢复img->buf_cycle
+if ((input->successive_Bframe != 0) && (IMG_NUMBER > 0)) // B-frame(s) to encode
+    {
+      img->type = B_IMG;            // set image type to B-frame
+      picture_coding_type = 1;
+      img->types = INTER_IMG;
+      
+	  //cjw for weighted prediction
+	  img->buf_cycle = tmp_buf_cycle;
+
+      img->frame_num++;                 //increment frame_num once for B-frames
+      img->frame_num %= (1 << (LOG2_MAX_FRAME_NUM_MINUS4 + 4));
+   
+      for(img->b_frame_to_code=1; img->b_frame_to_code<=input->successive_Bframe; img->b_frame_to_code++)
+      {
+		    picture_distance = (IMG_NUMBER - 1) * (input->jumpd + 1) + img->b_frame_to_code;
+        encode_one_frame();  // encode one B-frame
+      }
+    }
+
+###########################################################################################
+###########################200603###########################################################
+###########################################################################################
+8. AVS3月会议后，参考代码rm52e中需要解决的问题
+1).20060321 在函数start_slice（）里，slice结束时，即使bytealign也要加10000000码。 OK
+2).20060321在参考软件编码器中,存在MV取值可能越界的问题,不限制修改方法, 提供一个参考修改方法;  OK  
+    
+    A。修改编码  RD_Cost_for_Macroblocks() 
+    开始： mv_out_of_range ＝0；
+ 
+     最后 更新mincost前添加
+ 	if ( mv_out_of_range == 1 )
+	{
+		return 0;
+	}
+   B。 修改编码OneComponentLumaPrediction4x4
+	添加
+    //////cjw 20060321  for MV limit 
+  //MAX_V_SEARCH_RANGE	[-256, +255.75]
+  //MAX_V_SEARCH_RANGE_FIELD	[-128, +127.75]
+  //MAX_H_SEARCH_RANGE  [-2048, +2047.75]
+  MaxMVHRange= MAX_H_SEARCH_RANGE;
+  MaxMVVRange= MAX_V_SEARCH_RANGE;
+  	if(!img->picture_structure) //field coding
+	{
+		MaxMVVRange=MAX_V_SEARCH_RANGE_FIELD;
+	}
+
+	if ( mv[0] < -MaxMVHRange || mv[0] > MaxMVHRange-1 
+		|| mv[1] < -MaxMVVRange || mv[1] > MaxMVVRange-1 )
+	{
+		mv_out_of_range = 1;
+	}
+   //////////end cjw //////////////////////////////////////
+3). 20060321 加权预测中添加Marker bit 防止伪起始码  OK
+      编码解码端的SliceHeader()函数中添加一行程序。
+     u_1 ("insert bit", 1, bitstream); //cjw 20060321
+4). 20060321在设置一个参考帧的时候解码错误
+     此错误依然是由于加权预测的参数导致的。在目前文档里面，无论采用几个参考帧，在解码端应该
+从sliceheader中获取最大参考帧数目组参数， 对每个slice都会去解析最大的参考帧数目的加权参数，
+但是在编码端，我们仅仅是根据输入的要参考的帧的数目input->reference_num来写入参数的。
+这样就会出错。当编码器只是参考1帧图像的时候，解码器仍然按2帧去解析参数，就会出错。
+         因此在编码器端，我们修改了sliceheader里面的代码，使得无论你实际使用多少参考帧。码流里面总是
+写着最大参考帧的加权参数，这样虽然有些浪费，但是是目前不修改文档的最好方法了。此外解码端也采用
+文档一致的规则进行解析，即解析最大参考帧数目的加权参数。修改代码编码解码都如下：
+在sliceheader函数中。
+	 //cjw 20060321  Spec 9.4.3
+	  if(second_IField && !img->picture_structure)  //I bottom
+		weight_para_num=1;
+	  else if(img->type==INTER_IMG && img->picture_structure)  //P frame coding
+		weight_para_num=2;
+	  else if(img->type==INTER_IMG && !img->picture_structure) //P field coding
+		weight_para_num=4;
+	  else if(img->type==B_IMG && img->picture_structure)  //B frame
+		weight_para_num=2;
+	  else if(img->type==B_IMG && !img->picture_structure) //B field
+		weight_para_num=4;
+
+	 for(i=0;i<weight_para_num;i++) //cjw20050321
+		{
+				解析加权参数
+		}
+
+   此外需要修改 编码端 main函数里面的操作，修改如下： 当是I帧的时候应该为1，不能是/2，
+   因为如果输入为1个参考帧的话，/2后buf_cycle为0，不为期望值1。
+    if(image_type == INTRA_IMG)    // jlzheng 7.21
+      //img->buf_cycle /= 2;				
+        img->buf_cycle  = 1;       // cjw 20060321 for 1 reference is allowed in field coding (I bottom only 1 reference is used)
+
+5）20060323修改了对应的Makefile中的相关内容
+   A.修改了编码器端 fast_me.c中 使得linux下makefile不会有问题
+#ifdef WIN32
+_inline int PartCalMad(pel_t *ref_pic,pel_t** orig_pic,pel_t *(*get_ref_line)(int, pel_t*, int, int), int blocksize_y,int blocksize_x, int blocksize_x4,int mcost,int min_mcost,int cand_x,int cand_y)
+#else
+inline int PartCalMad(pel_t *ref_pic,pel_t** orig_pic,pel_t *(*get_ref_line)(int, pel_t*, int, int), int blocksize_y,int blocksize_x, int blocksize_x4,int mcost,int min_mcost,int cand_x,int cand_y)
+#endif
+  B.修改了编码解码中Makefile中对obj文件夹的建立    
+  C. NextStartCode(InputStream *p) 中添加对m变量的赋值 m=0;
+
+6)20060326 修改了编码端 writeMBweightflag()函数 使得编码解码trace符合文档 语法规定形式
+    具体修改参考代码中的内容
+7)20060327在参考软件的直接模式(B_ DIRECT)中, 编码器不做加权预测; Ok
+此问题由于文档历史原因修改非常麻烦。
+原因如下：B_Direct宏块，如果当cbp为0的时候则作为skip宏块被跳过。
+如果一个direct宏块，在加权后，得到的cbp为0，此宏块将被跳过，则其加权标志位也不会被写入码流。
+在文档中对跳过宏块是不需要加权的，而编码端是加权后为跳过宏块的，因此出现错误。
+修改方法是，在编码端的rdo循环里面，如果判断是direct模式，则当加权预测打开后，还需要判断一下cbp是否
+为0，如果是0则不能选择direct模式。
+
+编码端的修改:
+        在RDCost_for_macroblocks函数里面添加一部分内容
+ ////////////////////////****cjw  qhg add 20060327*************////////////
+   添加的内容
+if(img->LumVarFlag&&img->allframeweight&&img->mbweightflag&&(IS_DIRECT(currMB))&&(currMB->cbp==0)) //qhg add
+{
+}
+ ////////////////////////****end cjw  qhg *********************////////////
+ 
+解码端修改: 
+         按照文档一致修改。decode_one_macroblock()中所有加权的地方的判断修改为
+if(((img->slice_weighting_flag == 1) && (img->allframeweight == 1)&&(img->mbweightflag == 1)) //cjw20060321
+	||((img->slice_weighting_flag == 1) && (img->allframeweight == 0)))
+  		 {加权}
+
+8).20060327 对于stuffing, de-emulation实现方式的修改
+      在每个slice编码结束进行de-emulation ,在slice级进行了一次stuffing
+    编码端：
+	A.添加了void Demulate(Bitstream *currStream, int current_slice_bytepos)函数。
+	B.在start_slice()和terminate_picture()函数里面调用，如果是slice结束则进行一次deemuliation。
+	将stuffing放在slice级进行。
+	C.将write_1_bit(OutputStream *p,int b)中将deemulation部分的代码删除。因为我们目前的deemulation是在slice级做的
+	   这里将不再需要了。
+		// Because de-emulation is used in startslice, it is unecessary to do it here
+	
+
+9). 20060327修改了sliceheader的语法使得与文档一致
+都是在sliceheader（）函数中运行
+编码端：移动了slice vertical position的位置
+  	len+=u_v(8, "slice vertical position",slice_nr,bitstream);  //cjw 20060327
+解码端：将slice_vertical_position从32位起始码中导出
+	//currStream->read_len = currStream->frame_bitoffset = (startcodepos+1)*8; //delete by cjw 200600327
+	currStream->read_len = currStream->frame_bitoffset = (startcodepos)*8; //cjw 20060327 read 24bit starcode prefix
+	slice_vertical_position              = u_v  (8, "slice vertical position"); //cjw 20060327 read 8 bit
+
+10）20060327 对加权预测中得到的参数进行范围的限制
+在编码端CalculatePar(int refnum)函数中
+//cjw 20060327 for shift range limit  7.2.4
+	img->lum_shift[refnum]= Clip3(-128,127,img->lum_shift[refnum]);
+
+11) 20060327修改了代码中两个变量的名称使得跟文档描述一致，原来的描述很容易让人混淆
+   修改的为加权预测中的 宏块加权预测标志  mb_weighting_flag 和加权预测  weighting_prediction标志。
+  A.将sliceheader中的allframeweight 转换为mb_weighting_flag, 
+  B.将宏块中的加权标志位mbweightflag转换为weighting_prediction。
+  
+12）20060327 在16x16模式被disable后，对skip宏块的支持。
+   原来的代码中，skip采用的是16x16宏块模式的运动矢量预测等值，如果在config文件中将16x16宏块模式取消，则
+编码解码会出现不匹配。修改的方法是对skip单独做运动矢量预测
+  具体修改参考 编码端void FindSkipModeMotionVector ()函数。
+      

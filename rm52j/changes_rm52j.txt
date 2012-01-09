@@ -1,0 +1,46 @@
+rm52j版本修改处：
+
+1. picture_distance的计算
+   编码端：将picture_distance的计算移至init_frame()中；
+   解码端：int calculate_distance(int blkref, int fw_bw ) in macroblock.c
+           将用于计算DistanceIndex 和 BlockDistance的img->tr替换为picture_distance。
+
+           row 531&532  at void calc_picture_distance(struct img_par *img) in header.c
+
+   以上修改请搜索'20070327' '2007.05.01'
+
+
+2. 解码信息由按解码顺序输出改为按显示顺序输出以解决Frameskip值在大于B帧数量时，编解码在显示输出上不匹配的问题。
+   具体修改处请见解码端注释 HiSilicon, 2007.03.21
+
+
+3. slice_vertical_position的修改
+   按照提案AVS_M1992及AVS 20次会议的输出决议进行修改
+   具体修改处请见编解码端注释 //Xiaozhen Zheng, HiSilicon, 20070327
+
+
+4. video_edit_code extension的删除
+
+
+5. IDCT越界的修改
+   采用M2009的方案进行修改，在编解码端的inv_transform_B8中对水平反变换和垂直反变换后的数据都做一个clip操作，具体修改处请见//070305 dingdandan
+   并且修改了IDCT的接口为short，修改IDCT实现中的中间变量，采用32位的int，而不是short
+  
+
+6. 配置文件profile_id及level_id的输入功能
+   在encoder.cfg文件中添加了两个新参数ProfileID和LevelID，用户可根据应用场合输入编码的profile和level。并在编码端添加了ProfileCheck()和LevelCheck()两个函数，用于检查用户输入的profile及level与配置文件中的编码参数是否匹配。
+   以上改动处见LiShao, Tsinghua, 20070327
+
+7. 随机访问
+   按M2027的方案进行修改，包括：video_edit_code插入位置的修改，新标志位no_forward_reference_flag的添加及多sequence header的插入，并保证picture_distance
+在序列头后的第一个编码帧自动清零。
+   在encoder.cfg文件中添加了一个新参数，用于标识码流中sequence header出现的频率。
+   改变了encoder.cfg文件中VECPeriod的定义，VECPeriod=0代表码流中不存在video_edit_code，VECPeriod>0代表码流中video_edit_code出现的频率。
+   以上修改处见注释cjw, 20070327
+
+8. 在编码和解码端修改了对应的calculate_distance函数
+    与文档9.4.4中BlockDistance计算方法一致，原来此部分没有将最后的值加上512的和模512的操作。
+    以上修改处见注释查询2007.05.01 2007.05.05
+  
+9. 添加了License部分，以及相关的contributors.h文件。
+

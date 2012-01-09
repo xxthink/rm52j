@@ -1,0 +1,215 @@
+一. VEC问题： based on AVS-M1956 by Grandview Semi.
+Encoder:
+1. picture_header() in image.c
+   * row 159, 183
+      write the VEC_EXT byte to bitstream
+   * row 170, 194
+      force to write the value 3 to bitstream 
+      because of the first I picture
+
+2. PartitionMotionSearch()     in mv-search.c
+   PartitionMotionSearch_bid() in mv-search.c
+   * row 1982, 2087
+      force the cost to maximum when forward precition
+
+3. encode_one_macroblock() in rdopt.c
+   * row 1903
+      skip the Direct_B8x8  prediction
+   * row 2403
+      skip the Direct_16x16 prediction
+   * row 2406~2409, 2461~2462
+      skip the situation wehn vec_ext = 3
+
+4. image.c
+   misc modification only for displaying more information
+   about VEC status.
+
+Decoder:
+1. Header() in image.c
+   * row 720~728
+      if finds the vec_flag and vec_ext is 1,
+         the current B picture should be discarded,
+         and find the next start code,
+      otherwise,
+         begin decoding for current picture.
+   * row 734~740
+      discard the middle slice_header start codes.
+
+2. decode_one_frame() in image.c
+   * row 235~256
+   pls focus on 'vec_pr_flag'.
+   misc modification only for displaying more information
+   about VEC status.
+   
+ 二. IDCT问题 浙大修改
+ **Encoder:
+inv_transform_B8() in block.c
+Line:357~364 changed as
+	 curr_blk[yy][0]=((__int16)((__int16)(b[0]+b[4])+4))>>3;
+	 curr_blk[yy][1]=((__int16)((__int16)(b[1]+b[5])+4))>>3;
+	 curr_blk[yy][2]=((__int16)((__int16)(b[2]+b[6])+4))>>3;
+	 curr_blk[yy][3]=((__int16)((__int16)(b[3]+b[7])+4))>>3;
+	 curr_blk[yy][7]=((__int16)((__int16)(b[0]-b[4])+4))>>3;
+	 curr_blk[yy][6]=((__int16)((__int16)(b[1]-b[5])+4))>>3;
+	 curr_blk[yy][5]=((__int16)((__int16)(b[2]-b[6])+4))>>3;
+	 curr_blk[yy][4]=((__int16)((__int16)(b[3]-b[7])+4))>>3;
+
+Line:421~428 changed as
+	 curr_blk[0][xx]=((__int16)((__int16)(b[0]+b[4])+64))>>7;
+	 curr_blk[1][xx]=((__int16)((__int16)(b[1]+b[5])+64))>>7;
+	 curr_blk[2][xx]=((__int16)((__int16)(b[2]+b[6])+64))>>7;
+	 curr_blk[3][xx]=((__int16)((__int16)(b[3]+b[7])+64))>>7;
+	 curr_blk[7][xx]=((__int16)((__int16)(b[0]-b[4])+64))>>7;
+	 curr_blk[6][xx]=((__int16)((__int16)(b[1]-b[5])+64))>>7;
+	 curr_blk[5][xx]=((__int16)((__int16)(b[2]-b[6])+64))>>7;
+	 curr_blk[4][xx]=((__int16)((__int16)(b[3]-b[7])+64))>>7;
+	 
+**Decoder:
+inv_transform_B8() in block.c
+Line:150~157 changed as
+	 curr_blk[yy][0]=((__int16)((__int16)(b[0]+b[4])+4))>>3;
+	 curr_blk[yy][1]=((__int16)((__int16)(b[1]+b[5])+4))>>3;
+	 curr_blk[yy][2]=((__int16)((__int16)(b[2]+b[6])+4))>>3;
+	 curr_blk[yy][3]=((__int16)((__int16)(b[3]+b[7])+4))>>3;
+	 curr_blk[yy][7]=((__int16)((__int16)(b[0]-b[4])+4))>>3;
+	 curr_blk[yy][6]=((__int16)((__int16)(b[1]-b[5])+4))>>3;
+	 curr_blk[yy][5]=((__int16)((__int16)(b[2]-b[6])+4))>>3;
+	 curr_blk[yy][4]=((__int16)((__int16)(b[3]-b[7])+4))>>3;
+
+Line:224~231 changed as
+	 curr_blk[0][xx]=((__int16)((__int16)(b[0]+b[4])+64))>>7;
+	 curr_blk[1][xx]=((__int16)((__int16)(b[1]+b[5])+64))>>7;
+	 curr_blk[2][xx]=((__int16)((__int16)(b[2]+b[6])+64))>>7;
+	 curr_blk[3][xx]=((__int16)((__int16)(b[3]+b[7])+64))>>7;
+	 curr_blk[7][xx]=((__int16)((__int16)(b[0]-b[4])+64))>>7;
+	 curr_blk[6][xx]=((__int16)((__int16)(b[1]-b[5])+64))>>7;
+	 curr_blk[5][xx]=((__int16)((__int16)(b[2]-b[6])+64))>>7;
+	 curr_blk[4][xx]=((__int16)((__int16)(b[3]-b[7])+64))>>7;
+	 
+	 三. MAX_SYMBOLS_PER_MB 问题  清华大学修改
+based on output of AVS zhuhai about the AVS-M1942
+
+Encoder:
+
+1. global.h
+ 
+  * row 532
+   change the difinition of MB_SyntaxElements
+
+2. lencod.c
+
+  * row 314
+   allocate the memory for MB_SyntaxElements
+   the size is (img->height*img->width/256)+1200
+
+3. lencod.c
+
+  *row 392
+  free the memory 
+
+四. reserved bit 问题  法国电信修改
+(based on output of AVS zhuhai about the AVS-M1936 and mail from gaoyanjun
+Encoder:
+
+1. bitstream.c
+  *line 706-708
+   add WriteCopyrightExtension() and WriteCameraParametersExtension() to function         start_sequence()
+
+2. bitstream.c 
+   *line 504-591
+   revise function WriteCameraParametersExtension() according to newest AVS1-P2            specification AVS_N1349 page 19-20
+
+3. bitstream.c
+  *line 443-491
+   revise function WriteCopyrightExtension() according to newest AVS1-P2 pecification       AVS_N1349 page 19
+
+
+Decoder:
+
+1. header.c
+   *line 433-481
+   revise function cameraparameters_extension() according to newest AVS1-P2 pecification      AVS_N1349 page 19-20
+
+2. header.c 
+   *line 334-366
+   implement picture_display_extension() according to newest AVS1-P2 specification          AVS_N1349 page 22 and page 37
+
+2. header.c
+   *line 286-287
+   add picture_display_extension() to function extension_data(char *buf,int startcodepos,     int length) according to newest AVS1-P2 specification AVS_N1349 page 17-18
+
+五.M1929修改软件部分   清华大学修改
+
+Encoder:
+1.header.c
+  * line 320
+  * line 319
+decoder:
+1.header.c
+  * line 578
+2.macroblock.c
+  * line 520 ,521,802,817
+  
+六 一致性测试 ：9.5	参考代码中视频码流的第一个序列头部分掉了0x80问题  清华大学修改
+Encoder:
+1.bitstream.c
+ * line 56 265 183
+
+Decoder:
+   image.c   
+    line 116
+   header.c
+   line 73
+
+七 一致性测试：9.10 参考代码中运动矢量还是会超出边界16个像素之外问题 清华大学修改
+encoder:
+1.fastme.c
+*line 802~821
+* line 1748~1765
+2.mv-search.c
+ * line 1422~1441
+  line 1635~1656
+  
+八. 一致性测试：9.12	bbv_buffer_size问题 清华大学修改
+encoder
+1.bitstream.c
+* line 250
+
+
+九. 一致性测试：9.6     picture_distance问题  清华大学修改
+encoder
+1. int calculate_distance(int blkref, int fw_bw )  mv-serach.c  Ln93-214  见注释// Tsinghua 200701
+2. image()  Ln788  见注释// Tsinghua 200701
+3. main()   Ln152,154, 225
+
+十.mb_delta_qp的问题 参考代码原来的处理为正确的(参考前面一个MB的qp值),具体位置
+decoder        macroblock.c  line 1212 
+
+十一. 20070204后解决的问题
+1. deocoder  bitstream.c 删除寻找起始码的条件 line 291
+//	if(img->current_mb_nr == 0) //commented by cjw AVS 20070204
+//	{
+//		if(StartCodePosition>6 && StartCodePosition<20)
+//		   return 1;
+//		else
+//		{
+//		   currStream->frame_bitoffset = currentbitoffset;
+//		   return 0;
+//		}
+//	}
+
+2. encoder bitstream.c 注释掉679行，在一幅图像结尾后不应该再次对齐
+//   write_align_stuff(pORABS);       //commented by cjw AVS 20070204
+
+3. encoder lencod.c line148 修改picture_distance的计算方法1
+    if(img->number==0) //modified by cjw AVS 20070204  S1pec. 7.2.3.1
+      picture_distance = 0;
+    else
+   {
+      if(img->type==B_IMG)
+          picture_distance = ((IMG_NUMBER - 1) * (input->jumpd + 1) + img->b_interval * img->b_frame_to_code)%256;	// Tsinghua 200701
+      else
+          picture_distance = (IMG_NUMBER * (input->jumpd + 1))%256;	// Tsinghua 200701
+    }
+
+

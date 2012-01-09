@@ -1,0 +1,10 @@
+1:  Sequence Header中 aspect_ratio
+2:  Sequence Header中bit_rate
+3:  Advanced_pred_mode_disable：按场编码的码流问题
+4:   解决了运动矢量超出了边界16个像素以上的问题
+5:   解决了不能正确编码不能被16整除的图像，图像高度不能被32整除时，不能编码场码流的问题
+6:   解决了加权预测的无符号和有符号整数都按无符号来解析的问题
+7：  关于slice 结束判断，经王建鹏确认原参考软件没问题，不用修改。
+8：   在I帧头picture_distance前插入一个marker_bit 
+9.	  增加first_field和top_field 作为输入参数，规范了input->progressive_frame,img->progressive_frame用法，删掉了input->progressive_sequence.
+10：  VEC问题得等下次会议决议后再加入。

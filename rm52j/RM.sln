@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ldecod", "ldecod.vcproj", "{C4F98DB8-96AD-40CE-B35E-229B55A5AA8A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lencod", "lencod.vcproj", "{4EFCDB92-273F-4294-86D7-407CE59110B5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C4F98DB8-96AD-40CE-B35E-229B55A5AA8A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C4F98DB8-96AD-40CE-B35E-229B55A5AA8A}.Debug|Win32.Build.0 = Debug|Win32
+		{C4F98DB8-96AD-40CE-B35E-229B55A5AA8A}.Release|Win32.ActiveCfg = Release|Win32
+		{C4F98DB8-96AD-40CE-B35E-229B55A5AA8A}.Release|Win32.Build.0 = Release|Win32
+		{4EFCDB92-273F-4294-86D7-407CE59110B5}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4EFCDB92-273F-4294-86D7-407CE59110B5}.Debug|Win32.Build.0 = Debug|Win32
+		{4EFCDB92-273F-4294-86D7-407CE59110B5}.Release|Win32.ActiveCfg = Release|Win32
+		{4EFCDB92-273F-4294-86D7-407CE59110B5}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

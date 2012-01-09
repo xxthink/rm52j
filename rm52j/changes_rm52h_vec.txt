@@ -1,0 +1,46 @@
+===========================================================
+Video Edit Code issue
+(All based on AVS-M1956 by Grandview Semi. 2006/12/12)
+===========================================================
+Encoder:
+1. picture_header() in image.c
+   * row 159, 183
+      write the VEC_EXT byte to bitstream
+   * row 170, 194
+      force to write the value 3 to bitstream 
+      because of the first I picture
+
+2. PartitionMotionSearch()     in mv-search.c
+   PartitionMotionSearch_bid() in mv-search.c
+   * row 1982, 2087
+      force the cost to maximum when forward precition
+
+3. encode_one_macroblock() in rdopt.c
+   * row 1903
+      skip the Direct_B8x8  prediction
+   * row 2403
+      skip the Direct_16x16 prediction
+   * row 2406~2409, 2461~2462
+      skip the situation wehn vec_ext = 3
+
+4. image.c
+   misc modification only for displaying more information
+   about VEC status.
+
+===========================================================
+Decoder:
+1. Header() in image.c
+   * row 720~728
+      if finds the vec_flag and vec_ext is 1,
+         the current B picture should be discarded,
+         and find the next start code,
+      otherwise,
+         begin decoding for current picture.
+   * row 734~740
+      discard the middle slice_header start codes.
+
+2. decode_one_frame() in image.c
+   * row 235~256
+   pls focus on 'vec_pr_flag'.
+   misc modification only for displaying more information
+   about VEC status.

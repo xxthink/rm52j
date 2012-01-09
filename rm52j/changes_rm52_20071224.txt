@@ -1,0 +1,26 @@
+rm52_20071224版本修改处：
+
+encoder
+1、 码率控制
+    问题描述：码率控制打开时（RateControlEnable=1）编解码不匹配。
+ 
+以上修改请搜 RC 20071224
+
+2、 图像尺寸不为16（帧编码条件）或32（场编码条件）下图像扩展, AVS_M2186提案
+
+以上修改请搜_BUGFIX_NON16MUL_PICSIZE、Carmen
+
+decoder 
+1、 编码端参考重建图像定位
+    问题描述：编码端参考重建图像数目小于解码帧数时，解码过程可能会被中断
+ 
+2、 解码器命令行配置函数
+    功能描述：增加了行命令下对解码器码流文件名、输出图像、编码端参考重建图像等参数的配置功能。配置文件使用方法见根目录下文件decoder_avs1.0.bat。
+ 
+以上修改请搜 20071224
+
+
+Contact:
+Xiaozhen ZHENG（郑萧桢）, Hisilicon Technologies（海思半导体）
+xiaozhenzheng@hisilicon.com
+xiaozhenzheng@huawei.com

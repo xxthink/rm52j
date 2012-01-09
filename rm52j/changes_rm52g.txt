@@ -1,0 +1,9 @@
+from rm52f to rm52g
+1) Video Edit Code功能实现在编码解码器中
+   VECPeriod             = 0   # Period of VEC, distance of two I frames   (0=only first)
+   默认为0，则第一I帧前面总是有1个video edit code
+2) MV越界在RDO off的情况下没有实现的问题
+3) 支持帧内多slice变化QP的编码
+4) LSB和MSB值不能每帧都动，必须按照非参考帧来调整。
+   支持pic_distance变化的码流
+    

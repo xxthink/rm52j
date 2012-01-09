@@ -1,0 +1,46 @@
+rm52_20071009版本修改处：
+
+1、 direct mode blockdistance 计算
+    问题描述：当GOP size发生变化或跳帧数不等于 B帧数目时，参考软件 blockdistance推导有问题。
+ 
+2、 运动矢量越界
+    问题描述：参考软件对越界mv进行 clip操作，与文档 6.2.4节描述不符
+ 
+3、 next_start_code()
+    问题描述：场编码时，当前图像编码完毕之后参考软件进行了两次next_start_code() 操作。
+ 
+4、 环路滤波参数alpha_c_offset 与 beta_offset 设置 
+    问题描述： N1370 文档中规定：如果比特流中没有 alpha_c_offset ，beta_offset ，则 AlphaCOffset ，BetaOffset等于 0。参考软件中将 AlphaCOffset，BetaOffset 设为全局变量。因此，若当前图像没有 alpha_c_offset ，beta_offset ，AlphaCOffset ， BetaOffset 值不会被清零，而是等于上一幅带有 alpha_c_offset， beta_offset标志的图像的 AlphaCOffset， BetaOffset 的值。
+ 
+5、 编码图像扩展
+    问题描述：当编码图像尺寸不为16(32) 倍数时，参考软件对图像边界扩展方法有问题 (encoder issue)
+ 
+6、 picture_distance 清零 
+    问题描述：重复序列头之后picture_distance 不必清零
+ 
+7、 随机切入
+    问题描述：当码流第一幅图像前不带sequence header 时，rm52j_r1没法正确解码。新版软件已支持随机切入
+ 
+8、 buf_cycle
+    问题描述：场编码时，序列头之后第一个P帧底场参考图像数目设置有问题（buf_cycle设置出错）
+ 
+9、 解码图像序号输出出错
+    问题描述：跳帧>B帧数目时，编码图像序号输出有误
+ 
+以上修改请搜索 20071009
+ 
+
+10、图像头扩展数据处理
+    问题描述：一致性测试#19号测试码流没法解码
+ 
+以上修改请搜 08.16.2007 和 20071009
+
+ 
+11、码率控制
+    请搜 [5/11/2007 Leeswan]
+
+
+Contact:
+Xiaozhen ZHENG, Hisilicon Technologies, 20071009
+xiaozhenzheng@hisilicon.com
+xiaozhenzheng@huawei.com
