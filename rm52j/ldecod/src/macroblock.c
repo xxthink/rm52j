@@ -68,7 +68,7 @@ void readReferenceIndex(struct img_par *img, struct inp_par *inp);
 void readMotionVector(struct img_par *img, struct inp_par *inp);
 
 #define MODE_IS_P8x8  (mbmode==4)
-#define MODE_IS_I4x4  (mbmode==5)                  //xfwang modify          2004.7.29
+#define MODE_IS_I4x4  (mbmode==5)
 #define I16OFFSET     (mbmode-7)
 #define fwd_ref_idx_to_refframe(idx) ((idx)+fwd_refframe_offset)
 #define bwd_ref_idx_to_refframe(idx) ((idx)+bwd_refframe_offset)
