@@ -15,24 +15,24 @@
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 * License for the specific language governing rights and limitations under
 * the License.
-*                     
+*
 * THIS IS NOT A GRANT OF PATENT RIGHTS - SEE THE AVS PATENT POLICY.
 * The AVS Working Group doesn't represent or warrant that the programs
 * furnished here under are free of infringement of any third-party patents.
 * Commercial implementations of AVS, including shareware, may be
 * subject to royalty fees to patent holders. Information regarding
-* the AVS patent policy for standardization procedure is available at 
+* the AVS patent policy for standardization procedure is available at
 * AVS Web site http://www.avs.org.cn. Patent Licensing is outside
 * of AVS Working Group.
 *
-* The Original Code is Reference Software for China National Standard 
+* The Original Code is Reference Software for China National Standard
 * GB/T 20090.2-2006 (short for AVS-P2 or AVS Video) at version RM52J.
 *
 * The Initial Developer of the Original Code is Video subgroup of AVS
 * Workinggroup (Audio and Video coding Standard Working Group of China).
-* Contributors:   Guoping Li,    Siwei Ma,    Jian Lou,    Qiang Wang , 
+* Contributors:   Guoping Li,    Siwei Ma,    Jian Lou,    Qiang Wang ,
 *   Jianwen Chen,Haiwu Zhao,  Xiaozhen Zheng, Junhao Zheng, Zhiming Wang
-* 
+*
 ******************************************************************************
 */
 
@@ -119,7 +119,7 @@ byte **mref_frm[2];                               //!< 1/1 pix luma for direct i
 byte **mcef_frm[2][2];                              //!< pix chroma
 
 byte **mref_fld[4];                               //!< 1/1 pix luma for direct interpolation
-byte **mcef_fld[4][2];     
+byte **mcef_fld[4][2];
 
 byte nextP_tr_frm, nextP_tr_fld;
 
@@ -145,7 +145,7 @@ typedef enum {
   SE_LUM_AC_INTRA,
   SE_CHR_AC_INTRA,
   SE_CBP_INTER,
-  SE_CBP01,     //wzm,422
+  SE_CBP01,
   SE_LUM_DC_INTER,
   SE_CHR_DC_INTER,
   SE_LUM_AC_INTER,
@@ -178,12 +178,12 @@ typedef enum {
   B_IMG,
   I_IMG,
 } PictureType;
-/*Lou 1016 Start*/
+
 typedef enum{
   NS_BLOCK,
     VS_BLOCK
 }SmbMode;
-/*Lou 1016 End*/
+
 
 /***********************************************************************
  * N e w   D a t a    t y p e s   f o r    T M L
@@ -228,11 +228,11 @@ typedef struct macroblock
   int           delta_quant;          //!< for rate control
   struct macroblock   *mb_available[3][3]; /*!< pointer to neighboring MBs in a 3x3 window of current MB, which is located at [1][1]
                                                 NULL pointer identifies neighboring MBs which are unavailable */
-  
+
   // some storage of macroblock syntax elements for global access
   int           mb_type;
   int           mvd[2][BLOCK_MULTIPLE][BLOCK_MULTIPLE][2];      //!< indices correspond to [forw,backw][block_y][block_x][x,y]
-  int           cbp, cbp_blk,cbp01 ;  //wzm,422
+  int           cbp, cbp_blk,cbp01 ;
   unsigned long cbp_bits;
 
   int           b8mode[4];
@@ -309,7 +309,7 @@ typedef struct img_par
   int imgtr_last_P;
   int tr_frm;
   int tr_fld;
-  int imgtr_last_prev_P;//Lou 1016
+  int imgtr_last_prev_P;
 
   int no_forward_reference;            // xz zheng, 20071009
   int seq_header_indicate;            // xz zheng, 20071009
@@ -369,7 +369,7 @@ typedef struct img_par
   int advanced_pred_mode_disable;
   int types;
   int current_mb_nr_fld;
-  
+
   // !! shenyanfei Weighted Prediction
   int slice_weighting_flag ; //cjw 20051219
   int lum_scale[4] ;
@@ -379,7 +379,7 @@ typedef struct img_par
   int mb_weighting_flag ;   //0  all the MB is weighted, 1 the weighting_prediction is used for each MB
   int weighting_prediction ;
   int mpr_weight[16][16];
-  int top_bot;  // 0: top field / 1: bottom field / -1: frame / Yulj 2004.07.14 
+  int top_bot;  // 0: top field / 1: bottom field / -1: frame / Yulj 2004.07.14
   int Bframe_number;
 //Carmen, 2007/12/20, Bug Fix: correct picture size for outputted reconstructed pictures
   int auto_crop_right;
@@ -387,7 +387,7 @@ typedef struct img_par
 //Carmen, 2007/12/20, Bug Fix: correct picture size for outputted reconstructed pictures
 
 } ImageParameters;
-Macroblock          *mb_data;  
+Macroblock          *mb_data;
 
 extern ImageParameters *img;
 extern Bitstream *currStream;
@@ -434,8 +434,7 @@ FILE *p_trace;
 void read_ipred_block_modes(struct img_par *img,struct inp_par *inp,int b8);
 void set_MB_parameters (struct img_par *img,struct inp_par *inp, int mb);
 // prototypes
-//void init_conf(struct inp_par *inp, char *config_filename);    // 20071224
-void init_conf(struct inp_par *inp,int numpar,char **config_str);  // 20071224, command line
+void init_conf(struct inp_par *inp,int numpar,char **config_str);
 void report(struct inp_par *inp, struct img_par *img, struct snr_par *snr);
 void find_snr(struct snr_par *snr,struct img_par *img, FILE *p_ref);
 void init(struct img_par *img);
@@ -502,14 +501,12 @@ void tracebits2(const char *trace_str, int len, int info);
 int get_direct_mv (int****** mv,int mb_x,int mb_y);
 void free_direct_mv (int***** mv,int mb_x,int mb_y);
 
-int  *****direct_mv; // only to verify result  
-//int    direct_mv[45][80][4][4][3];  // only to verify result  
+int  *****direct_mv; // only to verify result
 int   ipdirect_x,ipdirect_y;
-int demulate_enable;  //X ZHENG, 20080515, enable demulation mechanism
-/* Sequence_header() */
+int demulate_enable;
 int aspect_ratio_information;
-int frame_rate_code; 
-int bit_rate_value; 
+int frame_rate_code;
+int bit_rate_value;
 int bbv_buffer_size;
 //int slice_enable;
 int slice_row_nr;
@@ -529,11 +526,8 @@ int bit_rate;
 int low_delay;
 int bit_rate_lower;
 int bit_rate_upper;
-//int slice_weighting_flag;
-//int mb_weighting_flag;
-/* Sequence_display_extension() */
 int video_format;
-int video_range;  
+int video_range;
 int color_description;
 int color_primaries;
 int transfer_characteristics;
@@ -541,23 +535,17 @@ int matrix_coefficients;
 int display_horizontal_size;
 int display_vertical_size;
 
-
-// Zheng Xiaozhen, HiSilicon, 2007.03.21
-int FrameNum;  // Used to count the current frame number 
+int FrameNum;  // Used to count the current frame number
 int eos;
 int pre_img_type;
 int pre_img_types;
 //int pre_str_vec;
 int pre_img_tr;
 int pre_img_qp;
-int pre_tmp_time;   
-int RefPicExist;   // 20071224
-struct snr_par    *snr;         //!< statistics    
+int pre_tmp_time;
+int RefPicExist;
+struct snr_par    *snr;         //!< statistics
 
-//char str_vec[5];   // added by XiaoZhen Zheng, Hilisicon just for output display
-
-
-/* video edit code */ // M1956 by Grandview 2006.12.12
 int vec_flag;
 
 /* Sopyright_extension() header */
@@ -568,7 +556,7 @@ int copyright_number_1;
 int copyright_number_2;
 int copyright_number_3;
 
-/* I_pictures_header() */ 
+/* I_pictures_header() */
 int stream_length_flag;
 int stream_length;
 int picture_distance;
@@ -602,7 +590,7 @@ int luma_scale;
 int luma_shift;
 int chroma_scale;
 int chroma_shift;
-int second_IField;   //cjw 20051230
+int second_IField;
 
 
 /* Pb_picture_header() */
@@ -620,7 +608,7 @@ int frame_centre_vertical_offset[4];
 /* slice_header() */
 int start_code_prefix;
 int img_width;
-int slice_vertical_position;  //cjw 20060327
+int slice_vertical_position;
 int slice_vertical_position_extension;
 int slice_start_code;
 int fixed_picture_qp;
@@ -679,6 +667,6 @@ typedef struct{
 
 extern CameraParamters *camera;
 
-unsigned long int bn;  // 08.16.2007
+unsigned long int bn;
 
 #endif

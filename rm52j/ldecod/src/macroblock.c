@@ -231,7 +231,6 @@ int calculate_distance(int blkref, int fw_bw )  //fw_bw>=0: forward ; fw_bw<0: b
     return distance;
 }
 
-/*Lou 1016 Start*/
 //The unit of time distance is calculated by field time
 /*
 *************************************************************************
@@ -261,7 +260,6 @@ int scale_motion_vector(int motion_vector, int currblkref, int neighbourblkref, 
 
     return motion_vector;
 }
-/*Lou 1016 End*/
 
 /*
 *************************************************************************
@@ -283,7 +281,7 @@ static void SetMotionVectorPredictor (struct img_par  *img,
                                       int             blockshape_x,
                                       int             blockshape_y,
                                       int             ref,
-                                      int             direct_mv)//Lou 1016
+                                      int             direct_mv)
 {
     int mb_x                 = 8*block_x;
     int mb_y                 = 8*block_y;
@@ -291,8 +289,8 @@ static void SetMotionVectorPredictor (struct img_par  *img,
     int pic_block_y          = img->block_y + block_y;
     int mb_width             = img->width/16;
     int mb_nr = img->current_mb_nr;
-    int mb_available_up   = (img->mb_y == 0 ) ? 0 : (mb_data[mb_nr].slice_nr == mb_data[mb_nr-mb_width  ].slice_nr);  // jlzheng 6.23
-    int mb_available_left = (img->mb_x == 0 ) ? 0 : (mb_data[mb_nr].slice_nr == mb_data[mb_nr-1         ].slice_nr);  // jlzheng 6.23
+    int mb_available_up   = (img->mb_y == 0 ) ? 0 : (mb_data[mb_nr].slice_nr == mb_data[mb_nr-mb_width  ].slice_nr);
+    int mb_available_left = (img->mb_x == 0 ) ? 0 : (mb_data[mb_nr].slice_nr == mb_data[mb_nr-1         ].slice_nr);
     int mb_available_upleft  = (img->mb_x == 0) ? 0 : ((img->mb_y == 0) ? 0 :
         (mb_data[mb_nr].slice_nr == mb_data[mb_nr-mb_width-1].slice_nr));
     int mb_available_upright = (img->mb_y == 0) ? 0 : ((img->mb_x >= (mb_width-1)) ? 0 :
@@ -304,7 +302,7 @@ static void SetMotionVectorPredictor (struct img_par  *img,
     int hv;
     int mva[3] , mvb[3],mvc[3];
     int y_up = 1,y_upright=1,y_upleft=1,off_y=0;
-    /*Lou 1016 Start*/
+
     int rFrameUL;
     Macroblock*     currMB = &mb_data[img->current_mb_nr];
     int smbtypecurr, smbtypeL, smbtypeU, smbtypeUL, smbtypeUR;
@@ -315,7 +313,7 @@ static void SetMotionVectorPredictor (struct img_par  *img,
     smbtypeU = -2;
     smbtypeUL = -2;
     smbtypeUR = -2;
-    /*Lou 1016 End*/
+
 
     /* D B C */
     /* A X   */
@@ -389,7 +387,7 @@ static void SetMotionVectorPredictor (struct img_par  *img,
         mvPredType = MVPRED_U;
     else if((rFrameL == -1)&&(rFrameU == -1)&&(rFrameUR != -1))
         mvPredType = MVPRED_UR;
-    /*Lou 1016 End*/
+
     // Directional predictions
     else if(blockshape_x == 8 && blockshape_y == 16)
     {
@@ -439,7 +437,7 @@ static void SetMotionVectorPredictor (struct img_par  *img,
         case MVPRED_MEDIAN:
 
             if(hv == 1){
-                //  jlzheng 7.2
+
                 // !! for A
 
                 mva[2] = abs(mva[0] - mvb[0])  + abs(mva[1] - mvb[1]);
@@ -594,7 +592,7 @@ void set_MB_parameters (struct img_par *img,struct inp_par *inp, int mb)
     img->block_y = img->mb_y * BLOCK_SIZE/2;      // vertical luma block position
     img->pix_y   = img->mb_y * MB_BLOCK_SIZE;   // vertical luma macroblock position
     if(chroma_format==2)
-        img->pix_c_y = img->mb_y * MB_BLOCK_SIZE; // vertical chroma macroblock position  //added by wuzhongmou 422
+        img->pix_c_y = img->mb_y * MB_BLOCK_SIZE; // vertical chroma macroblock position
     else
         img->pix_c_y = img->mb_y * MB_BLOCK_SIZE/2; // vertical chroma macroblock position
 
@@ -635,7 +633,7 @@ void start_macroblock(struct img_par *img,struct inp_par *inp)
     img->block8_y = img->mb_y * BLOCK_SIZE/2;
     img->pix_y   = img->mb_y * MB_BLOCK_SIZE;   /* luma macroblock position */
     if(chroma_format==2)
-        img->pix_c_y = img->mb_y * MB_BLOCK_SIZE; /* chroma macroblock position */ //added by wuzhongmou 422
+        img->pix_c_y = img->mb_y * MB_BLOCK_SIZE; /* chroma macroblock position */
     else
         img->pix_c_y = img->mb_y * MB_BLOCK_SIZE/2; /* chroma macroblock position */
 
@@ -655,7 +653,7 @@ void start_macroblock(struct img_par *img,struct inp_par *inp)
     currMB->cbp         = 0;
     currMB->cbp_blk     = 0;
     currMB->c_ipred_mode= DC_PRED_8; //GB
-    currMB->c_ipred_mode_2= DC_PRED_8; //X ZHENG,422
+    currMB->c_ipred_mode_2= DC_PRED_8;
 
     for (l=0; l < 2; l++)
         for (j=0; j < BLOCK_MULTIPLE; j++)
@@ -681,7 +679,7 @@ void start_macroblock(struct img_par *img,struct inp_par *inp)
 
         currMB->lf_disable = loop_filter_disable;
 
-        img->weighting_prediction=0;    default value Weighting Predicition is 0
+        img->weighting_prediction=0;
 }
 
 /*
@@ -933,8 +931,8 @@ int read_one_macroblock(struct img_par *img,struct inp_par *inp)
     int  img_block_y;
     int  real_mb_type;
     int  tempcbp;
-    int fixqp;          //add by wuzhongmou 200612
-    fixqp = (fixed_picture_qp|| fixed_slice_qp);  //add by wuzhongmou 200612
+    int fixqp;
+    fixqp = (fixed_picture_qp|| fixed_slice_qp);
 
     for(i=0;i<8;i++)
         for(j=0;j<8;j++)
@@ -1065,7 +1063,7 @@ int read_one_macroblock(struct img_par *img,struct inp_par *inp)
 
         if (IS_INTRA(currMB))
         {
-            for (i=0;i</*5*/(chroma_format==1?5:6);i++) //X ZHENG,422
+            for (i=0;i</*5*/(chroma_format==1?5:6);i++)
                 read_ipred_block_modes(img,inp,i);
         }
 
@@ -1162,7 +1160,7 @@ int read_one_macroblock(struct img_par *img,struct inp_par *inp)
             }
             else
             {
-                SetMotionVectorPredictor (img, pmv, pmv+1, 0, refFrArr, img->mv, 0, 0, 16, 16, 0, 0);//Lou 1016
+                SetMotionVectorPredictor (img, pmv, pmv+1, 0, refFrArr, img->mv, 0, 0, 16, 16, 0, 0);
                 for(i=0;i<2;i++)
                     for(j=0;j<2;j++)
                     {
@@ -1342,7 +1340,7 @@ void read_ipred_block_modes(struct img_par *img,struct inp_par *inp,int b8)
             error("illegal chroma intra pred mode!\n", 600);
         }
     }
-    else if( b8==5&&currMB->b8mode[b8-3]==IBLOCK&&chroma_format==2) //X ZHENG,422
+    else if( b8==5&&currMB->b8mode[b8-3]==IBLOCK&&chroma_format==2)
     {
 
         currSE.type = SE_INTRAPREDMODE;
@@ -1623,9 +1621,9 @@ void readMotionVector(struct img_par *img, struct inp_par *inp)
 
                         // first make mv-prediction
                         if (!bframe)
-                            SetMotionVectorPredictor (img, pmv, pmv+1, refframe, refFrArr,         img->mv,    i, j, 8*step_h, 8*step_v, 0, 0);//Lou 1016
+                            SetMotionVectorPredictor (img, pmv, pmv+1, refframe, refFrArr,         img->mv,    i, j, 8*step_h, 8*step_v, 0, 0);
                         else
-                            SetMotionVectorPredictor (img, pmv, pmv+1, refframe, img->fw_refFrArr, img->fw_mv, i, j, 8*step_h, 8*step_v, 0, 0);//Lou 1016
+                            SetMotionVectorPredictor (img, pmv, pmv+1, refframe, img->fw_refFrArr, img->fw_mv, i, j, 8*step_h, 8*step_v, 0, 0);
 
 
                         for (n=0; n < 2; n++)
@@ -1846,7 +1844,7 @@ void readMotionVector(struct img_par *img, struct inp_par *inp)
                         j4 = img->block_y+j;
                         i4 = img->block_x+i;
 
-                        SetMotionVectorPredictor (img, pmv, pmv+1, refframe, img->bw_refFrArr, img->bw_mv, i, j, 8*step_h, 8*step_v, -1, 0);//Lou 1016
+                        SetMotionVectorPredictor (img, pmv, pmv+1, refframe, img->bw_refFrArr, img->bw_mv, i, j, 8*step_h, 8*step_v, -1, 0);
 
                         for (k=0; k < 2; k++)
                         {
@@ -3191,7 +3189,7 @@ int decode_one_macroblock(struct img_par *img,struct inp_par *inp)
                 get_curr_blk (6+uv, img, curr_blk);
                 idct_dequant_B8 (6+uv, QP_SCALE_CR[currMB->qp-MIN_QP], curr_blk, img);
             }
-            //X ZHENG,422
+
         }
     }
     else if(chroma_format==1)
@@ -3619,7 +3617,7 @@ int decode_one_macroblock(struct img_par *img,struct inp_par *inp)
 
                                 //cjw 20051219 Weighted Predition
                                 //if(((img->slice_weighting_flag == 1) &&(img->mb_weighting_flag == 1)&&(img->weighting_prediction == 1)&&(mv_mode != 0))
-                                if(((img->slice_weighting_flag == 1) &&(img->mb_weighting_flag == 1)&&(img->weighting_prediction == 1))   //cjw 20060321
+                                if(((img->slice_weighting_flag == 1) &&(img->mb_weighting_flag == 1)&&(img->weighting_prediction == 1))
                                     ||((img->slice_weighting_flag == 1) && (img->mb_weighting_flag == 0)))
                                 {
 

@@ -61,153 +61,153 @@
 */
 void encode_golomb_word(unsigned int symbol,unsigned int grad0,unsigned int max_levels,unsigned int *res_bits,unsigned int *res_len)
 {
-  unsigned int level,res,numbits;
-  res=1UL<<grad0;
-  level=1UL;numbits=1UL+grad0;
-  //find golomb level
-  while( symbol>=res && level<max_levels )
-  {
-    symbol-=res;
-    res=res<<1;
-    level++;
-    numbits+=2UL;
-  }
-  if(level>=max_levels)
-  {
-    if(symbol>=res)
-      symbol=res-1UL;  //crop if too large.
-  }
-  //set data bits
-  *res_bits=res|symbol;
-  *res_len=numbits;
+    unsigned int level,res,numbits;
+    res=1UL<<grad0;
+    level=1UL;numbits=1UL+grad0;
+    //find golomb level
+    while( symbol>=res && level<max_levels )
+    {
+        symbol-=res;
+        res=res<<1;
+        level++;
+        numbits+=2UL;
+    }
+    if(level>=max_levels)
+    {
+        if(symbol>=res)
+            symbol=res-1UL;  //crop if too large.
+    }
+    //set data bits
+    *res_bits=res|symbol;
+    *res_len=numbits;
 }
 
 void encode_multilayer_golomb_word(unsigned int symbol,const unsigned int *grad,const unsigned int *max_levels,unsigned int *res_bits,unsigned int *res_len)
 {
-  unsigned accbits,acclen,bits,len,tmp;
-  accbits=acclen=0UL;
-  while(1)
-  {
-    encode_golomb_word(symbol,*grad,*max_levels,&bits,&len);
-    accbits=(accbits<<len)|bits;
-    acclen+=len;
-    assert(acclen<=32UL);  //we'l be getting problems if this gets longer than 32 bits.
-    tmp=*max_levels-1UL;
-    if(!(( len == (tmp<<1)+(*grad) )&&( bits == (1UL<<(tmp+*grad))-1UL )))  //is not last possible codeword? (Escape symbol?)
-      break;
-    tmp=*max_levels;
-    symbol-=(((1UL<<tmp)-1UL)<<(*grad))-1UL;
-    grad++;max_levels++;
-  }
-  *res_bits=accbits;
-  *res_len=acclen;
+    unsigned accbits,acclen,bits,len,tmp;
+    accbits=acclen=0UL;
+    while(1)
+    {
+        encode_golomb_word(symbol,*grad,*max_levels,&bits,&len);
+        accbits=(accbits<<len)|bits;
+        acclen+=len;
+        assert(acclen<=32UL);  //we'l be getting problems if this gets longer than 32 bits.
+        tmp=*max_levels-1UL;
+        if(!(( len == (tmp<<1)+(*grad) )&&( bits == (1UL<<(tmp+*grad))-1UL )))  //is not last possible codeword? (Escape symbol?)
+            break;
+        tmp=*max_levels;
+        symbol-=(((1UL<<tmp)-1UL)<<(*grad))-1UL;
+        grad++;max_levels++;
+    }
+    *res_bits=accbits;
+    *res_len=acclen;
 }
 #endif
 
 unsigned int decode_golomb_word(const unsigned char **buffer,unsigned int *bitoff,unsigned int grad0,unsigned int max_levels)
 {
-  const unsigned char *rd;
-  unsigned int bit,byte,level,databits,t,testbit;
-  rd=*buffer;
-  bit=*bitoff;
-  byte=*rd;
-  level=0UL;
-  while( level<max_levels )//( level+1UL<max_levels )
-  {
-    testbit=byte&(1UL<<bit);
-    bit = (bit-1UL) & 7UL ;
-    if(bit==7UL)byte=*(++rd);
-    if( testbit )break;
-    level++;
-  }
-  databits=0UL;
-  for( t=0UL ; t<(grad0+level) ; t++ )
-  {
-    databits = (databits<<1UL) | ((byte>>bit)&1UL) ;
-    bit = (bit-1UL) & 7UL ;
-    if(bit==7UL)byte=*(++rd);
-  }
-  *buffer=rd;
-  *bitoff=bit;
-  return (((1UL<<level)-1UL)<<grad0)+databits;
+    const unsigned char *rd;
+    unsigned int bit,byte,level,databits,t,testbit;
+    rd=*buffer;
+    bit=*bitoff;
+    byte=*rd;
+    level=0UL;
+    while( level<max_levels )//( level+1UL<max_levels )
+    {
+        testbit=byte&(1UL<<bit);
+        bit = (bit-1UL) & 7UL ;
+        if(bit==7UL)byte=*(++rd);
+        if( testbit )break;
+        level++;
+    }
+    databits=0UL;
+    for( t=0UL ; t<(grad0+level) ; t++ )
+    {
+        databits = (databits<<1UL) | ((byte>>bit)&1UL) ;
+        bit = (bit-1UL) & 7UL ;
+        if(bit==7UL)byte=*(++rd);
+    }
+    *buffer=rd;
+    *bitoff=bit;
+    return (((1UL<<level)-1UL)<<grad0)+databits;
 }
 
 unsigned int decode_multilayer_golomb_word(const unsigned char **buffer,unsigned int *bitoff,const unsigned int *grad0,const unsigned int *max_levels)
 {
-  unsigned int symbol,partsymbol,tmp;
-  symbol=0UL;
-  while(1)
-  {
-    partsymbol=decode_golomb_word(buffer,bitoff,*grad0,*max_levels);
-    symbol+=partsymbol;
-    tmp=*max_levels;
-    if( partsymbol < (((1UL<<tmp)-1UL)<<(*grad0))-1UL )  //not escape symbol?
-      break;
-    grad0++;
-    max_levels++;
-  }
-  return symbol;
+    unsigned int symbol,partsymbol,tmp;
+    symbol=0UL;
+    while(1)
+    {
+        partsymbol=decode_golomb_word(buffer,bitoff,*grad0,*max_levels);
+        symbol+=partsymbol;
+        tmp=*max_levels;
+        if( partsymbol < (((1UL<<tmp)-1UL)<<(*grad0))-1UL )  //not escape symbol?
+            break;
+        grad0++;
+        max_levels++;
+    }
+    return symbol;
 }
 
 int  readSyntaxElement_GOLOMB(SyntaxElement *se, struct img_par *img, struct inp_par *inp)
 {
-  int frame_bitoffset;
-  unsigned char *buf,*read;
-  int BitstreamLengthInBytes;
-  unsigned int bit,i;
-  unsigned int grad[4],max_lev[4];
-  
+    int frame_bitoffset;
+    unsigned char *buf,*read;
+    int BitstreamLengthInBytes;
+    unsigned int bit,i;
+    unsigned int grad[4],max_lev[4];
+
 #if TRACE
-  unsigned int len;
+    unsigned int len;
 #endif  
-  
-  frame_bitoffset = currStream->frame_bitoffset;
-  buf = (unsigned char*)currStream->streamBuffer;
-  BitstreamLengthInBytes = currStream->bitstream_length;
-  
-  bit=7UL-(frame_bitoffset&7);
-  read=buf+(frame_bitoffset>>3);
-  
-  if(!( se->golomb_maxlevels&~0xFF ))
-  {
-    se->value1=decode_golomb_word(&read,&bit,se->golomb_grad,se->golomb_maxlevels);
-  }
-  else
-  {
-    for(i=0UL;i<4UL;i++)
+
+    frame_bitoffset = currStream->frame_bitoffset;
+    buf = (unsigned char*)currStream->streamBuffer;
+    BitstreamLengthInBytes = currStream->bitstream_length;
+
+    bit=7UL-(frame_bitoffset&7);
+    read=buf+(frame_bitoffset>>3);
+
+    if(!( se->golomb_maxlevels&~0xFF ))
     {
-      grad[i]=(se->golomb_grad>>(i<<3))&0xFFUL;
-      max_lev[i]=(se->golomb_maxlevels>>(i<<3))&0xFFUL;
+        se->value1=decode_golomb_word(&read,&bit,se->golomb_grad,se->golomb_maxlevels);
     }
-    se->value1=decode_multilayer_golomb_word(&read,&bit,grad,max_lev);
-  }
-  
-  se->len=(((read-buf)<<3)+(7-bit))-frame_bitoffset;
-  
+    else
+    {
+        for(i=0UL;i<4UL;i++)
+        {
+            grad[i]=(se->golomb_grad>>(i<<3))&0xFFUL;
+            max_lev[i]=(se->golomb_maxlevels>>(i<<3))&0xFFUL;
+        }
+        se->value1=decode_multilayer_golomb_word(&read,&bit,grad,max_lev);
+    }
+
+    se->len=(((read-buf)<<3)+(7-bit))-frame_bitoffset;
+
 #if TRACE
-  if(!( se->golomb_maxlevels&~0xFF ))    //only bits 0-7 used? This means normal Golomb word.
-    encode_golomb_word(se->value1,se->golomb_grad,se->golomb_maxlevels,&(se->value2),&len);
-  else
-  {
-    for(i=0UL;i<4UL;i++)
+    if(!( se->golomb_maxlevels&~0xFF ))    //only bits 0-7 used? This means normal Golomb word.
+        encode_golomb_word(se->value1,se->golomb_grad,se->golomb_maxlevels,&(se->value2),&len);
+    else
     {
-      grad[i]=(se->golomb_grad>>(i<<3))&0xFFUL;
-      max_lev[i]=(se->golomb_maxlevels>>(i<<3))&0xFFUL;
+        for(i=0UL;i<4UL;i++)
+        {
+            grad[i]=(se->golomb_grad>>(i<<3))&0xFFUL;
+            max_lev[i]=(se->golomb_maxlevels>>(i<<3))&0xFFUL;
+        }
+        encode_multilayer_golomb_word(se->value1,grad,max_lev,&(se->value2),&len);
     }
-    encode_multilayer_golomb_word(se->value1,grad,max_lev,&(se->value2),&len);
-  }
-  
-  tracebits3("", se->len, se->value2, se->value1);
+
+    tracebits3("", se->len, se->value2, se->value1);
 #endif
 
-  se->value2=0;
-  currStream->frame_bitoffset += se->len;
+    se->value2=0;
+    currStream->frame_bitoffset += se->len;
 #ifdef _OUTPUT_CODENUM_
-  if (FrameNum == _FRAME_NUM_ && img->current_mb_nr >= _MBNR_ && img->type == B_IMG)
+    if (FrameNum == _FRAME_NUM_ && img->current_mb_nr >= _MBNR_ && img->type == B_IMG)
     {
-    fprintf(pf_code_num, "%4d\n", se->value1);
-    fflush(pf_code_num);
+        fprintf(pf_code_num, "%4d\n", se->value1);
+        fflush(pf_code_num);
     }    
 #endif
-  return 1;
+    return 1;
 }

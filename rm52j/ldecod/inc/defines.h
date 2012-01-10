@@ -117,10 +117,8 @@
 
 // FLAGS and DEFINES.
 #define B8_SIZE         8       // block size of transformed block
-//Lou 1014 #define QUANT_PERIOD    6       // mantissa/exponent quantization, step size doubles every QUANT_PERIOD qp
 #define QUANT_PERIOD    8       // mantissa/exponent quantization, step size doubles every QUANT_PERIOD qp
 #define _ALT_SCAN_              // use GI scan field coding
-//Lou 1013 #define QP_OFS         -12    // workaround to use old qp-design
 #define _CD_4x4VALUES_          // use baseline 4x4 quantization values
 
 #define P8x8    8
@@ -140,8 +138,6 @@
 #define IS_P8x8(MB)     ((MB)->mb_type==P8x8)
 
 // Quantization parameter range
-//Lou 1014#define MIN_QP          0
-//Lou 1014#define MAX_QP          51
 #define MIN_QP          0
 #define MAX_QP          63
 
@@ -223,7 +219,7 @@
 // Interim File Format: define the following macro to identify which version is 
 //                      used in the implementation
 
-#define WORKING_DRAFT_MAJOR_NO 0    // inidicate the working draft version number
+#define WORKING_DRAFT_MAJOR_NO 0    // indicate the working draft version number
 #define WORKING_DRAFT_MINOR_NO 4
 #define INTERIM_FILE_MAJOR_NO 0     // indicate interim file format version number
 #define INTERIM_FILE_MINOR_NO 1

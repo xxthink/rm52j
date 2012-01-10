@@ -66,30 +66,30 @@
 */
 void copy_Pframe(struct img_par *img)
 {
-  int i,j;
+    int i,j;
 
-  /*
-   * the mmin, mmax macros are taken out
-   * because it makes no sense due to limited range of data type
-   */
-  
-  for(i=0;i<img->height;i++)
-           for(j=0;j<img->width;j++)
-       {
+    /*
+    * the mmin, mmax macros are taken out
+    * because it makes no sense due to limited range of data type
+    */
+
+    for(i=0;i<img->height;i++)
+        for(j=0;j<img->width;j++)
+        {
             imgY_prev[i][j] = imgY[i][j];
-    }
-    
-  for(i=0;i<img->height_cr;i++)
-    for(j=0;j<img->width_cr;j++)
-    {
-      imgUV_prev[0][i][j] = imgUV[0][i][j];
-    }
+        }
 
-  for(i=0;i<img->height_cr;i++)
-    for(j=0;j<img->width_cr;j++)
-    {
-      imgUV_prev[1][i][j] = imgUV[1][i][j];
-    }
+        for(i=0;i<img->height_cr;i++)
+            for(j=0;j<img->width_cr;j++)
+            {
+                imgUV_prev[0][i][j] = imgUV[0][i][j];
+            }
+
+            for(i=0;i<img->height_cr;i++)
+                for(j=0;j<img->width_cr;j++)
+                {
+                    imgUV_prev[1][i][j] = imgUV[1][i][j];
+                }
 }
 
 /*
@@ -104,50 +104,50 @@ void copy_Pframe(struct img_par *img)
 
 void init_macroblock_Bframe(struct img_par *img)
 {
-  int i,j,k;
-  Macroblock *currMB = &mb_data[img->current_mb_nr];//GB current_mb_nr];
-  
-  // reset vectors and pred. modes
-  for (i=0;i<2;i++)
-  {
-    for(j=0;j<2;j++)
+    int i,j,k;
+    Macroblock *currMB = &mb_data[img->current_mb_nr];//GB current_mb_nr];
+
+    // reset vectors and pred. modes
+    for (i=0;i<2;i++)
     {
-      img->dfMV [img->block_x+i+4][img->block_y+j][0]=img->dfMV[img->block_x+i+4][img->block_y+j][1]=0;
-      img->dbMV [img->block_x+i+4][img->block_y+j][0]=img->dbMV[img->block_x+i+4][img->block_y+j][1]=0;
-      
-      img->fw_mv[img->block_x+i+4][img->block_y+j][0]=img->fw_mv[img->block_x+i+4][img->block_y+j][1]=0;
-      img->bw_mv[img->block_x+i+4][img->block_y+j][0]=img->bw_mv[img->block_x+i+4][img->block_y+j][1]=0;
+        for(j=0;j<2;j++)
+        {
+            img->dfMV [img->block_x+i+4][img->block_y+j][0]=img->dfMV[img->block_x+i+4][img->block_y+j][1]=0;
+            img->dbMV [img->block_x+i+4][img->block_y+j][0]=img->dbMV[img->block_x+i+4][img->block_y+j][1]=0;
+
+            img->fw_mv[img->block_x+i+4][img->block_y+j][0]=img->fw_mv[img->block_x+i+4][img->block_y+j][1]=0;
+            img->bw_mv[img->block_x+i+4][img->block_y+j][0]=img->bw_mv[img->block_x+i+4][img->block_y+j][1]=0;
+        }
     }
-  }
-  
-  for (i=0;i<2;i++)
-  {
-    for(j=0;j<2;j++)
+
+    for (i=0;i<2;i++)
     {
-//      img->ipredmode[img->block_x+i+1][img->block_y+j+1] = DC_PRED;
-  img->ipredmode[img->block_x+i+1][img->block_y+j+1] = -1;   //cjw the default value should be -1
+        for(j=0;j<2;j++)
+        {
+            //      img->ipredmode[img->block_x+i+1][img->block_y+j+1] = DC_PRED;
+            img->ipredmode[img->block_x+i+1][img->block_y+j+1] = -1;   //cjw the default value should be -1
+        }
     }
-  }
-  
-  // Set the reference frame information for motion vector prediction
-  if (IS_INTRA (currMB) || IS_DIRECT (currMB))
-  {
-    for (j=0; j<2; j++)
-      for (i=0; i<2; i++)
-      {
-        img->fw_refFrArr[img->block_y+j][img->block_x+i] = -1;
-        img->bw_refFrArr[img->block_y+j][img->block_x+i] = -1;
-      }
-  }
-  else
-  {
-    for(j=0;j<2;j++)
-      for(i=0;i<2;i++)
-      {
-        k=2*j+i;
-        
-        img->fw_refFrArr[img->block_y+j][img->block_x+i] = ((currMB->b8pdir[k]==0||currMB->b8pdir[k]==2)&&currMB->b8mode[k]!=0?0:-1);
-        img->bw_refFrArr[img->block_y+j][img->block_x+i] = ((currMB->b8pdir[k]==1||currMB->b8pdir[k]==2)&&currMB->b8mode[k]!=0?0:-1);
-      }
-  }
+
+    // Set the reference frame information for motion vector prediction
+    if (IS_INTRA (currMB) || IS_DIRECT (currMB))
+    {
+        for (j=0; j<2; j++)
+            for (i=0; i<2; i++)
+            {
+                img->fw_refFrArr[img->block_y+j][img->block_x+i] = -1;
+                img->bw_refFrArr[img->block_y+j][img->block_x+i] = -1;
+            }
+    }
+    else
+    {
+        for(j=0;j<2;j++)
+            for(i=0;i<2;i++)
+            {
+                k=2*j+i;
+
+                img->fw_refFrArr[img->block_y+j][img->block_x+i] = ((currMB->b8pdir[k]==0||currMB->b8pdir[k]==2)&&currMB->b8mode[k]!=0?0:-1);
+                img->bw_refFrArr[img->block_y+j][img->block_x+i] = ((currMB->b8pdir[k]==1||currMB->b8pdir[k]==2)&&currMB->b8mode[k]!=0?0:-1);
+            }
+    }
 }
