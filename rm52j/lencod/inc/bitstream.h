@@ -15,24 +15,24 @@
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 * License for the specific language governing rights and limitations under
 * the License.
-*                     
+*
 * THIS IS NOT A GRANT OF PATENT RIGHTS - SEE THE AVS PATENT POLICY.
 * The AVS Working Group doesn't represent or warrant that the programs
 * furnished here under are free of infringement of any third-party patents.
 * Commercial implementations of AVS, including shareware, may be
 * subject to royalty fees to patent holders. Information regarding
-* the AVS patent policy for standardization procedure is available at 
+* the AVS patent policy for standardization procedure is available at
 * AVS Web site http://www.avs.org.cn. Patent Licensing is outside
 * of AVS Working Group.
 *
-* The Original Code is Reference Software for China National Standard 
+* The Original Code is Reference Software for China National Standard
 * GB/T 20090.2-2006 (short for AVS-P2 or AVS Video) at version RM52J.
 *
 * The Initial Developer of the Original Code is Video subgroup of AVS
 * Workinggroup (Audio and Video coding Standard Working Group of China).
-* Contributors:   Guoping Li,    Siwei Ma,    Jian Lou,    Qiang Wang , 
+* Contributors:   Guoping Li,    Siwei Ma,    Jian Lou,    Qiang Wang ,
 *   Jianwen Chen,Haiwu Zhao,  Xiaozhen Zheng, Junhao Zheng, Zhiming Wang
-* 
+*
 ******************************************************************************
 */
 
@@ -40,8 +40,8 @@
 
 /*
 *************************************************************************************
-* File name: 
-* Function: 
+* File name:
+* Function:
 *
 *************************************************************************************
 */
@@ -71,7 +71,7 @@ extern OutputStream *pORABS;
 
 void CloseBitStreamFile();
 void OpenBitStreamFile(char *Filename);
-int  WriteVideoEditCode(); //added by cjw 20070419
+int  WriteVideoEditCode();
 int  WriteSequenceHeader();
 int  WriteSequenceDisplayExtension();
 int  WriteUserData(char *userdata);

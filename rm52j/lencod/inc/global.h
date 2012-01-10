@@ -108,7 +108,7 @@ typedef enum {
     SE_LUM_AC_INTRA,
     SE_CHR_AC_INTRA,
     SE_CBP_INTER,
-    SE_CBP01,  
+    SE_CBP01,
     SE_LUM_DC_INTER,
     SE_CHR_DC_INTER,
     SE_LUM_AC_INTER,
@@ -187,7 +187,7 @@ typedef struct macroblock
     int                 mvd[2][BLOCK_MULTIPLE][BLOCK_MULTIPLE][2];          //!< indices correspond to [forw,backw][block_y][block_x][x,y]
     int                 intra_pred_modes[BLOCK_MULTIPLE*BLOCK_MULTIPLE];
     int                 cbp,scbp;
-    int          cbp01;   
+    int          cbp01;
     int                 cbp_blk ;    //!< 1 bit set for every 4x4 block with coefs (not implemented for INTRA)
     int                 b8mode[4];
     int                 b8pdir[4];
@@ -592,7 +592,7 @@ typedef struct
     int num_ref_pic_active_fwd_minus1;
     int num_ref_pic_active_bwd_minus1;
 
-    
+
     int *****mv_fld;
     int *****p_fwMV_fld;
     int *****p_bwMV_fld;
@@ -685,8 +685,8 @@ typedef struct
     int BasicUnit;
     int bot_MB;
     //  int VEC_FLAG;          // Commented by cjw, 20070327
-    int Seqheader_flag;      // Added by cjw, 20070327
-    int EncodeEnd_flag;          // Carmen, 2007/12/19    
+    int Seqheader_flag;
+    int EncodeEnd_flag;          // Carmen, 2007/12/19
     int curr_picture_distance;  // Added by Xiaozhen Zheng, 20070405
     int last_picture_distance;  // Added by Xiaozhen Zheng, 20070405
     int count;
@@ -754,7 +754,7 @@ typedef struct
     int    frefar[2][2], brefar[2][2];
     int    **ipredmode;
     int    intra_pred_modes[4];
-    int    cbp, cbp_blk,cbp01;  
+    int    cbp, cbp_blk,cbp01;
     int    mode;
     int    *****mv, *****p_fwMV, *****p_bwMV ;
     int    *****all_mv;

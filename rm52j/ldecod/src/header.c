@@ -590,7 +590,7 @@ void SliceHeader (char *buf,int startcodepos, int length)
     currStream->code_len = currStream->bitstream_length = length;
 
     currStream->read_len = currStream->frame_bitoffset = (startcodepos)*8;
-    slice_vertical_position              = u_v  (8, "slice vertical position");
+    slice_vertical_position  = u_v  (8, "slice vertical position");
 
     if(vertical_size > 2800)
         slice_vertical_position_extension  = u_v  (3, "slice vertical position extension");

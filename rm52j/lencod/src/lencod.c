@@ -15,24 +15,24 @@
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 * License for the specific language governing rights and limitations under
 * the License.
-*                     
+*
 * THIS IS NOT A GRANT OF PATENT RIGHTS - SEE THE AVS PATENT POLICY.
 * The AVS Working Group doesn't represent or warrant that the programs
 * furnished here under are free of infringement of any third-party patents.
 * Commercial implementations of AVS, including shareware, may be
 * subject to royalty fees to patent holders. Information regarding
-* the AVS patent policy for standardization procedure is available at 
+* the AVS patent policy for standardization procedure is available at
 * AVS Web site http://www.avs.org.cn. Patent Licensing is outside
 * of AVS Working Group.
 *
-* The Original Code is Reference Software for China National Standard 
+* The Original Code is Reference Software for China National Standard
 * GB/T 20090.2-2006 (short for AVS-P2 or AVS Video) at version RM52J.
 *
 * The Initial Developer of the Original Code is Video subgroup of AVS
 * Workinggroup (Audio and Video coding Standard Working Group of China).
-* Contributors:   Guoping Li,    Siwei Ma,    Jian Lou,    Qiang Wang , 
+* Contributors:   Guoping Li,    Siwei Ma,    Jian Lou,    Qiang Wang ,
 *   Jianwen Chen,Haiwu Zhao,  Xiaozhen Zheng, Junhao Zheng, Zhiming Wang
-* 
+*
 ******************************************************************************
 */
 
@@ -40,8 +40,8 @@
 
 /*
 *************************************************************************************
-* File name: 
-* Function: 
+* File name:
+* Function:
 *
 *************************************************************************************
 */
@@ -65,7 +65,7 @@
 #include "image.h"
 #include "header.h"
 #include "ratectl.h"
-#include "vlc.h"  // Added by cjw, 20070327
+#include "vlc.h"
 #include "bitstream.h"
 
 #ifdef FastME
@@ -103,8 +103,8 @@ int main(int argc,char **argv)
 {
     int image_type;
     int M, N, np, nb, n;
-    int len=0;      // Added by cjw, 20070327
-    Bitstream *bitstream = currBitStream;  // Added by cjw, 20070327
+    int len=0;
+    Bitstream *bitstream = currBitStream;
 
     p_dec = p_dec_u = p_dec_v = p_stat = p_log = p_datpart = p_trace = NULL;
 
@@ -130,7 +130,7 @@ int main(int argc,char **argv)
     Init_Motion_Search_Module ();
     information_init();
 
-    //Rate control 
+    //Rate control
     if(input->RCEnable)
         rc_init_seq();
 
@@ -152,24 +152,24 @@ int main(int argc,char **argv)
     // B pictures
     Bframe_ctr=0;
     tot_time=0;                 // time for total encoding session
-    img->pn = -1;    
-    input->skip_mode_flag = 1; 
+    img->pn = -1;
+    input->skip_mode_flag = 1;
 
-    // Write sequence header 
+    // Write sequence header
     stats.bit_slice = start_sequence();
     printf("Sequence Header \n");
-    img->Seqheader_flag=1;           // Add by cjw, 20070327
-    img->count_PAFF=0;             // Add by cjw, 20070327
-    img->curr_picture_distance = img->last_picture_distance = 0;  // Added by Xiaozhen Zheng, 20070405
+    img->Seqheader_flag=1;
+    img->count_PAFF=0;
+    img->curr_picture_distance = img->last_picture_distance = 0;
 
-    img->EncodeEnd_flag=0;     //Carmen, 2007/12/19, Bug Fix: No sequence end codes when stream has multiple sequences
+    img->EncodeEnd_flag=0;
 
-    tmp_buf_cycle = img->buf_cycle;  
+    tmp_buf_cycle = img->buf_cycle;
 
     for (img->number=0; img->number < input->no_frames; img->number++)
     {
         if(img->number!=0 && input->vec_period!=0 && img->number%(input->vec_period*input->seqheader_period*input->intra_period)==0 ){
-            len=  WriteVideoEditCode(); //added by cjw 20070419
+            len=  WriteVideoEditCode();
             stats.bit_slice += len;
         }
 
@@ -178,40 +178,28 @@ int main(int argc,char **argv)
 
             stats.bit_slice += start_sequence();
             printf("Sequence Header \n");
-            img->Seqheader_flag=1;           
-            img->count_PAFF=0;           
+            img->Seqheader_flag=1;
+            img->count_PAFF=0;
             img->nb_references = 0;      // restrict ref_num after the seq_header, 20071009
         }
-        // Added by cjw, 20070327, End
+        , End
 
 
-        img->pn = (img->pn+1) % (img->buf_cycle+1); 
-        img->buf_cycle = tmp_buf_cycle;  
+        img->pn = (img->pn+1) % (img->buf_cycle+1);
+        img->buf_cycle = tmp_buf_cycle;
 
         //frame_num for this frame
         img->frame_num = IMG_NUMBER % (1 << (LOG2_MAX_FRAME_NUM_MINUS4 + 4));
 
         SetImgType();
 
-        stats.bit_use_header[img->type] += len;    // Added by cjw, 20070327
-
-        //    if(img->number==0) //modified by cjw AVS 20070204  Spec. 7.2.3.1 //commented Hisilicon XiaoZhen Zheng 20070327
-        //      picture_distance = 0;
-        //    else
-        //   {
-        //      if(img->type==B_IMG)
-        //          picture_distance = ((IMG_NUMBER - 1) * (input->jumpd + 1) + img->b_interval * img->b_frame_to_code)%256;  // Tsinghua 200701
-        //      else
-        //          picture_distance = (IMG_NUMBER * (input->jumpd + 1))%256;  // Tsinghua 200701
-        //    }
+        stats.bit_use_header[img->type] += len;
 
         image_type = img->type;
 
-        if(image_type == INTRA_IMG)    // jlzheng 7.21
-            //img->buf_cycle /= 2;        
-            img->buf_cycle  = 1;       // cjw 20060321 
+        if(image_type == INTRA_IMG)
+            img->buf_cycle  = 1;
         // for 1 reference is used field coding (I bottom only 1 reference is used)
-
         //Rate control
         if (img->type == INTRA_IMG)
         {
@@ -222,7 +210,7 @@ int main(int argc,char **argv)
                     n = input->no_frames + (input->no_frames - 1) * input->successive_Bframe;
 
                     /* number of P frames */
-                    np = input->no_frames-1; 
+                    np = input->no_frames-1;
 
                     /* number of B frames */
                     nb = (input->no_frames - 1) * input->successive_Bframe;
@@ -257,7 +245,7 @@ int main(int argc,char **argv)
         encode_one_frame(); // encode one I- or P-frame
 
         img->nb_references += 1;
-        img->nb_references = min(img->nb_references, 2);// Tian Dong. June 7, 2002
+        img->nb_references = min(img->nb_references, 2);
 
         if ((input->successive_Bframe != 0) && (IMG_NUMBER > 0)) // B-frame(s) to encode
         {
@@ -273,7 +261,6 @@ int main(int argc,char **argv)
 
             for(img->b_frame_to_code=1; img->b_frame_to_code<=input->successive_Bframe; img->b_frame_to_code++)
             {
-                //    picture_distance = (IMG_NUMBER - 1) * (input->successive_Bframe + 1) + img->b_frame_to_code;  // Tsinghua 200701 //commented Hisilicon XiaoZhen Zheng 20070327
                 encode_one_frame();  // encode one B-frame
             }
         }
@@ -316,7 +303,7 @@ int main(int argc,char **argv)
 * Function:Initializes the Image structure with appropriate parameters.
 * Input:Input Parameters struct inp_par *inp
 * Output:Image Parameters struct img_par *img
-* Return: 
+* Return:
 * Attention:
 *************************************************************************
 */
@@ -334,7 +321,7 @@ void init_img()
     img->max_lindex=0;
     img->width    = (input->img_width+img->auto_crop_right);  //add by wuzhongmou 0610
     img->height   = (input->img_height+img->auto_crop_bottom); //add by wuzhongmou 0610
-    img->width_cr =img->width/2;                                
+    img->width_cr =img->width/2;
     img->height_cr= img->height/(input->chroma_format==2?1:2);//add by wuzhongmou 0610, X ZHENG 422
 
     img->framerate = (int)FrameRate[input->frame_rate_code-1];
@@ -344,7 +331,7 @@ void init_img()
         input->slice_row_nr=img->height/16;
 
     //img->framerate=INIT_FRAME_RATE;   // The basic frame rate (of the original sequence)
-    if(input->InterlaceCodingOption != FRAME_CODING) 
+    if(input->InterlaceCodingOption != FRAME_CODING)
         img->buf_cycle *= 2;
 
     get_mem_mv (&(img->mv));
@@ -364,12 +351,12 @@ void init_img()
     get_mem4Dint(&(img->chromacofAC),2,4,2,17);
     /*Lou End*/
 
-    
-    if(input->InterlaceCodingOption != FRAME_CODING) 
+
+    if(input->InterlaceCodingOption != FRAME_CODING)
         img->buf_cycle /= 2;
 
     if ((img->MB_SyntaxElements = (SyntaxElement*)calloc (((img->height*img->width/256)+1200), sizeof(SyntaxElement))) == NULL)
-        no_mem_exit ("init_img: MB_SyntaxElements");     
+        no_mem_exit ("init_img: MB_SyntaxElements");
 
     if ((img->quad = (int*)calloc (511, sizeof(int))) == NULL)
         no_mem_exit ("init_img: img->quad");
@@ -386,7 +373,7 @@ void init_img()
 
 
     for (i=0; i < (img->width/MB_BLOCK_SIZE) * (img->height/MB_BLOCK_SIZE); i++)
-    {  
+    {
         get_mem4Dint (&(img->mb_data[i].cofAC),6,4,2,65);/*lgp*dct*modify*/
         get_mem4Dint(&(img->mb_data[i].chromacofAC),2,4,2,17);
 
@@ -416,14 +403,14 @@ void init_img()
 * Function:Free the Image structures
 * Input:Image Parameters struct img_par *img
 * Output:
-* Return: 
+* Return:
 * Attention:
 *************************************************************************
 */
 
 void free_img ()
 {
-    if(input->InterlaceCodingOption != FRAME_CODING) 
+    if(input->InterlaceCodingOption != FRAME_CODING)
         img->buf_cycle *= 2;
 
     free_mem_mv (img->mv);
@@ -436,7 +423,7 @@ void free_img ()
     free_mem_mv (img->omv_fld);
     free_mem_mv (img->all_omv_fld);
 
-    if(input->InterlaceCodingOption != FRAME_CODING) 
+    if(input->InterlaceCodingOption != FRAME_CODING)
         img->buf_cycle /= 2;
 
     /*Lou Start*/
@@ -475,7 +462,7 @@ Picture *malloc_picture()
 * Function:Frees a picture
 * Input:pic: POinter to a Picture to be freed
 * Output:
-* Return: 
+* Return:
 * Attention:
 *************************************************************************
 */
@@ -494,9 +481,9 @@ void free_picture(Picture *pic)
 * Input:  struct inp_par *inp,                                            \n
 struct img_par *img,                                            \n
 struct stat_par *stat,                                          \n
-struct stat_par *stat        
+struct stat_par *stat
 * Output:
-* Return: 
+* Return:
 * Attention:
 *************************************************************************
 */
@@ -544,7 +531,7 @@ void report()
     {
         bit_use_Bframe=0;
         for(i=0; i<11; i++)
-            bit_use_Bframe += stats.bit_use_mode_inter[1][i]; 
+            bit_use_Bframe += stats.bit_use_mode_inter[1][i];
         bit_use_Bframe += stats.bit_use_header[2];
         bit_use_Bframe += stats.bit_use_mb_type[2];
         bit_use_Bframe += stats.tmp_bit_use_cbp[2];
@@ -572,7 +559,7 @@ void report()
         fprintf(stdout," Hadamard transform                : Not used\n");
 
     fprintf(stdout," Image (Encoding) format                      : %dx%d\n",img->width,img->height); //add by wuzhongmou 0610
-    fprintf(stdout," Image (Recon) format                      : %dx%d\n",(img->width-img->auto_crop_right),(img->height-img->auto_crop_bottom)); 
+    fprintf(stdout," Image (Recon) format                      : %dx%d\n",(img->width-img->auto_crop_right),(img->height-img->auto_crop_bottom));
 
     if(input->intra_upd)
         fprintf(stdout," Error robustness                  : On\n");
@@ -725,8 +712,8 @@ void report()
     fprintf(p_stat,"\n Mode  3  (8x16)    | %5d         |    %8.2f     |",stats.mode_use_inter[0][3   ],(float)stats.bit_use_mode_inter[0][3   ]/(float)bit_use[1][0]);
     fprintf(p_stat,"\n Mode  4  (8x8)     | %5d         |    %8.2f     |",stats.mode_use_inter[0][P8x8],(float)stats.bit_use_mode_inter[0][P8x8]/(float)bit_use[1][0]);
     fprintf(p_stat,"\n Mode  5  intra old | %5d         |-----------------|",stats.mode_use_inter[0][I4MB]);
-    mean_motion_info_bit_use[0] = (float)(stats.bit_use_mode_inter[0][0] + stats.bit_use_mode_inter[0][1] + stats.bit_use_mode_inter[0][2] 
-    + stats.bit_use_mode_inter[0][3] + stats.bit_use_mode_inter[0][P8x8])/(float) bit_use[1][0]; 
+    mean_motion_info_bit_use[0] = (float)(stats.bit_use_mode_inter[0][0] + stats.bit_use_mode_inter[0][1] + stats.bit_use_mode_inter[0][2]
+    + stats.bit_use_mode_inter[0][3] + stats.bit_use_mode_inter[0][P8x8])/(float) bit_use[1][0];
 
     // MODE
     fprintf(p_stat,"\n -------------------|---------------|\n");
@@ -747,8 +734,8 @@ void report()
         fprintf(p_stat,"\n Mode  3  (8x16)    | %5d         |    %8.2f     |",stats.mode_use_inter[1][3   ],(float)stats.bit_use_mode_inter[1][3   ]/(float)Bframe_ctr);
         fprintf(p_stat,"\n Mode  4  (8x8)     | %5d         |    %8.2f     |",stats.mode_use_inter[1][P8x8],(float)stats.bit_use_mode_inter[1][P8x8]/(float)Bframe_ctr);
         fprintf(p_stat,"\n Mode  5  intra old | %5d         |-----------------|",stats.mode_use_inter[1][I4MB]);
-        mean_motion_info_bit_use[1] = (float)(stats.bit_use_mode_inter[1][0] + stats.bit_use_mode_inter[1][1] + stats.bit_use_mode_inter[1][2] 
-        + stats.bit_use_mode_inter[1][3] + stats.bit_use_mode_inter[1][P8x8])/(float) Bframe_ctr; 
+        mean_motion_info_bit_use[1] = (float)(stats.bit_use_mode_inter[1][0] + stats.bit_use_mode_inter[1][1] + stats.bit_use_mode_inter[1][2]
+        + stats.bit_use_mode_inter[1][3] + stats.bit_use_mode_inter[1][P8x8])/(float) Bframe_ctr;
     }
 
     fprintf(p_stat,"\n\n --------------------|----------------|----------------|----------------|\n");
@@ -769,7 +756,7 @@ void report()
 
     if(input->successive_Bframe!=0 && Bframe_ctr!=0)
         fprintf(p_stat," %10.2f     |",(float)stats.bit_use_mb_type[2]/Bframe_ctr);
-    else 
+    else
         fprintf(p_stat," %10.2f     |", 0.);
 
     fprintf(p_stat,"\n");
@@ -779,7 +766,7 @@ void report()
 
     if(input->successive_Bframe!=0 && Bframe_ctr!=0)
         fprintf(p_stat," %10.2f     |",mean_motion_info_bit_use[1]);
-    else 
+    else
         fprintf(p_stat," %10.2f     |", 0.);
 
     fprintf(p_stat,"\n");
@@ -792,7 +779,7 @@ void report()
 
     if(input->successive_Bframe!=0 && Bframe_ctr!=0)
         fprintf(p_stat," %10.2f     |", (float)stats.tmp_bit_use_cbp[2]/Bframe_ctr);
-    else 
+    else
         fprintf(p_stat," %10.2f     |", 0.);
 
     fprintf(p_stat,"\n");
@@ -835,7 +822,7 @@ void report()
 
     if(input->successive_Bframe!=0 && Bframe_ctr!=0)
         fprintf(p_stat," %10.2f     |", (float) bit_use_Bframe/ (float) Bframe_ctr );
-    else 
+    else
         fprintf(p_stat," %10.2f     |", 0.);
 
     fprintf(p_stat,"\n");
@@ -931,7 +918,7 @@ void report()
 * Function:Prints the header of the protocol.
 * Input:struct inp_par *inp
 * Output:
-* Return: 
+* Return:
 * Attention:
 *************************************************************************
 */
@@ -970,12 +957,12 @@ int init_global_buffers()
     int refnum;
     int i;
 
-    if(input->chroma_format==2) 
+    if(input->chroma_format==2)
     {
         imgY_org_buffer = (byte*)malloc(input->img_height*input->img_width*2);
         memory_size += input->img_height*input->img_width*2;
     }
-    else if(input->chroma_format==1) 
+    else if(input->chroma_format==1)
     {
         imgY_org_buffer = (byte*)malloc(input->img_height*input->img_width*3/2); //add by wuzhongmou 0610
         memory_size += input->img_height*input->img_width*3/2;  //add by wuzhongmou 0610
@@ -996,7 +983,7 @@ int init_global_buffers()
     memory_size += get_mem2Dint(&refFrArr_frm, img->height/BLOCK_SIZE, img->width/BLOCK_SIZE);
 
     if(input->successive_Bframe!=0)
-    {    
+    {
         // allocate memory for temp B-frame motion vector buffer: fw_refFrArr, bw_refFrArr
         // int ...refFrArr[72][88];
         memory_size += get_mem2Dint(&fw_refFrArr_frm, img->height/BLOCK_SIZE, img->width/BLOCK_SIZE);
@@ -1115,7 +1102,7 @@ int init_global_buffers()
                 ref_fld[4] = reference_field[5];
         }
 
-        // !! 
+        // !!
         allalpha_lum = (int*)malloc(((img->height*img->width)/256)*sizeof(int));
         allbelta_lum = (int*)malloc(((img->height*img->width)/256)*sizeof(int));
 
@@ -1130,7 +1117,7 @@ int get_mem4global_buffers()
 * Input: Input Parameters struct inp_par *inp,                             \n
 Image Parameters struct img_par *img
 * Output:
-* Return: 
+* Return:
 * Attention:
 *************************************************************************
 */
@@ -1179,14 +1166,14 @@ void free_global_buffers()
         free_mem3Dint(dfMV,2);
         free_mem3Dint(dbMV,2);
         free_mem2Dint(fw_refFrArr_frm);
-        free_mem2Dint(bw_refFrArr_frm);    
+        free_mem2Dint(bw_refFrArr_frm);
     } // end if B frame
 
     free_mem2Dint(img4Y_tmp);    // free temp quarter pel frame buffer
 
     // free mem, allocated in init_img()
     // free intra pred mode buffer for blocks
-    free_mem2Dint(img->ipredmode);  
+    free_mem2Dint(img->ipredmode);
 
     if (input->InterlaceCodingOption != FRAME_CODING)
     {
@@ -1211,13 +1198,13 @@ void free_global_buffers()
 
         free_mem3Dint(tmp_mv_fld,2);
         free_mem2Dint(refFrArr_fld);
-#endif    
+#endif
     }
 
     /*  if (1)//input->InterlaceCodingOption == SMB_CODING)
-    {    
+    {
     for (i=0; i < (img->width/MB_BLOCK_SIZE) * (img->height/MB_BLOCK_SIZE); i++)
-    {  
+    {
     free_mem4Dint ((img->mb_data[i].cofAC),6,4);
     free_mem4Dint(img->mb_data[i].chromacofAC, 2, 4 );
     }
@@ -1225,7 +1212,7 @@ void free_global_buffers()
 
     free(img->mb_data);
 
-    // !! 
+    // !!
     free(allbelta_lum) ;
     free(allalpha_lum) ;
 
@@ -1279,7 +1266,7 @@ int get_mem_mv (int****** mv)
 * Function:Free memory from mv
 * Input:int****** mv
 * Output:
-* Return: 
+* Return:
 * Attention:
 *************************************************************************
 */
@@ -1310,7 +1297,7 @@ void free_mem_mv (int***** mv)
 * Function:
 * Input:
 * Output:
-* Return: 
+* Return:
 * Attention:
 *************************************************************************
 */
@@ -1347,7 +1334,7 @@ int get_direct_mv (int****** mv,int mb_x,int mb_y)
 * Function:Free memory from mv
 * Input:int****** mv
 * Output:
-* Return: 
+* Return:
 * Attention:
 *************************************************************************
 */
@@ -1380,7 +1367,7 @@ void free_direct_mv (int***** mv,int mb_x,int mb_y)
 * Function:Allocate memory for AC coefficients
 * Input:
 * Output:
-* Return: 
+* Return:
 * Attention:
 *************************************************************************
 */
@@ -1390,7 +1377,7 @@ int get_mem_ACcoeff (int***** cofAC)
     int i, j, k;
 
     if ((*cofAC = (int****)calloc (8, sizeof(int***))) == NULL)              no_mem_exit ("get_mem_ACcoeff: cofAC");
-    for (k=0; k<8; k++) 
+    for (k=0; k<8; k++)
     {
         if (((*cofAC)[k] = (int***)calloc (4, sizeof(int**))) == NULL)         no_mem_exit ("get_mem_ACcoeff: cofAC");
         for (j=0; j<4; j++)
@@ -1410,7 +1397,7 @@ int get_mem_ACcoeff (int***** cofAC)
 * Function:Allocate memory for DC coefficients
 * Input:
 * Output:
-* Return: 
+* Return:
 * Attention:
 *************************************************************************
 */
@@ -1437,7 +1424,7 @@ int get_mem_DCcoeff (int**** cofDC)
 * Function:Free memory of AC coefficients
 * Input:
 * Output:
-* Return: 
+* Return:
 * Attention:
 *************************************************************************
 */
@@ -1466,7 +1453,7 @@ void free_mem_ACcoeff (int**** cofAC)
 * Function:Free memory of DC coefficients
 * Input:
 * Output:
-* Return: 
+* Return:
 * Attention:
 *************************************************************************
 */
@@ -1492,7 +1479,7 @@ void free_mem_DCcoeff (int*** cofDC)
 * Function:SetImgType
 * Input:
 * Output:
-* Return: 
+* Return:
 * Attention:
 *************************************************************************
 */

@@ -15,24 +15,24 @@
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 * License for the specific language governing rights and limitations under
 * the License.
-*                     
+*
 * THIS IS NOT A GRANT OF PATENT RIGHTS - SEE THE AVS PATENT POLICY.
 * The AVS Working Group doesn't represent or warrant that the programs
 * furnished here under are free of infringement of any third-party patents.
 * Commercial implementations of AVS, including shareware, may be
 * subject to royalty fees to patent holders. Information regarding
-* the AVS patent policy for standardization procedure is available at 
+* the AVS patent policy for standardization procedure is available at
 * AVS Web site http://www.avs.org.cn. Patent Licensing is outside
 * of AVS Working Group.
 *
-* The Original Code is Reference Software for China National Standard 
+* The Original Code is Reference Software for China National Standard
 * GB/T 20090.2-2006 (short for AVS-P2 or AVS Video) at version RM52J.
 *
 * The Initial Developer of the Original Code is Video subgroup of AVS
 * Workinggroup (Audio and Video coding Standard Working Group of China).
-* Contributors:   Guoping Li,    Siwei Ma,    Jian Lou,    Qiang Wang , 
+* Contributors:   Guoping Li,    Siwei Ma,    Jian Lou,    Qiang Wang ,
 *   Jianwen Chen,Haiwu Zhao,  Xiaozhen Zheng, Junhao Zheng, Zhiming Wang
-* 
+*
 ******************************************************************************
 */
 
@@ -40,8 +40,8 @@
 
 /*
 *************************************************************************************
-* File name: 
-* Function: 
+* File name:
+* Function:
 *
 *************************************************************************************
 */
@@ -60,7 +60,7 @@
 * Function:
 * Input:
 * Output:
-* Return: 
+* Return:
 * Attention:
 *************************************************************************
 */
@@ -86,7 +86,7 @@ int frametotc(int frame, int dropflag)
 * Function:
 * Input:
 * Output:
-* Return: 
+* Return:
 * Attention:
 *************************************************************************
 */
@@ -108,7 +108,7 @@ int IPictureHeader(int frame)
         input->fixed_picture_qp = 1;
 
 
-    //xyji 12.23  
+    //xyji 12.23
     len+=u_v(16,"bbv delay",0xffff/*img->bbv_delay*/,bitstream);
 
     len += u_v(1, "time_code_flag",0,bitstream);
@@ -138,7 +138,7 @@ int IPictureHeader(int frame)
         len+=u_v(6,"I picture QP",img->qp,bitstream);
     else
     {
-        len+=u_v(6,"I picture QP",input->qp0,bitstream);  
+        len+=u_v(6,"I picture QP",input->qp0,bitstream);
         img->qp = input->qp0;
     }
 
@@ -172,7 +172,7 @@ int IPictureHeader(int frame)
 * Function:
 * Input:
 * Output:
-* Return: 
+* Return:
 * Attention:
 *************************************************************************
 */
@@ -183,34 +183,34 @@ int PBPictureHeader()
     int len = 0;
 
     if (img->type == INTER_IMG)
-    {  
+    {
         img->count_PAFF=img->count_PAFF+1;
         picture_coding_type = 1;
         if((input->InterlaceCodingOption == FRAME_CODING)||(input->InterlaceCodingOption == FIELD_CODING))   //add by wuzhongmou
         {
-            // Add by cjw, 20070327, Begin
-            if(img->Seqheader_flag==1)   
+            , Begin
+            if(img->Seqheader_flag==1)
             {
                 //                img->buf_cycle=1;    // restrict ref_num after the seq_header, 20071009
                 img->Seqheader_flag=0;
-            } 
-            // Add by cjw, 20070327, End
-        } 
+            }
+            , End
+        }
         if(input->InterlaceCodingOption == PAFF_CODING)
         {
-            // Add by cjw, 20070327, Begin
-            if(img->Seqheader_flag==1)     
+            , Begin
+            if(img->Seqheader_flag==1)
             {
                 //                img->buf_cycle=1;    // restrict ref_num after the seq_header, 20071009
                 if(img->count_PAFF==2)
                     img->Seqheader_flag=0;
-            } 
-            // Add by cjw, 20070327, End
+            }
+            , End
         }//add by wuzhongmou
 
     }
     else
-        picture_coding_type = 2; //add by wuzhongmou 
+        picture_coding_type = 2; //add by wuzhongmou
 
     //rate control
     if(input->RCEnable&&img->BasicUnit<=img->Frame_Total_Number_MB)
@@ -225,7 +225,7 @@ int PBPictureHeader()
 
     len+=u_v(24,"start code prefix",1,bitstream);
     len+=u_v(8, "PB picture start code",0xB6,bitstream);
-    //xyji 12.23  
+    //xyji 12.23
     len+=u_v(16,"bbv delay",0xffff/*bbv_delay*/,bitstream);
     len+=u_v(2,"picture coding type",picture_coding_type,bitstream);
 
@@ -242,8 +242,8 @@ int PBPictureHeader()
     {
         len+=u_v(1,"picture_structure",img->picture_structure,bitstream);
         if (!img->picture_structure)
-        {   
-            img->advanced_pred_mode_disable=1;  //add by wuzhongmou 06.10   
+        {
+            img->advanced_pred_mode_disable=1;  //add by wuzhongmou 06.10
             len+=u_v(1,"advanced_pred_mode_disable",img->advanced_pred_mode_disable,bitstream);
         }
     }
@@ -277,10 +277,10 @@ int PBPictureHeader()
         len+=u_v(1,"piture reference flag",picture_reference_flag,bitstream);
     }
 
-    len+=u_v(1, "no_forward_reference_flag", 0, bitstream);    // Added by cjw, 20070327
+    len+=u_v(1, "no_forward_reference_flag", 0, bitstream);
 
     //  len+=u_v(4,"reserved bits",0,bitstream);          // Commented by cjw, 20070327
-    len+=u_v(3,"reserved bits",0,bitstream);          // Added by cjw, 20070327
+    len+=u_v(3,"reserved bits",0,bitstream);
     len+=u_v(1,"skip mode flag",input->skip_mode_flag, bitstream);
 
     len+=u_v(1,"loop filter disable",input->loop_filter_disable,bitstream);
@@ -303,20 +303,20 @@ int PBPictureHeader()
 * Function:
 * Input:
 * Output:
-* Return: 
+* Return:
 * Attention:    cjw 20060112  Spec 9.4.3
 ///frame coding/////////
-P    img->lum_scale[0]  fw[0] 
-img->lum_scale[1]  fw[1]      
+P    img->lum_scale[0]  fw[0]
+img->lum_scale[1]  fw[1]
 B      img->lum_scale[0]  fw[0]
 img->lum_scale[1]  bw[0]
 ///field coding////////
-P    img->lum_scale[0]  fw[0] ; img->lum_scale[1]  fw[1] 
-img->lum_scale[2]  fw[2] ; img->lum_scale[3]  fw[3]       
-B    img->lum_scale[0]  fw[0] ; img->lum_scale[1]  bw[0] 
-img->lum_scale[2]  fw[1] ; img->lum_scale[3]  bw[1]                                                    
+P    img->lum_scale[0]  fw[0] ; img->lum_scale[1]  fw[1]
+img->lum_scale[2]  fw[2] ; img->lum_scale[3]  fw[3]
+B    img->lum_scale[0]  fw[0] ; img->lum_scale[1]  bw[0]
+img->lum_scale[2]  fw[1] ; img->lum_scale[3]  bw[1]
 *************************************************************************
-*/                                                                
+*/
 
 int SliceHeader(int slice_nr, int slice_qp)
 {
@@ -345,7 +345,7 @@ int SliceHeader(int slice_nr, int slice_qp)
     if(img->type != INTRA_IMG){
         len += u_v(1,"slice weighting flag",img->LumVarFlag,bitstream);
 
-        if(img->LumVarFlag)  
+        if(img->LumVarFlag)
         {
             //cjw 20060321  Spec 9.4.3
             if(second_IField && !img->picture_structure)  //I bottom
@@ -363,7 +363,7 @@ int SliceHeader(int slice_nr, int slice_qp)
             for(i=0;i<weight_para_num;i++) //cjw20050321
             {
                 len+=u_v(8,"luma scale",img->lum_scale[i],bitstream);      //cjw 20051230
-                //  len+=u_v(8,"luma shift",img->lum_shift[i]+127,bitstream); 
+                //  len+=u_v(8,"luma shift",img->lum_shift[i]+127,bitstream);
                 //  img->lum_shift[i]=-1;
                 len+=u_v(8,"luma shift",img->lum_shift[i],bitstream);     //cjw 20051230
 
