@@ -73,8 +73,6 @@ void readMotionVector(struct img_par *img, struct inp_par *inp);
 #define fwd_ref_idx_to_refframe(idx) ((idx)+fwd_refframe_offset)
 #define bwd_ref_idx_to_refframe(idx) ((idx)+bwd_refframe_offset)
 
-
-
 /*
 ******************************************************************************
 *  Function: calculated field or frame distance between current field(frame)
@@ -229,7 +227,7 @@ int calculate_distance(int blkref, int fw_bw )  //fw_bw>=0: forward ; fw_bw<0: b
 
         }
     }
-    distance = (distance+512)%512;  // Added by Xiaozhen ZHENG, 20070413, HiSilicon
+    distance = (distance+512)%512;
     return distance;
 }
 
